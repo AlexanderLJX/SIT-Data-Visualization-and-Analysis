@@ -205,8 +205,7 @@ def get_popular_times(browser):
         # Print the popular times
         print("Popular Times:", popular_times)
     except NoSuchElementException:
-        logging.info("NoSuchElementException")
-        print("Target has no popular times")
+        logging.info("NoSuchElementException - Target has no popular times")
     except TimeoutException:
         logging.exception("TimeoutException")
         print("Target has no popular times")
@@ -246,7 +245,7 @@ def get_star_rating_and_number_of_reviews(browser):
             # Print the reviews count
             print("Number of Reviews:", number_of_reviews)
     except NoSuchElementException:
-        logging.info("NoSuchElementException")
+        logging.info("NoSuchElementException - Target has no star rating")
     except StaleElementReferenceException:
         logging.exception("StaleElementReferenceException")
 
@@ -388,7 +387,7 @@ def get_reviewer_info(current_review):
         reviewer_total_reviews = reviewer_total_reviews.split(" ")[0].replace(",", "")
         reviewer_total_photos = reviewer_total_photos.split(" ")[0].replace(",", "")
     except NoSuchElementException:
-        logging.info("NoSuchElementException")
+        logging.info("NoSuchElementException - No reviewer status")
         reviewer_local_guide_status = False
         reviewer_total_reviews = "NAN"
         reviewer_total_photos = "NAN"
@@ -417,7 +416,7 @@ def expand_review(current_review):
             more_button = current_review.find_element(By.CLASS_NAME, 'w8nwRe.kyuRq')
             more_button.click()
         except NoSuchElementException:
-            logging.info("NoSuchElementException")
+            logging.info("NoSuchElementException - No more button")
             print("No more button")
             break
         except StaleElementReferenceException:
@@ -431,8 +430,7 @@ def get_review_text(current_review):
         review_text = current_review.find_element(By.CLASS_NAME, 'wiI7pd').text
         print("review_text:", review_text)
     except NoSuchElementException:
-        logging.info("NoSuchElementException")
-        print("No review text")
+        logging.info("NoSuchElementException - No review text")
         review_text = "NAN"
 
     return review_text
