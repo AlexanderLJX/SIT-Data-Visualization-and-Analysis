@@ -59,7 +59,15 @@ URL = "https://www.google.com/maps/search/"
 
 TARGET = "food"
 
-MAX_REVIEWS_PER_PLACE = 10
+MAX_REVIEWS_PER_PLACE = 100
+
+RUN_MULTITHREADED = True
+
+RUN_HEADLESS = True
+
+NUM_THREADS = 6
+
+
 
 SUB_AREAS = ["Marymount", "Upper Thomson",
  "Alexandra Hill", "Alexandra North", "Bukit Ho Swee", "Bukit Merah", "Depot Road", "Everton Park",

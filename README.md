@@ -38,6 +38,29 @@ To run and explore the project locally, follow these steps:
 1. **Clone the Repository:**
    ```bash
    git clone https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis.git
+2. **Create a virtual environment**
+   ```bash
+   python -m venv env
+3. **Activate the virtual environment**
+   ```bash
+   source env/bin/activate
+4. **Install the dependencies**
+   ```bash
+   pip install -r requirements.txt
+5. **Launch the project**
+   ```bash
+   python main.py
+   ```
+
+   
+## Contributing
+
+If you would like to contribute to the project, please follow these steps:
+
+1. **Create a fork of the project**
+2. **Clone the forked repository**
+   ```bash
+   git clone
 2. Install Dependencies:
    ```bash
    pip install -r requirements.txt
@@ -65,6 +88,7 @@ To run and explore the project locally, follow these steps:
  - **Name:** Name of the restaurant
  - **Search Engine Rating:** 1 means it it the first restaurant that appears in the list when searching that specific planning area, 2 means it's the second, and so on.
  - **Sponsored:** Whether the restaurant paid for google advertising. This will probably mean it will be the first to appear in the list, search engine rating 1.
+ - **Opening Hours** Opening hours of the restaurant
  - **Popular Times:** Data on aggregated and anonymized Location History data
  - **Average Star Rating:** Average star rating of the restaurant
  - **Reviews:** Number of reviews of the restaurant
