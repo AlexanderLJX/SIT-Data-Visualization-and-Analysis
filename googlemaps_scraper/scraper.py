@@ -175,7 +175,7 @@ def get_popular_times(browser):
     # Check if popular times g2BVhd eoFzo  is present 
     try:
         # Find the element with class "g2BVhd eoFzo" using wait
-        # WebDriverWait(browser, 1).until(EC.presence_of_element_located((By.CLASS_NAME, 'C7xf8b')))
+        WebDriverWait(browser, 0.5).until(EC.presence_of_element_located((By.CLASS_NAME, 'C7xf8b')))
         all_popular_times = browser.find_elements(By.CLASS_NAME, 'g2BVhd')
         if len(all_popular_times) != 7 and len(all_popular_times) != 0:
             raise NoSuchElementException
