@@ -580,6 +580,7 @@ def get_tab_button(browser, tab_name):
     return about_button
 
 def get_about_combined(browser, about_button):
+    about_combined = []
     while True:
         try:
             about_button.click()
@@ -599,6 +600,8 @@ def get_about_combined(browser, about_button):
         except StaleElementReferenceException:
             logging.exception("StaleElementReferenceException")
             continue
+    
+    return about_combined
 
 def find_target_in_area(url, planning_area, browser, csv_writer, csv_writer_reviews):
     url = url + planning_area
