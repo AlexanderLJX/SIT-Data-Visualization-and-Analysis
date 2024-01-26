@@ -129,7 +129,7 @@ def is_sponsored(browser):
         print("sponsored_place:", sponsored_place)
         sponsored_label = "Yes"
     except NoSuchElementException:
-        logging.info("NoSuchElementException")
+        logging.info("NoSuchElementException - Target is not sponsored")
         if sponsored_label == "":
             sponsored_label = "No"
     except StaleElementReferenceException:
@@ -163,10 +163,8 @@ def get_opening_times(browser):
         print("Opening Times:", opening_times)
     except NoSuchElementException:
         logging.info("NoSuchElementException - Target has no opening times")
-        opening_times = "NoSuchElementException"
     except StaleElementReferenceException:
         logging.exception("StaleElementReferenceException")
-        opening_times = "StaleElementReferenceException"
     
     return opening_times
 
@@ -464,8 +462,7 @@ def get_detail_list(current_review):
                 detail_list.append(f"{detail_title}: {detail_content}")
             print(f"{detail_title}: {detail_content}")
     except NoSuchElementException:
-        logging.info("NoSuchElementException")
-        print("No Review Metadata")
+        logging.info("NoSuchElementException - No Review Metadata")
 
     return detail_list
 
@@ -579,9 +576,9 @@ def get_tab_button(browser, tab_name):
                     about_button = button
             break
         except NoSuchElementException:
-            logging.info("NoSuchElementException")
+            logging.info("NoSuchElementException - No " + tab_name + " tab")
         except StaleElementReferenceException:
-            logging.info("StaleElementReferenceException")
+            logging.info("StaleElementReferenceException - No " + tab_name + " tab")
             break
     return about_button
 
@@ -592,9 +589,9 @@ def get_about_combined(browser, about_button):
             about_present = browser.find_element(By.CLASS_NAME, 'iP2t7d.fontBodyMedium')
             break
         except NoSuchElementException:
-            logging.info("NoSuchElementException")
+            logging.info("NoSuchElementException - No About tab")
         except ElementClickInterceptedException:
-            logging.exception("ElementClickInterceptedException")
+            logging.exception("ElementClickInterceptedException - No About tab")
 
     while True:
         try:
