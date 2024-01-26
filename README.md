@@ -52,21 +52,6 @@ To run and explore the project locally, follow these steps:
    python main.py
    ```
 
-   
-## Contributing
-
-If you would like to contribute to the project, please follow these steps:
-
-1. **Create a fork of the project**
-2. **Clone the forked repository**
-   ```bash
-   git clone
-2. Install Dependencies:
-   ```bash
-   pip install -r requirements.txt
-3. Run the Project:
-   ```bash
-   python main.py
 
 ## Web Scraping
 
