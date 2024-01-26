@@ -417,7 +417,6 @@ def expand_review(current_review):
             more_button.click()
         except NoSuchElementException:
             logging.info("NoSuchElementException - No more button")
-            print("No more button")
             break
         except StaleElementReferenceException:
             logging.info("StaleElementReferenceException")
