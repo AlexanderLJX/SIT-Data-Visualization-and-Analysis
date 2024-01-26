@@ -342,7 +342,7 @@ def get_indv_star_rating(browser):
                 star_level = review_element.find_element(By.CLASS_NAME, 'yxmtmf').text
                 reviews_count = review_element.get_attribute('aria-label').split(",")[1].split()[0]
                 print(f"{star_level} - {reviews_count}")
-                indv_star_rating[int(star_level)] = reviews_count
+                indv_star_rating[int(star_level)] = int(reviews_count)
             break
         except StaleElementReferenceException:
             logging.exception("StaleElementReferenceException")
@@ -360,8 +360,8 @@ def get_list_of_tags(browser):
     # Extract and print the tag and review count for each element
     for tag_element in tags_elements:
         tag = tag_element.find_element(By.CLASS_NAME, 'fontBodyMedium').text
-        review_count = tag_element.find_element(By.CLASS_NAME, 'bC3Nkc').text
-        all_tags[tag] = review_count
+        tag_count = tag_element.find_element(By.CLASS_NAME, 'bC3Nkc').text
+        all_tags[tag] = int(tag_count)
     print(all_tags)
     return all_tags
 
