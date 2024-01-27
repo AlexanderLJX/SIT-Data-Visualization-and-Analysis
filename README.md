@@ -68,36 +68,37 @@ To run and explore the project locally, follow these steps:
 ## Data
 
 **Restaurants csv:**
- - **href:** Link to the restaurant
- - **Planning area:** 1 of the 55 divisions in Singapore
- - **Name:** Name of the restaurant
- - **Search Engine Rating:** 1 means it it the first restaurant that appears in the list when searching that specific planning area, 2 means it's the second, and so on.
- - **Sponsored:** Whether the restaurant paid for google advertising. This will probably mean it will be the first to appear in the list, search engine rating 1.
- - **Opening Hours** Opening hours of the restaurant
- - **Popular Times:** Data on aggregated and anonymized Location History data
- - **Average Star Rating:** Average star rating of the restaurant
- - **Reviews:** Number of reviews of the restaurant
- - **Category:** Category of the restaurant e.g. (Korean, Japanese, etc...)
- - **Price Rating:** Official Google price rating of the restaurant (The number of dollar signs)
- - **Address:** Address of the restaurant
- - **Metadata:** Metadata of the restaurant, including location etc.
- - **Tags** Food tags, given by reviewers. e.g. Chicken, Pasta, etc..
- - **About** A list of stuff in the About section of the restaurant
+ - **href:** Link to the restaurant. Format is a string.
+ - **Sub Area:** Sub areas of the 55 Planning Areas in Singapore. Format is a string.
+ - **Name:** Name of the restaurant. Format is a string.
+ - **Search Engine Rating:** 1 means it it the first restaurant that appears in the list when searching that specific area, 2 means it's the second, and so on. Format is an integer.
+ - **Sponsored:** Whether the restaurant paid for google advertising. This will probably mean it will be the first to appear in the list, search engine rating 1. Format is a string, either 'Yes' or 'No'.
+ - **Opening Hours** Opening hours of the restaurant. Provided as a dictionary, the key is the day of the week and the value is a list of opening hours, each element in that list is a dictionary with a 'open' and 'close' value with the key being the time e.g. '9 am'. If 'open' and 'close' value is 'Closed' means the restaurant is closed on that day. If 'open' is '12 am' and 'close' is '12 am' means the restaurant is opened the whole day. The values are lists because some restaurants have more than 1 opening and closing time for example, open from 11am to 3pm then close then open from 5 pm to 10pm.
+ - **Popular Times:** Provided as a dictionary where each key represents a day of the week (e.g., 'Monday', 'Tuesday') and the value is another dictionary. This inner dictionary's keys are times of the day (e.g., '6 am', '7 am') with corresponding values indicating the percentage of the establishment's usual crowd at that time (e.g., '24%', '41%'). This data is based on aggregated and anonymized Location History data from Google Maps users.
+ - **Average Star Rating:** The average star rating given to the establishment by reviewers. Format is a decimal number (float) (e.g., 4.2).
+ - **Reviews:** The total number of reviews left for the establishment. Format is an integer.
+ - **Category:** The type or category of the establishment (e.g., 'Shopping mall', 'Restaurant'). Format is a string.
+ - **Price Rating:** An indicator of the price range of the establishment, based on the official Google price rating system, the number of dollar signs (e.g., '$', '$$'). It is provided as a String, either 'Moderate', 'Inexpensive', 'Very Expensive' or listed as 'NAN' if not available.
+ - **Address:** Address of the restaurant. Provided as a String.
+ - **Metadata:** Additional information about the establishment, potentially including a website URL, phone number, unique location code, and other relevant details. Provided as a list of strings.
+ - **Tags:** Keywords or phrases frequently mentioned in reviews or associated with the establishment. Provided as a dictionary where keys are tags related to the food or service provided by the restaurant (e.g., 'wine', 'mussels', 'dinner', 'ingredients') and values are integers representing the number of times the tag has been mentioned or associated with the restaurant.
+ - **About:** A list of features, services, or attributes of the restaurant, such as 'Dine-in', 'Delivery', 'Wheelchair-accessible entrance', etc., provided in a list format.
 
 
 **Reviews csv:**
- - **href of Place:** Link to the place on google maps, can be used as Primary key for the Restaurants csv
- - **Review ID:** Review ID of the review
- - **Relavancy Ranking:** Ranking of the review, 1 being the most relevant (Appears as the first review)
- - **Reviewer href:** Link to reviewer, can be used a primary key
- - **Reviewer Name:** Name of the reviewer
- - **Local Guide:** Whether the reviewer is a local guide
- - **Total Reviews:** Total number of reviews the reviewer has made
- - **Total Photos:** Total number of photos the reviewer has made
- - **Star Rating:** Star rating of the review
- - **Date:** Date the review was made - calculated based on relative time
- - **Review:** Text of the review
- - **Metadata:** Food, Service ratings etc.
+ - **href of Place:** The URL linking to the Google Maps page of the place. It serves as a unique identifier that can be used as a primary key to relate to entries in the Restaurants CSV. Format is a string.
+ - **Review ID:** A unique identifier for the review. Format is a string.
+ - **Relavancy Ranking:** Indicates the order of relevance of the review, with 1 being the most relevant and appearing as the first review. Format is an integer.
+ - **Reviewer href:** The URL to the reviewer's Google Maps profile. It can serve as a unique identifier or primary key for reviewers. Format is a string.
+ - **Reviewer Name:** The name of the person who left the review. Format is a string.
+ - **Local Guide:** Indicates whether the reviewer is part of the Google Local Guide program. Format is a boolean, represented as 'True' or 'False'.
+ - **Total Reviews:** The total number of reviews the reviewer has posted on Google Maps. Format is an integer.
+ - **Total Photos:** The total number of photos the reviewer has uploaded to Google Maps. Format is an integer.
+ - **Star Rating:** The star rating given by the reviewer, typically on a scale from 1 to 5. Format is an integer.
+ - **Date:** The date and time when the review was posted. This is calculated based on the relative time from the current date. Format is a datetime string.
+ - **Review:** The text content of the review. Format is a string.
+ - **Metadata:** Additional information related to the review, such as ratings for specific aspects like food or service, meal type, price per person, recommended dishes, and atmosphere. This is provided as a list of strings or key-value pairs enclosed in brackets.
+
  
 
 ## TODO
