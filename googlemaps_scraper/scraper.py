@@ -140,6 +140,7 @@ def is_sponsored(browser):
 
 def get_opening_times(browser):
     # Check if Opening Times is present
+    opening_times = {}
     try:
         # Find the element with class "OqCZI fontBodyMedium WVXvdc"
         opening_times_parent = browser.find_element(By.CLASS_NAME, 'OqCZI.fontBodyMedium.WVXvdc')
@@ -659,7 +660,7 @@ def find_target_in_area(url, planning_area, browser, csv_writer, csv_writer_revi
 
 
         # Find the about tab
-        about_button = get_tab_button(browser, "About", href)
+        about_button = get_tab_button(browser, "About")
         if about_button is not None:
             about_combined = get_about_combined(browser, about_button)
             
@@ -721,12 +722,12 @@ def main():
     if constants.RUN_MULTITHREADED:
         # run Multi Threaded
         with ThreadPoolExecutor(max_workers=constants.NUM_THREADS) as executor:
-            for planning_area in list_of_areas:
-                executor.submit(scrape_area, planning_area, csv_writer, csv_writer_reviews)
+            for area in list_of_areas:
+                executor.submit(scrape_area, area, csv_writer, csv_writer_reviews)
     else:
         # run Single Threaded
-        for planning_area in list_of_areas:
-            scrape_area(planning_area, csv_writer, csv_writer_reviews)
+        for area in list_of_areas:
+            scrape_area(area, csv_writer, csv_writer_reviews)
 
     # # Close the CSV file
     # csv_file.close()
