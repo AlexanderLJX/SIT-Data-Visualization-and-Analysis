@@ -497,7 +497,7 @@ def scrape_all_reviews(browser, csv_writer_reviews, number_of_reviews, href):
         relavancy_ranking = review_index + 1
 
         # Get reviewer href which is the data-review-id of WEBjve class in the current review
-        reviewer_href = current_review.find_element(By.CLASS_NAME, 'WEBjve').get_attribute('data-review-id')
+        reviewer_href = current_review.find_element(By.CLASS_NAME, 'WEBjve').get_attribute('data-href')
 
         # Get reviewer name which is in the aria-label of the current review
         reviewer_name = current_review.get_attribute('aria-label')
@@ -610,8 +610,8 @@ def find_target_in_area(url, planning_area, browser, csv_writer, csv_writer_revi
     noMoreResults = False
     element_index = 0
 
+    # Loop through list of restaurants
     while True:
-
         seo_rating = element_index + 1
 
         print("Total elements found:", len(elements))
