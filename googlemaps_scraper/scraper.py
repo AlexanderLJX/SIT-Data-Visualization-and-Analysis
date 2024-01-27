@@ -173,7 +173,7 @@ def get_popular_times(browser):
     # Check if popular times g2BVhd eoFzo  is present 
     try:
         # Find the element with class "g2BVhd eoFzo" using wait
-        WebDriverWait(browser, 0.5).until(EC.presence_of_element_located((By.CLASS_NAME, 'C7xf8b')))
+        WebDriverWait(browser, 2).until(EC.presence_of_element_located((By.CLASS_NAME, 'C7xf8b')))
         all_popular_times = browser.find_elements(By.CLASS_NAME, 'g2BVhd')
         if len(all_popular_times) != 7 and len(all_popular_times) != 0:
             raise NoSuchElementException
@@ -207,8 +207,7 @@ def get_popular_times(browser):
     except NoSuchElementException:
         logging.info("NoSuchElementException - Target has no popular times")
     except TimeoutException:
-        logging.exception("TimeoutException")
-        print("Target has no popular times")
+        logging.info("TimeoutException - Target has no popular times")
     
     return popular_times
 
@@ -419,8 +418,7 @@ def expand_review(current_review):
             logging.info("NoSuchElementException - No more button")
             break
         except StaleElementReferenceException:
-            logging.info("StaleElementReferenceException")
-            print("No more button")
+            logging.info("StaleElementReferenceException - No more button")
             break
 
 def get_review_text(current_review):
@@ -541,8 +539,7 @@ def scrape_all_reviews(browser, csv_writer_reviews, number_of_reviews, href):
             try:
                 browser.execute_script("arguments[0].scrollIntoView();", presentation_elements[-1])
             except StaleElementReferenceException:
-                logging.info("StaleElementReferenceException")
-                print("Cannot scroll to last element")
+                logging.info("StaleElementReferenceException - Cannot scroll to last element")
 
             # more elements are loaded after scrolling, add the new elements to the list, but only if they are not already in the list
             new_reviews = browser.find_elements(By.CLASS_NAME, 'jftiEf.fontBodyMedium')
@@ -574,9 +571,9 @@ def get_tab_button(browser, tab_name):
             break
         except NoSuchElementException:
             logging.info("NoSuchElementException - No " + tab_name + " tab")
+            break
         except StaleElementReferenceException:
             logging.info("StaleElementReferenceException - No " + tab_name + " tab")
-            break
     return about_button
 
 def get_about_combined(browser, about_button):
@@ -642,6 +639,11 @@ def find_target_in_area(url, planning_area, browser, csv_writer, csv_writer_revi
             
         address, metadata_list = get_address_and_metadata_list(browser)
 
+        # Initialize indv_star_rating, all_tags, about_combined
+        indv_star_rating = {}
+        all_tags = {}
+        about_combined = []
+
         # if there is at least 1 review there is a review tab
         if number_of_reviews != 0:
             select_review_tab(browser)
@@ -657,7 +659,7 @@ def find_target_in_area(url, planning_area, browser, csv_writer, csv_writer_revi
 
 
         # Find the about tab
-        about_button = get_tab_button(browser, "About")
+        about_button = get_tab_button(browser, "About", href)
         if about_button is not None:
             about_combined = get_about_combined(browser, about_button)
             
