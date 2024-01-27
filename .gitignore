@@ -1,0 +1,7 @@
+# Ignore all CSV files
+*.csv
+
+
+test.py
+
+__pycache__
