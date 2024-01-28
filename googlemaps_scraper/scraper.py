@@ -17,6 +17,8 @@ import constants
 
 file_write_lock = threading.Lock()
 file_write_lock_reviews = threading.Lock()
+href_list = []
+href_list_lock = threading.Lock()
 
 def convert_relative_time(relative_time):
     now = datetime.now()
@@ -24,6 +26,10 @@ def convert_relative_time(relative_time):
     if 'day' in relative_time:
         days_ago = int(relative_time.split()[0].replace("a", "1"))
         return now - relativedelta(days=days_ago)
+    
+    elif 'week' in relative_time:
+        weeks_ago = int(relative_time.split()[0].replace("a", "1"))
+        return now - relativedelta(weeks=weeks_ago)
 
     elif 'month' in relative_time:
         months_ago = int(relative_time.split()[0].replace("a", "1"))
@@ -466,7 +472,7 @@ def get_detail_list(current_review):
 def scrape_all_reviews(browser, csv_writer_reviews, number_of_reviews, href):
     # Scrape all reviews
     review_index = 0
-    # Scroll down
+    
     # Locate the div element
     div_element = browser.find_element(By.CLASS_NAME, 'm6QErb.DxyBCb.kA9KIf.dS8AEf')
 
@@ -579,15 +585,16 @@ def get_tab_button(browser, tab_name):
 
 def get_about_combined(browser, about_button):
     about_combined = []
-    while True:
-        try:
-            about_button.click()
-            about_present = browser.find_element(By.CLASS_NAME, 'iP2t7d.fontBodyMedium')
-            break
-        except NoSuchElementException:
-            logging.info("NoSuchElementException - No About tab")
-        except ElementClickInterceptedException:
-            logging.exception("ElementClickInterceptedException - No About tab")
+    try:
+        about_button.click()
+        # wait till element present
+        WebDriverWait(browser, 4).until(EC.presence_of_element_located((By.CLASS_NAME, 'iP2t7d.fontBodyMedium')))
+    except NoSuchElementException:
+        logging.info("NoSuchElementException - No About tab elements")
+        return about_combined
+    except ElementClickInterceptedException:
+        logging.exception("ElementClickInterceptedException - No About tab elements")
+        return about_combined
 
     while True:
         try:
@@ -613,12 +620,43 @@ def find_target_in_area(url, planning_area, browser, csv_writer, csv_writer_revi
 
     # Loop through list of restaurants
     while True:
-        seo_rating = element_index + 1
+        # if lesser than 5 elements left, scroll and load more elements
+        if len(elements) - element_index < 10:
+            browser.execute_script("arguments[0].scrollIntoView();", elements[-1])
+
+        # more elements are loaded after scrolling, add the new elements to the list, but only if they are not already in the list
+        new_elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
+        for new_element in new_elements:
+            if new_element not in elements:
+                elements.append(new_element)
+        
+        # Check if the "You've reached the end of the list." message is present
+        end_of_list_element = browser.find_elements(By.CLASS_NAME, 'HlvSq')
+        if end_of_list_element:
+            print("You've scrolled to the end of the list.")
+            noMoreResults = True
+        
+        element_index += 1
+        
+        if noMoreResults and element_index == len(new_elements):
+            print("Finished scraping all elements")
+            break
+
+        # get the seo rating of the current element
+        seo_rating = element_index
 
         print("Total elements found:", len(elements))
-        current_element = elements[element_index]
+        current_element = elements[element_index-1]
         # href of current element
         href = current_element.get_attribute("href")
+
+        # if href is already present in csv
+        if href in href_list:
+            print("href already present in csv")
+            continue
+        else:
+            with href_list_lock:
+                href_list.append(href)
         print("current element:", element_index)
         browser.execute_script("arguments[0].scrollIntoView();", current_element)
         current_element.click()
@@ -627,6 +665,12 @@ def find_target_in_area(url, planning_area, browser, csv_writer, csv_writer_revi
         location_name = wait_for_target_popup(current_element, browser)
         
         category_name = find_target_category(browser)
+
+        for blacklisted_word in constants.NOT_FOOD_FLAGS:
+            if blacklisted_word in category_name.lower():
+                print("Blacklisted word found in category name:", blacklisted_word)
+                print("Skipping this element")
+                continue
 
         sponsored_label = is_sponsored(browser)
 
@@ -668,29 +712,9 @@ def find_target_in_area(url, planning_area, browser, csv_writer, csv_writer_revi
         with file_write_lock:
             csv_writer.writerow([href, planning_area, location_name, seo_rating, sponsored_label, opening_times, popular_times, star_rating, indv_star_rating, number_of_reviews, category_name, price_rating, address, metadata_list, all_tags, about_combined])
 
-        # if lesser than 5 elements left, scroll and load more elements
-        if len(elements) - element_index < 10:
-            browser.execute_script("arguments[0].scrollIntoView();", elements[-1])
-
-        # more elements are loaded after scrolling, add the new elements to the list, but only if they are not already in the list
-        new_elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
-        for new_element in new_elements:
-            if new_element not in elements:
-                elements.append(new_element)
         
-        # Check if the "You've reached the end of the list." message is present
-        end_of_list_element = browser.find_elements(By.CLASS_NAME, 'HlvSq')
-        if end_of_list_element:
-            print("You've scrolled to the end of the list.")
-            noMoreResults = True
-        
-        element_index += 1
-        
-        if noMoreResults and element_index == len(new_elements):
-            print("Finished scraping all elements")
-            break
             
-def scrape_area(planning_area, csv_writer, csv_writer_reviews):
+def scrape_area(area, csv_writer, csv_writer_reviews):
     # Set up Chrome options for headless mode
     chrome_options = Options()
     if constants.RUN_HEADLESS:
@@ -700,10 +724,10 @@ def scrape_area(planning_area, csv_writer, csv_writer_reviews):
 
     # Navigate to the Chrome settings page
     browser.get('chrome://settings/')
-    # Execute JavaScript code to set the default zoom level to 80%
-    browser.execute_script('chrome.settingsPrivate.setDefaultZoom(0.8);')
+    # Execute JavaScript code to set the default zoom level to 60%
+    browser.execute_script('chrome.settingsPrivate.setDefaultZoom(0.6);')
 
-    find_target_in_area(constants.URL + constants.TARGET + "+in+Singapore,+", planning_area, browser, csv_writer, csv_writer_reviews)
+    find_target_in_area(constants.URL + constants.TARGET + "+in+Singapore,+", area, browser, csv_writer, csv_writer_reviews)
 
     browser.quit()
 
@@ -718,6 +742,10 @@ def main():
     csv_writer_reviews.writerow(['href of Place', 'Review ID', 'Relavancy Ranking', 'Reviewer href', 'Reviewer Name', 'Local Guide', 'Total Reviews', 'Total Photos', 'Star Rating', 'Date', 'Review', 'Metadata', ])
 
     list_of_areas = constants.SUB_AREAS
+
+    for area in list_of_areas:
+        # convert / to %2F
+        area = area.replace("/", "%2F")
 
     if constants.RUN_MULTITHREADED:
         # run Multi Threaded

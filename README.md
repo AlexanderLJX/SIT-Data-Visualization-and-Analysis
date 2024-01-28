@@ -40,10 +40,10 @@ To run and explore the project locally, follow these steps:
    git clone https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis.git
 2. **Create a virtual environment**
    ```bash
-   python -m venv env
+   python -m venv venv
 3. **Activate the virtual environment**
    ```bash
-   source env/bin/activate
+   venv\Scripts\activate.bat
 4. **Install the dependencies**
    ```bash
    pip install -r requirements.txt
@@ -59,7 +59,18 @@ To run and explore the project locally, follow these steps:
    ```bash
    python googlemaps_scraper/scraper.py
 
-## Data
+## Data Cleansing
+
+You can either use the notebook with the jupyter notebook extension in Visual Studio Code or use the jupyter notebook application.
+1. Install Jupyter Notebook
+   ```bash
+   pip install notebook
+
+2. Lauching the data cleanser
+   ```bash
+   jupyter notebook
+
+## Data 
 
 **Restaurants csv:**
  - **href:** Link to the restaurant. Format is a string.
@@ -97,3 +108,13 @@ To run and explore the project locally, follow these steps:
 
 ## TODO
 
+- fix review scroll - unimportant, temp zoom out more, find a better element to scroll into view
+https://www.google.com/maps/place/Poulet+-+Bugis%2B/@1.2995798,103.8520492,18z/data=!3m1!5s0x31da19bae819f967:0xb825fcec28837274!4m13!1m3!2m2!1sfood+in+Singapore,+Bencoolen!6e5!3m8!1s0x31da19bae87236f3:0x231d683b4f37b913!8m2!3d1.2995798!4d103.8543023!9m1!1b1!15sChxmb29kIGluIFNpbmdhcG9yZSwgQmVuY29vbGVuWh0iG2Zvb2QgaW4gc2luZ2Fwb3JlIGJlbmNvb2xlbpIBCnJlc3RhdXJhbnTgAQA!16s%2Fg%2F1ptwngs34?entry=ttu
+
+for example
+
+
+- implement code to detect out of memory error in the browsers, and refresh the page
+
+
+- implement code to check if restaurant is already in the csv and skip if it is.

@@ -4,4 +4,13 @@
 
 test.py
 
+
+# Ignore cache files
 __pycache__
+
+# Ignore the virtual environment directory venv
+venv/
+
+.vscode/
+
+.ipynb_checkpoints/

@@ -59,13 +59,15 @@ URL = "https://www.google.com/maps/search/"
 
 TARGET = "food"
 
-MAX_REVIEWS_PER_PLACE = 100
+MAX_REVIEWS_PER_PLACE = 5
 
 RUN_MULTITHREADED = True
 
 RUN_HEADLESS = True
 
 NUM_THREADS = 6
+
+NOT_FOOD_FLAGS = ["island", "temple", "park", "nature preserve"]
 
 
 
@@ -123,17 +125,4 @@ SUB_AREAS = ["Marymount", "Upper Thomson",
  "Lorong Halus", "Tai Seng", "Trafalgar", "North-Eastern Islands", "Punggol Coney Island", "Matilda", "Northshore",
  "Punggol Canal", "Punggol Field", "Punggol Town Centre", "Waterway East", "Pulau Punggol Barat", "Pulau Punggol Timor",
  "Seletar", "Anchorvale", "Compassvale", "Fernvale", "Jalan Kayu", "Lorong Halus North", "Rivervale", 
- "Sengkang Town Centre", "Sengkang West", "Serangoon", "Lorong Chuan", "Seletar Hills", "Serangoon Central",
- "Serangoon Garden", "Serangoon North", "Serangoon North Industrial Estate", "Upper Paya Lebar",
- "Liu Fang", "Samulun", "Shipyard", "Tukang",
- "Bukit Batok Central", "Bukit Batok East", "Bukit Batok South", "Bukit Batok West", "Brickworks", "Bukit Gombak",
- "Guilin", "Hillview", "Hong Kah North",
- "Bangkit", "Dairy Farm", "Fajar", "Jelebu", "Nature Reserve", "Saujana", "Senja",
- "Choa Chu Kang Central", "Choa Chu Kang North", "Keat Hong", "Peng Siang", "Teck Whye", "Yew Tee",
- "Clementi Central", "Clementi North", "Clementi West", "Clementi Woods", "Faber", "Pandan", "Sunset Way", "Toh Tuck",
- "West Coast",
- "International Business Park", "Jurong Gateway", "Jurong Port", "Lakeside", "Jurong River", "Penjuru Crescent",
- "Teban Gardens", "Toh Guan", "Yuhua", "Boon Lay Place", "Chin Bee", "Hong Kah", "Kian Teck", "Safti",
- "Taman Jurong", "Wenya", "Yunnan", "Benoi Sector", "Gul Basin", "Gul Circle", "Joo Koon", "Pioneer Sector", 
- "Tengah", "Tuas Tengeh", "Tuas Bay", "Tuas North", "Tuas Promenade", "Tuas View", "Tuas View Extension",
- "Jurong Island", "Bukum", "Semakau", "Sudong"]
+ "Sengkang Town Centre", "Sengkang West", "Serangoon"]
