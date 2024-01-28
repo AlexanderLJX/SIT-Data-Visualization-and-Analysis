@@ -59,14 +59,14 @@ To run and explore the project locally, follow these steps:
    ```bash
    python googlemaps_scraper/scraper.py
 
-## Data Cleansing
+## Data Cleansing and Data Visualization Notebooks
 
-You can either use the notebook with the jupyter notebook extension in Visual Studio Code or use the jupyter notebook application.
+You can either use the jupyter notebook extension in Visual Studio Code or use the Jupyter Notebook application.
 1. Install Jupyter Notebook
    ```bash
    pip install notebook
 
-2. Lauch jupyter notebook and open the notebook file
+2. Launch Jupyter Notebook and open the notebook files
    ```bash
    jupyter notebook
 
