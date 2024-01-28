@@ -115,6 +115,3 @@ for example
 
 
 - implement code to detect out of memory error in the browsers, and refresh the page
-
-
-- implement code to check if restaurant is already in the csv and skip if it is.
