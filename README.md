@@ -66,7 +66,7 @@ You can either use the notebook with the jupyter notebook extension in Visual St
    ```bash
    pip install notebook
 
-2. Lauching the data cleanser
+2. Lauch jupyter notebook and open the notebook file
    ```bash
    jupyter notebook
 
