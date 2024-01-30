@@ -782,12 +782,14 @@ def main():
     list_of_areas = []
     list_of_places = constants.LIST_OF_PLACES
     # list_of_places is a dict, key is the region, value is another dict with key as the planning area and value as the list of sub zones
-    # loop through each region
-    for region in constants.LIST_OF_PLACES:
+    # loop through each region key
+    for region in list_of_places:
         # loop through each planning area
         for planning_area in list_of_places[region]:
             # loop through each sub zone
             for sub_zone in list_of_places[region][planning_area]:
+                print("planning_area:", planning_area)
+                print("sub_zone:", sub_zone)
                 # append the sub zone to the planning area
                 list_of_areas.append(planning_area)
                 list_of_subzones.append(sub_zone)
@@ -804,11 +806,11 @@ def main():
     if constants.RUN_MULTITHREADED:
         # run Multi Threaded
         with ThreadPoolExecutor(max_workers=constants.NUM_THREADS) as executor:
-            for area in list_of_areas:
+            for area, subzone in zip(list_of_areas, list_of_subzones):
                 executor.submit(scrape_area, area, subzone, csv_writer, csv_writer_reviews)
     else:
         # run Single Threaded
-        for area in list_of_areas:
+        for area, subzone in zip(list_of_areas, list_of_subzones):
             scrape_area(area, subzone, csv_writer, csv_writer_reviews)
 
     # # Close the CSV file
