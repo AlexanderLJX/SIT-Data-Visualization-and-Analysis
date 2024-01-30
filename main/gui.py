@@ -9,12 +9,16 @@ sg.theme('DarkAmber')  # Add a touch of color
 layout = [
     [sg.Text('What would you like to do today?')],
     [sg.Text('Choose one of the following options : ')],
-    [sg.Button('View all food places', key='-VIEW-ALL-'), sg.Button('View Dataset diagrams', key='-VIEW-DIAGRAMS-')],
-    [sg.Button('View in areas of Singapore', key='-VIEW-AREAS-')],
-    [sg.Button('Ok'), sg.Button('Cancel')],
+    [],
+    [sg.Button('View all food places', key='-VIEW-ALL-', size=(30, 2), pad=(10,10)), sg.Button('View Dataset diagrams', key='-VIEW-DIAGRAMS-', pad=(10,10), size=(30, 2))],
+    [],
+    [sg.Text('Choose the area in Singapore : '),sg.Combo(['Bukit Batok','Bukit Timah','Sengkang','Hougang'], key='-OPTION-', pad=(10,10), size=(30, 2))],
+    [],
+    [sg.Button('Ok', size=(5, 2)), sg.Button('Cancel', size=(5, 2))],
+    [],
 ]
 
-window = sg.Window('Foodplaces in Singapore', layout, finalize=True)
+window = sg.Window('Foodplaces in Singapore', layout, size=(1000, 500),element_justification='center', resizable=True, finalize=True)
 
 # Event Loop to process "events" and get the "values" of the inputs
 while True:
