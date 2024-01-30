@@ -18,7 +18,7 @@ layout = [
     [],
 ]
 
-window = sg.Window('Foodplaces in Singapore', layout, size=(1000, 500),element_justification='center', resizable=True, finalize=True)
+window = sg.Window('Foodplaces in Singapore', layout, size=(1000, 300),element_justification='center', resizable=True, finalize=True)
 
 # Event Loop to process "events" and get the "values" of the inputs
 while True:
