@@ -112,6 +112,3 @@ You can either use the jupyter notebook extension in Visual Studio Code or use t
 https://www.google.com/maps/place/Poulet+-+Bugis%2B/@1.2995798,103.8520492,18z/data=!3m1!5s0x31da19bae819f967:0xb825fcec28837274!4m13!1m3!2m2!1sfood+in+Singapore,+Bencoolen!6e5!3m8!1s0x31da19bae87236f3:0x231d683b4f37b913!8m2!3d1.2995798!4d103.8543023!9m1!1b1!15sChxmb29kIGluIFNpbmdhcG9yZSwgQmVuY29vbGVuWh0iG2Zvb2QgaW4gc2luZ2Fwb3JlIGJlbmNvb2xlbpIBCnJlc3RhdXJhbnTgAQA!16s%2Fg%2F1ptwngs34?entry=ttu
 
 for example
-
-
-- implement code to detect out of memory error in the browsers, and refresh the page

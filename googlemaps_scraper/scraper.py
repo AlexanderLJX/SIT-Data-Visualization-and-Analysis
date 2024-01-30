@@ -11,6 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, TimeoutException, ElementClickInterceptedException
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
+from resettabletimer import ResettableTimer
 
 # Constants
 import constants
@@ -56,6 +57,15 @@ def get_next_day(day_of_week):
         return "Sunday"
     elif day_of_week == "Sunday":
         return "Monday"
+    
+# def get_current_element(browser, elements, element_index):
+#     # more elements are loaded after scrolling, add the new elements to the list, but only if they are not already in the list
+    
+
+#     return current_element
+
+def get_href(current_element):
+    return current_element.get_attribute("href")
 
 def wait_for_target_popup(element, browser):
     # find the aria-label of the element, which contains the location name
@@ -69,7 +79,7 @@ def wait_for_target_popup(element, browser):
             print("location_name2:", location_name2)
         except (TimeoutException, NoSuchElementException, StaleElementReferenceException):
             print("TimeoutException")
-            print("Target has no location name")
+            print("Waiting for more elements to load")
         
         if location_name == location_name2:
             break
@@ -314,6 +324,7 @@ def get_address_and_metadata_list(browser):
 
 def select_review_tab(browser):
     # make sure there is a Review tab
+    initial_time = datetime.now()
     while True:
         found_reviews_tab = False
         # Locate the tab list
@@ -324,6 +335,10 @@ def select_review_tab(browser):
                 found_reviews_tab = True
                 review_button = button
                 break
+        # if more than 5 seconds have passed, refresh the page
+        if (datetime.now() - initial_time).seconds > 5:
+            browser.refresh()
+            initial_time = datetime.now()
         if found_reviews_tab:
             break
     while True:
@@ -482,12 +497,12 @@ def scrape_all_reviews(browser, csv_writer_reviews, number_of_reviews, href):
     browser.execute_script("arguments[0].scrollIntoView();", tags_element_scroll)
 
     # wait for the element with class "jftiEf fontBodyMedium", the review element class, to be present
-    while True:
-        try:
-            review_present = WebDriverWait(browser, 4).until(EC.presence_of_element_located((By.CLASS_NAME, 'jftiEf.fontBodyMedium')))
-            break
-        except TimeoutException:
-            logging.exception("TimeoutException")
+    try:
+        review_present = WebDriverWait(browser, 3).until(EC.presence_of_element_located((By.CLASS_NAME, 'jftiEf.fontBodyMedium')))
+    except TimeoutException:
+        # TO FIX 
+        logging.exception("TimeoutException")
+
     
     visible_reviews = browser.find_elements(By.CLASS_NAME, 'jftiEf.fontBodyMedium')
     while True:
@@ -585,16 +600,25 @@ def get_tab_button(browser, tab_name):
 
 def get_about_combined(browser, about_button):
     about_combined = []
-    try:
-        about_button.click()
-        # wait till element present
-        WebDriverWait(browser, 4).until(EC.presence_of_element_located((By.CLASS_NAME, 'iP2t7d.fontBodyMedium')))
-    except NoSuchElementException:
-        logging.info("NoSuchElementException - No About tab elements")
-        return about_combined
-    except ElementClickInterceptedException:
-        logging.exception("ElementClickInterceptedException - No About tab elements")
-        return about_combined
+    start_time = datetime.now()
+    while True:
+        try:
+            if (datetime.now() - start_time).seconds > 5:
+                break
+            about_button.click()
+            # wait till element present
+            # WebDriverWait(browser, 4).until(EC.presence_of_element_located((By.CLASS_NAME, 'iP2t7d.fontBodyMedium')))
+            element = browser.find_element(By.CLASS_NAME, 'iP2t7d.fontBodyMedium')
+            break
+        except NoSuchElementException:
+            logging.info("NoSuchElementException - No About tab elements")
+            return about_combined
+        except ElementClickInterceptedException:
+            logging.exception("ElementClickInterceptedException - No About tab elements")
+            return about_combined
+        except TimeoutException:
+            logging.exception("TimeoutException - No About tab elements")
+            return about_combined
 
     while True:
         try:
@@ -608,28 +632,35 @@ def get_about_combined(browser, about_button):
     
     return about_combined
 
-def find_target_in_area(url, planning_area, browser, csv_writer, csv_writer_reviews):
-    url = url + planning_area
+
+def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_reviews, timer):
+    url = url  + "+in+" + subzone + ",+" + area + ",+Singapore"
     browser.get(url)
     print(url)
     # get all elements with class "hfpxzc"
     elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
+    print(elements[0].get_attribute("href"))
 
     noMoreResults = False
     element_index = 0
 
     # Loop through list of restaurants
     while True:
+        # reset the timer to 5 mins everytime a new element is clicked
+        timer.reset(300)
         # if lesser than 5 elements left, scroll and load more elements
         if len(elements) - element_index < 10:
             browser.execute_script("arguments[0].scrollIntoView();", elements[-1])
 
-        # more elements are loaded after scrolling, add the new elements to the list, but only if they are not already in the list
+        # current_element = get_current_element(browser, elements, element_index)
         new_elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
         for new_element in new_elements:
             if new_element not in elements:
                 elements.append(new_element)
         
+        # get the current element
+        current_element = new_elements[element_index]
+
         # Check if the "You've reached the end of the list." message is present
         end_of_list_element = browser.find_elements(By.CLASS_NAME, 'HlvSq')
         if end_of_list_element:
@@ -638,17 +669,18 @@ def find_target_in_area(url, planning_area, browser, csv_writer, csv_writer_revi
         
         element_index += 1
         
-        if noMoreResults and element_index == len(new_elements):
+        if noMoreResults and element_index == len(elements):
             print("Finished scraping all elements")
             break
 
         # get the seo rating of the current element
         seo_rating = element_index
 
-        print("Total elements found:", len(elements))
-        current_element = elements[element_index-1]
+        
+        # print(new_elements[0].get_attribute("href"))
+
         # href of current element
-        href = current_element.get_attribute("href")
+        href = get_href(current_element)
 
         # if href is already present in csv
         if href in href_list:
@@ -666,7 +698,7 @@ def find_target_in_area(url, planning_area, browser, csv_writer, csv_writer_revi
         
         category_name = find_target_category(browser)
 
-        for blacklisted_word in constants.NOT_FOOD_FLAGS:
+        for blacklisted_word in constants.CATEGORY_BLACKLISTED_WORDS:
             if blacklisted_word in category_name.lower():
                 print("Blacklisted word found in category name:", blacklisted_word)
                 print("Skipping this element")
@@ -710,11 +742,12 @@ def find_target_in_area(url, planning_area, browser, csv_writer, csv_writer_revi
             
         # Write to main CSV file
         with file_write_lock:
-            csv_writer.writerow([href, planning_area, location_name, seo_rating, sponsored_label, opening_times, popular_times, star_rating, indv_star_rating, number_of_reviews, category_name, price_rating, address, metadata_list, all_tags, about_combined])
+            csv_writer.writerow([href, area, subzone, location_name, seo_rating, sponsored_label, opening_times, popular_times, star_rating, indv_star_rating, number_of_reviews, category_name, price_rating, address, metadata_list, all_tags, about_combined])
 
-        
+def refresh_browser(browser):
+    browser.refresh()
             
-def scrape_area(area, csv_writer, csv_writer_reviews):
+def scrape_area(area, subzone, csv_writer, csv_writer_reviews):
     # Set up Chrome options for headless mode
     chrome_options = Options()
     if constants.RUN_HEADLESS:
@@ -727,7 +760,11 @@ def scrape_area(area, csv_writer, csv_writer_reviews):
     # Execute JavaScript code to set the default zoom level to 60%
     browser.execute_script('chrome.settingsPrivate.setDefaultZoom(0.6);')
 
-    find_target_in_area(constants.URL + constants.TARGET + "+in+Singapore,+", area, browser, csv_writer, csv_writer_reviews)
+    # set 5 mins timer to refresh browser
+    timer = ResettableTimer(300, refresh_browser, args=(browser,))
+    timer.start()
+
+    find_targets_in_area(constants.URL + constants.TARGET, area, subzone, browser, csv_writer, csv_writer_reviews, timer)
 
     browser.quit()
 
@@ -735,27 +772,44 @@ def main():
     # Create a CSV file and write the header
     csv_file = open('scraped_data_' + constants.TARGET.replace("+", "_") + '.csv', 'w', encoding='utf-8-sig', newline='')
     csv_writer = csv.writer(csv_file)
-    csv_writer.writerow(['href', 'Sub Area', 'Name', 'Search Engine Rating', 'Sponsored', 'Opening Hours', 'Popular Times', 'Average Star Rating', 'Individual Star Rating', 'Reviews', 'Category', 'Price Rating', 'Address', 'Metadata', 'Tags', 'About'])
+    csv_writer.writerow(['href', 'Planning Area', 'Subzone', 'Name', 'Search Engine Rating', 'Sponsored', 'Opening Hours', 'Popular Times', 'Average Star Rating', 'Individual Star Rating', 'Reviews', 'Category', 'Price Rating', 'Address', 'Metadata', 'Tags', 'About'])
 
     csv_file_reviews = open('scraped_data_reviews_' + constants.TARGET.replace("+", "_") + '.csv', 'w', encoding='utf-8-sig', newline='')
     csv_writer_reviews = csv.writer(csv_file_reviews)
     csv_writer_reviews.writerow(['href of Place', 'Review ID', 'Relavancy Ranking', 'Reviewer href', 'Reviewer Name', 'Local Guide', 'Total Reviews', 'Total Photos', 'Star Rating', 'Date', 'Review', 'Metadata', ])
 
-    list_of_areas = constants.SUB_AREAS
+    list_of_subzones = []
+    list_of_areas = []
+    list_of_places = constants.LIST_OF_PLACES
+    # list_of_places is a dict, key is the region, value is another dict with key as the planning area and value as the list of sub zones
+    # loop through each region
+    for region in constants.LIST_OF_PLACES:
+        # loop through each planning area
+        for planning_area in list_of_places[region]:
+            # loop through each sub zone
+            for sub_zone in list_of_places[region][planning_area]:
+                # append the sub zone to the planning area
+                list_of_areas.append(planning_area)
+                list_of_subzones.append(sub_zone)
 
-    for area in list_of_areas:
+
+    # zip
+    for area, subzone in zip(list_of_areas, list_of_subzones):
         # convert / to %2F
         area = area.replace("/", "%2F")
+        area = area.replace(" ", "+")
+        subzone = subzone.replace("/", "%2F")
+        subzone = subzone.replace(" ", "+")
 
     if constants.RUN_MULTITHREADED:
         # run Multi Threaded
         with ThreadPoolExecutor(max_workers=constants.NUM_THREADS) as executor:
             for area in list_of_areas:
-                executor.submit(scrape_area, area, csv_writer, csv_writer_reviews)
+                executor.submit(scrape_area, area, subzone, csv_writer, csv_writer_reviews)
     else:
         # run Single Threaded
         for area in list_of_areas:
-            scrape_area(area, csv_writer, csv_writer_reviews)
+            scrape_area(area, subzone, csv_writer, csv_writer_reviews)
 
     # # Close the CSV file
     # csv_file.close()
