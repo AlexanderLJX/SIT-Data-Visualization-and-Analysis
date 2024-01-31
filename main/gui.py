@@ -21,13 +21,9 @@ except Exception as e:
     print(f"An error occurred while reading the CSV files: {e}")
     exit(1)
 
-def plotmap(Area,Category):
-    if Area!='' and Category!='':
-       df_data_filtered = df_data.loc[df_data['Sub Area'] == Area, df_data['Category']==Category]
-    elif Area=='' and  Category!='':
-        df_data_filtered = df_data.loc[df_data['Category'] == Category]
-    elif Area!='' and  Category=='':
-        df_data_filtered = df_data.loc[df_data['Sub Area'] == Area]
+def plotmap(value):
+    if value!='':
+       df_data_filtered = df_data.loc[df_data['Sub Area'] == value]
     else: 
         df_data_filtered=df_data
     m=folium.Map(location=[1.287953, 103.851784],zoom_start=12,prefer_canvas=True)
@@ -55,7 +51,7 @@ layout = [
     [],
     [sg.Button('View all food places', key='-VIEW-ALL-', size=(30, 2), pad=(10,10)), sg.Button('View Dataset diagrams', key='-VIEW-DIAGRAMS-', pad=(10,10), size=(30, 2)), sg.Button('Export the Dataset', key='-EXPORT-', pad=(10,10), size=(30, 2) , font=font)],
     [],
-    [sg.Text('Choose the area in Singapore : ', font=font),sg.Combo(['Bukit Merah','Bukit Timah','Sengkang','Hougang'], key='-OPTION-', pad=(10,10), size=(30, 2), font=font), sg.Text('      Choose the cuisine type:',font=font),sg.Combo(['Restaurant','Indian Muslim Restaurant','Italian restaurant'], key='-OPTION2-', pad=(10,10), size=(30, 2), font=font) ],
+    [sg.Text('Choose the area in Singapore : ', font=font),sg.Combo(['Bukit Merah','Bukit Timah','Sengkang','Hougang'], key='-OPTION-', pad=(10,10), size=(30, 2), font=font)],
     [sg.Text( font=font)],
     [sg.Button('Ok', size=(3, 2), font=font), sg.Button('Cancel', size=(6, 2), font=font)],
     [],
@@ -86,8 +82,8 @@ while True:
 
 
     elif event == 'Ok' :
-         area=values['-OPTION-']
-         temp_file_name =plotmap(area)
+         value=values['-OPTION-']
+         temp_file_name =plotmap(value)
     
 
 
