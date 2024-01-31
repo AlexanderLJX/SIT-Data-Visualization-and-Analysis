@@ -10,7 +10,7 @@ RUN_MULTITHREADED = True
 
 RUN_HEADLESS = False
 
-NUM_THREADS = 5
+NUM_THREADS = 3
 
 CATEGORY_BLACKLISTED_WORDS = ["island", "temple", "park", "nature preserve", "shopping mall"]
 

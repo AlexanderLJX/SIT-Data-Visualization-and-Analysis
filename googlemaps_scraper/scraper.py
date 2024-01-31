@@ -646,8 +646,8 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
 
     # Loop through list of restaurants
     while True:
-        # reset the timer to 5 mins everytime a new element is clicked
-        timer.reset(300)
+        # reset the timer to 10 mins everytime a new element is clicked
+        timer.reset(600)
         # if lesser than 5 elements left, scroll and load more elements
         if len(elements) - element_index < 10:
             browser.execute_script("arguments[0].scrollIntoView();", elements[-1])
@@ -760,8 +760,8 @@ def scrape_area(area, subzone, csv_writer, csv_writer_reviews):
     # Execute JavaScript code to set the default zoom level to 60%
     browser.execute_script('chrome.settingsPrivate.setDefaultZoom(0.6);')
 
-    # set 5 mins timer to refresh browser
-    timer = ResettableTimer(300, refresh_browser, args=(browser,))
+    # set 10 mins timer to refresh browser
+    timer = ResettableTimer(600, refresh_browser, args=(browser,))
     timer.start()
 
     find_targets_in_area(constants.URL + constants.TARGET, area, subzone, browser, csv_writer, csv_writer_reviews, timer)

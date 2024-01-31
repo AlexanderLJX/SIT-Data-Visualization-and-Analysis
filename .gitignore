@@ -14,3 +14,6 @@ venv/
 .vscode/
 
 .ipynb_checkpoints/
+
+
+main/map.html

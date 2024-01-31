@@ -29,7 +29,7 @@ while True:
         break
 
     if event == '-VIEW-ALL-':
-        webbrowser.open("main/map.html")
+        webbrowser.open("main\map.html")
     elif event == '-VIEW-DIAGRAMS-':
         print('View Dataset diagrams')
     elif event == '-EXPORT-':
