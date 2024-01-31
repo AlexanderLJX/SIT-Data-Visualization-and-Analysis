@@ -1,7 +1,6 @@
 import PySimpleGUI as sg
 import webbrowser
 import pandas as pd
-import folium
 from branca.element import Figure
 
 sg.theme('DarkAmber')  # Add a touch of color
@@ -31,7 +30,7 @@ while True:
         break
         
     if event == '-VIEW-ALL-':
-        webbrowser.open("main/map.html")
+        webbrowser.open("main\map.html")
     elif event == '-VIEW-DIAGRAMS-':
         print('View Dataset diagrams')
     elif event == '-EXPORT-':
