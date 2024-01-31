@@ -6,7 +6,7 @@ from branca.element import Figure
 import folium
 from folium.plugins import MarkerCluster
 import tempfile
-from threading import Thread
+
 
 sg.theme('DarkAmber')  # Add a touch of color
 
@@ -21,25 +21,28 @@ except Exception as e:
     print(f"An error occurred while reading the CSV files: {e}")
     exit(1)
 
-m=folium.Map(location=[1.287953, 103.851784],zoom_start=12,prefer_canvas=True)
-
-
-coordinates = df_data.apply(lambda row: [row['Name'], row['latitude'], row['longitude']], axis=1)
-marker_cluster = MarkerCluster().add_to(m)
-def create_markers():
+def plotmap(value):
+    if value!='':
+       df_data_filtered = df_data.loc[df_data['Sub Area'] == value]
+    else: 
+        df_data_filtered=df_data
+    m=folium.Map(location=[1.287953, 103.851784],zoom_start=12,prefer_canvas=True)
+    coordinates = df_data_filtered.apply(lambda row: [row['Name'], row['latitude'], row['longitude']], axis=1)
+    marker_cluster = MarkerCluster().add_to(m)
     for coord in coordinates:
         folium.Marker(location=[coord[1], coord[2]], popup=str(coord[0]), tooltip='Click here to see restaurant').add_to(marker_cluster)
 
-thread = Thread(target=create_markers)
-thread.start()
-thread.join()
-
 # Save the HTML content to a temporary file
-with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as tmp:
-    tmp.write(m._repr_html_().encode('utf-8'))
-    tmp.close()
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as tmp:
+        tmp.write(m._repr_html_().encode('utf-8'))
+        tmp.close()
+    # Open the temporary file in a web browser
+    webbrowser.open("file://" + os.path.realpath(tmp.name))
+    # Return the name of the temporary file
+    return tmp.name
 
-#creating the gui window
+
+#creatig the gui
 font = ("Arial", 11)
 layout = [
     
@@ -48,25 +51,25 @@ layout = [
     [],
     [sg.Button('View all food places', key='-VIEW-ALL-', size=(30, 2), pad=(10,10)), sg.Button('View Dataset diagrams', key='-VIEW-DIAGRAMS-', pad=(10,10), size=(30, 2)), sg.Button('Export the Dataset', key='-EXPORT-', pad=(10,10), size=(30, 2) , font=font)],
     [],
-    [sg.Text('Choose the area in Singapore : ', font=font),sg.Combo(['Bukit Batok','Bukit Timah','Sengkang','Hougang'], key='-OPTION-', pad=(10,10), size=(30, 2), font=font)],
+    [sg.Text('Choose the area in Singapore : ', font=font),sg.Combo(['Bukit Merah','Bukit Timah','Sengkang','Hougang'], key='-OPTION-', pad=(10,10), size=(30, 2), font=font)],
     [sg.Text( font=font)],
     [sg.Button('Ok', size=(3, 2), font=font), sg.Button('Cancel', size=(6, 2), font=font)],
     [],
 ]
 
 window = sg.Window('Foodplaces in Singapore', layout, size=(1000, 300),element_justification='center', resizable=True, finalize=True)
-
+temp_file_name= None
 # Event Loop to process "events" and get the "values" of the inputs
 while True:
     event, values = window.read()
 
     if event == sg.WIN_CLOSED or event == 'Cancel':
+        if temp_file_name is not None:
+            os.remove(temp_file_name)
         break
         
     if event == '-VIEW-ALL-':
-            
-            # Open the temporary file in a web browser
-            webbrowser.open("file://" + os.path.realpath(tmp.name))
+        temp_file_name=plotmap('')
         
     elif event == '-VIEW-DIAGRAMS-':
         print('View Dataset diagrams')
@@ -78,9 +81,14 @@ while True:
             df.to_csv(filename, index=False)
 
 
-    elif event == '-VIEW-AREAS-':
-        print('View in areas of Singapore')
+    elif event == 'Ok' :
+         value=values['-OPTION-']
+         temp_file_name =plotmap(value)
+    
+
+
 
 # Close the PySimpleGUI window
 window.close()
-os.remove(tmp.name)
+
+
