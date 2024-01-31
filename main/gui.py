@@ -1,7 +1,11 @@
 import PySimpleGUI as sg
+import os
 import webbrowser
 import pandas as pd
 from branca.element import Figure
+import folium
+from folium.plugins import MarkerCluster
+import tempfile
 
 sg.theme('DarkAmber')  # Add a touch of color
 
@@ -30,7 +34,29 @@ while True:
         break
         
     if event == '-VIEW-ALL-':
-        webbrowser.open("main\map.html")
+        df_data=pd.read_csv('main/modified_data.csv')
+
+        
+        m=folium.Map(location=[1.287953, 103.851784],zoom_start=12,prefer_canvas=True)
+        
+        coordinates=[]
+        for i,n in enumerate(df_data['Name']):
+            a= [df_data['Name'][i],df_data['latitude'][i], df_data['longitude'][i]]
+            coordinates.append(a)
+
+        marker_cluster = MarkerCluster().add_to(m)
+
+        for c in coordinates:
+            folium.Marker(location=[c[1], c[2]], popup=str(c[0]), tooltip='Click here to see restaurant').add_to(marker_cluster)
+
+        # Save the HTML content to a temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as tmp:
+            tmp.write(m._repr_html_().encode('utf-8'))
+            tmp.close()
+
+            # Open the temporary file in a web browser
+            webbrowser.open("file://" + os.path.realpath(tmp.name))
+        
     elif event == '-VIEW-DIAGRAMS-':
         print('View Dataset diagrams')
     elif event == '-EXPORT-':
