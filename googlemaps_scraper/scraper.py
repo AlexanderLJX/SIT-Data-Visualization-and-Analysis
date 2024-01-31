@@ -11,7 +11,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, TimeoutException, ElementClickInterceptedException
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
-from resettabletimer import ResettableTimer
 
 # Constants
 import constants
@@ -64,8 +63,6 @@ def get_next_day(day_of_week):
 
 #     return current_element
 
-def get_href(current_element):
-    return current_element.get_attribute("href")
 
 def wait_for_target_popup(element, browser):
     # find the aria-label of the element, which contains the location name
@@ -633,7 +630,7 @@ def get_about_combined(browser, about_button):
     return about_combined
 
 
-def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_reviews, timer):
+def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_reviews):
     url = url  + "+in+" + subzone + ",+" + area + ",+Singapore"
     browser.get(url)
     print(url)
@@ -644,13 +641,14 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
     noMoreResults = False
     element_index = 0
 
+
     # Loop through list of restaurants
     while True:
         # reset the timer to 10 mins everytime a new element is clicked
-        timer.reset(600)
+        # timer.reset(600)
         # if lesser than 5 elements left, scroll and load more elements
-        if len(elements) - element_index < 10:
-            browser.execute_script("arguments[0].scrollIntoView();", elements[-1])
+        # if len(elements) - element_index < 10:
+        #     browser.execute_script("arguments[0].scrollIntoView();", elements[-1])
 
         # current_element = get_current_element(browser, elements, element_index)
         new_elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
@@ -660,6 +658,9 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
         
         # get the current element
         current_element = new_elements[element_index]
+
+        # href of current element
+        href = current_element.get_attribute("href")
 
         # Check if the "You've reached the end of the list." message is present
         end_of_list_element = browser.find_elements(By.CLASS_NAME, 'HlvSq')
@@ -679,8 +680,7 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
         
         # print(new_elements[0].get_attribute("href"))
 
-        # href of current element
-        href = get_href(current_element)
+        
 
         # if href is already present in csv
         if href in href_list:
@@ -761,10 +761,13 @@ def scrape_area(area, subzone, csv_writer, csv_writer_reviews):
     browser.execute_script('chrome.settingsPrivate.setDefaultZoom(0.6);')
 
     # set 10 mins timer to refresh browser
-    timer = ResettableTimer(600, refresh_browser, args=(browser,))
-    timer.start()
+    # timer = ResettableTimer(600, refresh_browser, args=(browser,))
+    # timer.start()
 
-    find_targets_in_area(constants.URL + constants.TARGET, area, subzone, browser, csv_writer, csv_writer_reviews, timer)
+    find_targets_in_area(constants.URL + constants.TARGET, area, subzone, browser, csv_writer, csv_writer_reviews)
+
+    # delete the timer
+    # timer.cancel()
 
     browser.quit()
 
@@ -788,8 +791,6 @@ def main():
         for planning_area in list_of_places[region]:
             # loop through each sub zone
             for sub_zone in list_of_places[region][planning_area]:
-                print("planning_area:", planning_area)
-                print("sub_zone:", sub_zone)
                 # append the sub zone to the planning area
                 list_of_areas.append(planning_area)
                 list_of_subzones.append(sub_zone)
