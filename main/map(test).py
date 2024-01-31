@@ -1,7 +1,5 @@
 import folium
 import pandas as pd 
-
-import folium
 from branca.element import Figure
 
 
