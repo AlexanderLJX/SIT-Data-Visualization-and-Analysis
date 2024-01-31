@@ -6,7 +6,7 @@ from branca.element import Figure
 import folium
 from folium.plugins import MarkerCluster
 import tempfile
-import threading
+from threading import Thread
 
 sg.theme('DarkAmber')  # Add a touch of color
 
@@ -23,20 +23,23 @@ except Exception as e:
 
 m=folium.Map(location=[1.287953, 103.851784],zoom_start=12,prefer_canvas=True)
 
+
+coordinates = df_data.apply(lambda row: [row['Name'], row['latitude'], row['longitude']], axis=1)
 marker_cluster = MarkerCluster().add_to(m)
-
-
-def add_markers(df_data, marker_cluster):
-    coordinates = df_data.apply(lambda row: [row['Name'], row['latitude'], row['longitude']], axis=1)
+def create_markers():
     for coord in coordinates:
         folium.Marker(location=[coord[1], coord[2]], popup=str(coord[0]), tooltip='Click here to see restaurant').add_to(marker_cluster)
-# Start a new thread for the for loop
-thread = threading.Thread(target=add_markers, args=(df_data, marker_cluster))
+
+thread = Thread(target=create_markers)
 thread.start()
+thread.join()
+
 # Save the HTML content to a temporary file
 with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as tmp:
     tmp.write(m._repr_html_().encode('utf-8'))
     tmp.close()
+
+#creating the gui window
 font = ("Arial", 11)
 layout = [
     
@@ -61,6 +64,7 @@ while True:
         break
         
     if event == '-VIEW-ALL-':
+            
             # Open the temporary file in a web browser
             webbrowser.open("file://" + os.path.realpath(tmp.name))
         
