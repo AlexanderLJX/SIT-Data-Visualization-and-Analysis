@@ -6,7 +6,7 @@ from branca.element import Figure
 import folium
 from folium.plugins import MarkerCluster
 import tempfile
-
+import shutil
 
 sg.theme('DarkAmber')  # Add a touch of color
 
@@ -69,11 +69,15 @@ layout = [
     [],
     [sg.Text('Choose the area in Singapore : ', font=font),sg.Combo(values=unique_Area_list, key='-OPTION-', pad=(10,10), size=(30, 20), font=font),sg.Text('Choose the Category of Foodplace : ', font=font),sg.Combo(values=unique_cat_list, key='-OPTION2-', pad=(10,10), size=(30, 20), font=font)],
     [sg.Text( font=font)],
+    [sg.Button('Export Map', key='-EXPORT-MAP-', size=(15, 2), font=font),
+     sg.Button('Export Filtered Dataset', key='-EXPORT-FILTERED-', size=(20, 2), font=font)],
+    [],
+    [sg.Text( font=font)],
     [sg.Button('Ok', size=(3, 2), font=font), sg.Button('Cancel', size=(6, 2), font=font)],
     [],
 ]
 
-window = sg.Window('Foodplaces in Singapore', layout, size=(1000,300),element_justification='center', resizable=True, finalize=True)
+window = sg.Window('Foodplaces in Singapore', layout, size=(1000,350),element_justification='center', resizable=True, finalize=True)
 temp_file_name= None
 # Event Loop to process "events" and get the "values" of the inputs
 while True:
@@ -102,7 +106,20 @@ while True:
         value2 = values['-OPTION2-']
         temp_file_name = plotmap(value1, value2)
     
+    elif event == '-EXPORT-MAP-':
+        if temp_file_name is not None:
+            destination = sg.popup_get_file('Select a file to save the map HTML', save_as=True, file_types=(("HTML Files", "*.html"),))
+            if destination:
+                shutil.copy(temp_file_name, destination)
 
+    elif event == '-EXPORT-FILTERED-':
+        value1 = values['-OPTION-']
+        value2 = values['-OPTION2-']
+        if value1 != '' or value2 != '':
+            filtered_df = df_data.loc[(df_data['Sub Area'] == value1) & (df_data['Category'] == value2)]
+            destination = sg.popup_get_file('Select a file to save the filtered dataset CSV', save_as=True, file_types=(("CSV Files", "*.csv"),))
+            if destination:
+                filtered_df.to_csv(destination, index=False)
 
 
 # Close the PySimpleGUI window
