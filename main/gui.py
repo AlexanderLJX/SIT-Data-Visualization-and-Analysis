@@ -69,11 +69,10 @@ layout = [
     [],
     [sg.Text('Choose the area in Singapore : ', font=font),sg.Combo(values=unique_Area_list, key='-OPTION-', pad=(10,10), size=(30, 20), font=font),sg.Text('Choose the Category of Foodplace : ', font=font),sg.Combo(values=unique_cat_list, key='-OPTION2-', pad=(10,10), size=(30, 20), font=font)],
     [sg.Text( font=font)],
-    [sg.Button('Export Map', key='-EXPORT-MAP-', size=(15, 2), font=font),
-     sg.Button('Export Filtered Dataset', key='-EXPORT-FILTERED-', size=(20, 2), font=font)],
+    [sg.Button('Export Map', key='-EXPORT-MAP-', size=(15, 2),button_color=('white', 'orange'),font=font,border_width=0),sg.Button('Export Filtered Dataset', key='-EXPORT-FILTERED-', size=(20, 2), font=font,button_color=('white', 'orange'),border_width=0)],
     [],
     [sg.Text( font=font)],
-    [sg.Button('Ok', size=(3, 2), font=font), sg.Button('Cancel', size=(6, 2), font=font)],
+    [sg.Button('Ok', size=(3, 2), font=font,border_width=0), sg.Button('Cancel', size=(6, 2), font=font,border_width=0)],
     [],
 ]
 
