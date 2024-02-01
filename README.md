@@ -38,6 +38,7 @@ To run and explore the project locally, follow these steps:
 1. **Clone the Repository:**
    ```bash
    git clone https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis.git
+   cd SIT-Data-Visualization-and-Analysis
 2. **Create a virtual environment**
    ```bash
    python -m venv venv

@@ -98,6 +98,7 @@ def wait_for_target_popup(element, browser):
     return location_name
 
 def find_target_category(browser):
+    category_name = ""
     while True:
         try:
             # Find the category name e.g. "Japanese reaurant" using the class in <button class="DkEaL " jsaction="pane.rating.category">Japanese restaurant</button> ...
@@ -111,7 +112,16 @@ def find_target_category(browser):
             tab_list = browser.find_element(By.CLASS_NAME, 'RWPxGd')
             buttons = tab_list.find_elements(By.TAG_NAME, 'button')
             buttons[0].click()
-            logging.exception("NoSuchElementException")
+            logging.info("NoSuchElementException - Target has no category name")
+            # find class  fCEvvc
+            try:
+                category_class = browser.find_element(By.CLASS_NAME, 'fCEvvc')
+                # get text of span inside the class 
+                category_name = category_class.find_element(By.TAG_NAME, 'span').text
+                print("Category:", category_name)
+                break # break out of while loop
+            except:
+                logging.info("no pernamently closed class")
             if category_name == "":
                 category_name = "NoSuchElementException"
         except StaleElementReferenceException:
@@ -448,6 +458,9 @@ def get_review_text(current_review):
     except NoSuchElementException:
         logging.info("NoSuchElementException - No review text")
         review_text = "NAN"
+    except StaleElementReferenceException:
+        logging.info("StaleElementReferenceException - No review text")
+        review_text = "NAN"
 
     return review_text
 
@@ -634,9 +647,10 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
     url = url  + "+in+" + subzone + ",+" + area + ",+Singapore"
     browser.get(url)
     print(url)
+    # wait for the element with class "hfpxzc" to be present
+    WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'hfpxzc')))
     # get all elements with class "hfpxzc"
     elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
-    print(elements[0].get_attribute("href"))
 
     noMoreResults = False
     element_index = 0
@@ -647,8 +661,8 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
         # reset the timer to 10 mins everytime a new element is clicked
         # timer.reset(600)
         # if lesser than 5 elements left, scroll and load more elements
-        # if len(elements) - element_index < 10:
-        #     browser.execute_script("arguments[0].scrollIntoView();", elements[-1])
+        if len(elements) - element_index < 10:
+            browser.execute_script("arguments[0].scrollIntoView();", elements[-1])
 
         # current_element = get_current_element(browser, elements, element_index)
         new_elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
@@ -656,6 +670,13 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
             if new_element not in elements:
                 elements.append(new_element)
         
+        while len(elements) < element_index + 1:
+            browser.execute_script("arguments[0].scrollIntoView();", elements[-1])
+            new_elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
+            for new_element in new_elements:
+                if new_element not in elements:
+                    elements.append(new_element)
+                
         # get the current element
         current_element = new_elements[element_index]
 
@@ -808,6 +829,9 @@ def main():
         # run Multi Threaded
         with ThreadPoolExecutor(max_workers=constants.NUM_THREADS) as executor:
             for area, subzone in zip(list_of_areas, list_of_subzones):
+                # wait 1 second before starting the next thread
+                import time
+                time.sleep(1)
                 executor.submit(scrape_area, area, subzone, csv_writer, csv_writer_reviews)
     else:
         # run Single Threaded
