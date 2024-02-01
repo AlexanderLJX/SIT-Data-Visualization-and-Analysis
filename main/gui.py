@@ -51,7 +51,7 @@ layout = [
     [],
     [sg.Button('View all food places', key='-VIEW-ALL-', size=(30, 2), pad=(10,10)), sg.Button('View Dataset diagrams', key='-VIEW-DIAGRAMS-', pad=(10,10), size=(30, 2)), sg.Button('Export the Dataset', key='-EXPORT-', pad=(10,10), size=(30, 2) , font=font)],
     [],
-    [sg.Text('Choose the area in Singapore : ', font=font),sg.Combo(['Bukit Merah','Bukit Timah','Sengkang','Hougang'], key='-OPTION-', pad=(10,10), size=(30, 2), font=font)],
+    [sg.Text('Choose the area in Singapore : ', font=font),sg.Combo(['Bukit Merah','HarbourFront/Maritime Square','Depot Road','Hougang'], key='-OPTION-', pad=(10,10), size=(30, 2), font=font)],
     [sg.Text( font=font)],
     [sg.Button('Ok', size=(3, 2), font=font), sg.Button('Cancel', size=(6, 2), font=font)],
     [],
