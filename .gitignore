@@ -17,3 +17,6 @@ venv/
 
 
 main/map.html
+
+# ignore log files
+*.log

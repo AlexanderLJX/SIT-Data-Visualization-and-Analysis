@@ -90,6 +90,8 @@ def wait_for_target_popup(element, browser):
                     overview_button.click()
                 except StaleElementReferenceException:
                     logging.info("StaleElementReferenceException")
+                except ElementClickInterceptedException:
+                    logging.exception("ElementClickInterceptedException")
             
             location_name = element.get_attribute("aria-label")
 
@@ -121,7 +123,7 @@ def find_target_category(browser):
                 print("Category:", category_name)
                 break # break out of while loop
             except:
-                logging.info("no pernamently closed class")
+                logging.info("no Permanently Closed class")
             if category_name == "":
                 category_name = "NoSuchElementException"
         except StaleElementReferenceException:
@@ -168,7 +170,11 @@ def get_opening_times(browser):
         # Find the element with class "OqCZI fontBodyMedium WVXvdc"
         opening_times_parent = browser.find_element(By.CLASS_NAME, 'OqCZI.fontBodyMedium.WVXvdc')
         # find element with class "t39EBf GUrTXd" and extract the aria-label
-        opening_times_string = opening_times_parent.find_element(By.CLASS_NAME, 't39EBf.GUrTXd').get_attribute('aria-label').replace('\u202f', ' ')
+        opening_times_string = opening_times_parent.find_element(By.CLASS_NAME, 't39EBf.GUrTXd').get_attribute('aria-label')
+        # replace the unicode character \u202f with a space
+        opening_times_string = opening_times_string.replace('\u202f', ' ')
+        # remove ". Hide open hours for the week" from the string
+        opening_times_string = opening_times_string.split(". Hide open hours for the week")[0]
         # split the string into a list
         opening_times_list = opening_times_string.split("; ")
         # convert the list into a dictionary with the day of the week as the key
@@ -350,12 +356,17 @@ def select_review_tab(browser):
             break
     while True:
         # Click on the Second tab which is the "Reviews" tab
-        review_button.click()
+        try:
+            review_button.click()
+        except ElementClickInterceptedException:
+            logging.exception("ElementClickInterceptedException")
+        except StaleElementReferenceException:
+            logging.exception("StaleElementReferenceException")
         # Locate the button element
         button = browser.find_element(By.CLASS_NAME, 'hh2c6.G7m0Af')
         # Check if the button is selected
-        data_tab_index= button.get_attribute('data-tab-index')
-        if data_tab_index == "1":
+        data_tab_index= button.get_attribute('aria-selected')
+        if data_tab_index == "true":
             print("Reviews tab is selected")
             break
 
@@ -421,6 +432,34 @@ def get_reviewer_info(current_review):
         reviewer_total_photos = "NAN"
     return reviewer_local_guide_status, reviewer_total_reviews, reviewer_total_photos
 
+def find_current_review(browser, review_index):
+    # try to get current review element for 5 seconds, else break
+    current_review = None
+    start_get_current_review = datetime.now()
+    while True:
+        if (datetime.now() - start_get_current_review).seconds > 5:
+            break
+        try:
+            # new_reviews = browser.find_elements(By.CLASS_NAME, 'jftiEf.fontBodyMedium')
+            # for new_review in new_reviews:
+            #     if new_review not in visible_reviews:
+            #         visible_reviews.append(new_review)
+            visible_reviews = browser.find_elements(By.CLASS_NAME, 'jftiEf.fontBodyMedium')
+            current_review = visible_reviews[review_index]
+            # make sure the current review is in view
+            reviewer_button = current_review.find_element(By.CLASS_NAME, 'al6Kxe')
+            browser.execute_script("arguments[0].scrollIntoView();", reviewer_button)
+            visible_reviews = browser.find_elements(By.CLASS_NAME, 'jftiEf.fontBodyMedium')
+            current_review = visible_reviews[review_index]
+            break
+        except IndexError:
+            pass
+        except StaleElementReferenceException:
+            logging.info("StaleElementReferenceException - No current review")
+            pass
+    
+    return current_review
+
 def get_reviewer_star_rating(current_review):
     # Get star rating in aria-label of kvMYJc class in current review
     reviewer_star_rating = current_review.find_element(By.CLASS_NAME, 'kvMYJc').get_attribute('aria-label')
@@ -447,8 +486,10 @@ def expand_review(current_review):
             logging.info("NoSuchElementException - No more button")
             break
         except StaleElementReferenceException:
-            logging.info("StaleElementReferenceException - No more button")
+            logging.info("StaleElementReferenceException - More button not in current view")
             break
+        except ElementClickInterceptedException:
+            logging.exception("ElementClickInterceptedException - No more button")
 
 def get_review_text(current_review):
     # Get review text in class wiI7pd
@@ -490,8 +531,40 @@ def get_detail_list(current_review):
             print(f"{detail_title}: {detail_content}")
     except NoSuchElementException:
         logging.info("NoSuchElementException - No Review Metadata")
+    except StaleElementReferenceException:
+        logging.exception("StaleElementReferenceException - No Review Metadata")
 
     return detail_list
+
+def get_review_likes(current_review):
+    # Get review likes in class pkWtMe in the current_review
+    review_likes = 0
+    try:
+        review_likes = current_review.find_element(By.CLASS_NAME, 'pkWtMe').text
+        print("review_likes:", review_likes)
+    except NoSuchElementException:
+        logging.info("NoSuchElementException - No review likes")
+    except StaleElementReferenceException:
+        logging.info("StaleElementReferenceException - No review likes")
+
+    return review_likes
+
+def get_review_images_href(current_review):
+    # Get review images href in class KtCyie in the current_review
+    review_images_href = []
+    try:
+        review_images_class = current_review.find_element(By.CLASS_NAME, 'KtCyie')
+        review_images = review_images_class.find_elements(By.CLASS_NAME, 'Tya61d')
+        for review_image in review_images:
+            review_image_href = review_image.get_attribute('style')
+            review_image_href = review_image_href.split('url("')[1].split('")')[0].split("=")[0]
+            review_images_href.append(review_image_href)
+    except NoSuchElementException:
+        logging.info("NoSuchElementException - No review images")
+    except StaleElementReferenceException:
+        logging.info("StaleElementReferenceException - No review images")
+    
+    return review_images_href
 
 
 def scrape_all_reviews(browser, csv_writer_reviews, number_of_reviews, href):
@@ -516,9 +589,11 @@ def scrape_all_reviews(browser, csv_writer_reviews, number_of_reviews, href):
     
     visible_reviews = browser.find_elements(By.CLASS_NAME, 'jftiEf.fontBodyMedium')
     while True:
-        current_review = visible_reviews[review_index]
-        # # if less than 5 elements left, scroll and load more elements
-        # if len(reviews) - review_index < 5:
+
+        current_review = find_current_review(browser, review_index)
+        if current_review is None:
+            break
+
         # Get href of current place
         href_of_place = href
 
@@ -528,34 +603,50 @@ def scrape_all_reviews(browser, csv_writer_reviews, number_of_reviews, href):
         # Get relavancy ranking
         relavancy_ranking = review_index + 1
 
+        current_review = find_current_review(browser, review_index)
         # Get reviewer href which is the data-review-id of WEBjve class in the current review
         reviewer_href = current_review.find_element(By.CLASS_NAME, 'WEBjve').get_attribute('data-href')
 
+        current_review = find_current_review(browser, review_index)
         # Get reviewer name which is in the aria-label of the current review
         reviewer_name = current_review.get_attribute('aria-label')
         print("reviewer_name:", reviewer_name)
 
+        current_review = find_current_review(browser, review_index)
         # Get reviewer local guide status, total reviews and total photos
         reviewer_local_guide_status, reviewer_total_reviews, reviewer_total_photos = get_reviewer_info(current_review)
 
+        current_review = find_current_review(browser, review_index)
         # Get reviewer star rating
         reviewer_star_rating = get_reviewer_star_rating(current_review)
 
+        current_review = find_current_review(browser, review_index)
         # Get date of review in class rsqaWe
         review_date = get_review_date(current_review)
 
+        current_review = find_current_review(browser, review_index)
         # Expand review text, click the "More" button
         expand_review(current_review)
         
+        current_review = find_current_review(browser, review_index)
         # Get review text
         review_text = get_review_text(current_review)
 
+        current_review = find_current_review(browser, review_index)
         # Get detail list
         detail_list = get_detail_list(current_review)
 
+        current_review = find_current_review(browser, review_index)
+        # Get review likes
+        review_likes = get_review_likes(current_review)
+
+        current_review = find_current_review(browser, review_index)
+        # Get review images href
+        review_images_href = get_review_images_href(current_review)
+
         # Write to reviews CSV file
         with file_write_lock_reviews:
-            csv_writer_reviews.writerow([href_of_place, review_id, relavancy_ranking, reviewer_href, reviewer_name, reviewer_local_guide_status, reviewer_total_reviews, reviewer_total_photos, reviewer_star_rating, review_date, review_text, detail_list])
+            csv_writer_reviews.writerow([href_of_place, review_id, relavancy_ranking, reviewer_href, reviewer_name, reviewer_local_guide_status, reviewer_total_reviews, reviewer_total_photos, reviewer_star_rating, review_date, review_text, detail_list, review_likes, review_images_href])
 
         # scroll until there's more reviews below the current review
         # set max timing to wait for the next review to load to 5 seconds
@@ -661,8 +752,9 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
         # reset the timer to 10 mins everytime a new element is clicked
         # timer.reset(600)
         # if lesser than 5 elements left, scroll and load more elements
+        new_elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
         if len(elements) - element_index < 10:
-            browser.execute_script("arguments[0].scrollIntoView();", elements[-1])
+            browser.execute_script("arguments[0].scrollIntoView();", new_elements[-1])
 
         # current_element = get_current_element(browser, elements, element_index)
         new_elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
@@ -678,10 +770,7 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
                     elements.append(new_element)
                 
         # get the current element
-        current_element = new_elements[element_index]
-
-        # href of current element
-        href = current_element.get_attribute("href")
+        current_element = elements[element_index]
 
         # Check if the "You've reached the end of the list." message is present
         end_of_list_element = browser.find_elements(By.CLASS_NAME, 'HlvSq')
@@ -694,6 +783,9 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
         if noMoreResults and element_index == len(elements):
             print("Finished scraping all elements")
             break
+
+        # href of current element
+        href = current_element.get_attribute("href")
 
         # get the seo rating of the current element
         seo_rating = element_index
@@ -712,7 +804,14 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
                 href_list.append(href)
         print("current element:", element_index)
         browser.execute_script("arguments[0].scrollIntoView();", current_element)
-        current_element.click()
+        while True:
+            try:
+                browser.execute_script("arguments[0].scrollIntoView();", current_element)
+                current_element.click()
+                break
+            except ElementClickInterceptedException:
+                logging.exception("ElementClickInterceptedException")
+                continue
 
         # wait for the restaurant clicked to popup and load
         location_name = wait_for_target_popup(current_element, browser)
@@ -800,7 +899,7 @@ def main():
 
     csv_file_reviews = open('scraped_data_reviews_' + constants.TARGET.replace("+", "_") + '.csv', 'w', encoding='utf-8-sig', newline='')
     csv_writer_reviews = csv.writer(csv_file_reviews)
-    csv_writer_reviews.writerow(['href of Place', 'Review ID', 'Relavancy Ranking', 'Reviewer href', 'Reviewer Name', 'Local Guide', 'Total Reviews', 'Total Photos', 'Star Rating', 'Date', 'Review', 'Metadata', ])
+    csv_writer_reviews.writerow(['href of Place', 'Review ID', 'Relavancy Ranking', 'Reviewer href', 'Reviewer Name', 'Local Guide', 'Total Reviews', 'Total Photos', 'Star Rating', 'Date', 'Review', 'Metadata', 'Likes', 'Review Images href'])
 
     list_of_subzones = []
     list_of_areas = []
@@ -842,5 +941,5 @@ def main():
     # csv_file.close()
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.ERROR, filename='error.log', filemode='w', format='%(asctime)s - %(levelname)s - %(message)s')
     main()
