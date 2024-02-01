@@ -2,10 +2,8 @@ import PySimpleGUI as sg
 import os
 import webbrowser
 import pandas as pd
-from branca.element import Figure
 import folium
 from folium.plugins import MarkerCluster
-from folium.plugins import HeatMap
 import tempfile
 import shutil
 
@@ -116,11 +114,18 @@ while True:
     elif event == '-EXPORT-FILTERED-':
         value1 = values['-OPTION-']
         value2 = values['-OPTION2-']
-        if value1 != '' or value2 != '':
-            filtered_df = df_data.loc[(df_data['Sub Area'] == value1) & (df_data['Category'] == value2)]
-            destination = sg.popup_get_file('Select a file to save the filtered dataset CSV', save_as=True, file_types=(("CSV Files", "*.csv"),))
-            if destination:
-                filtered_df.to_csv(destination, index=False)
+        if value1!='':
+            filtered_df = df_data.loc[df_data['Sub Area'] == value1]
+        else: 
+            filtered_df=df_data
+        if value2!= '':
+            filtered_df = filtered_df.loc[filtered_df['Category'] == value2]
+        else :
+            filtered_df=filtered_df
+            
+        destination = sg.popup_get_file('Select a file to save the filtered dataset CSV', save_as=True, file_types=(("CSV Files", "*.csv"),))
+        if destination:
+            filtered_df.to_csv(destination, index=False)
 
 
 # Close the PySimpleGUI window
