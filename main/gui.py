@@ -5,6 +5,7 @@ import pandas as pd
 from branca.element import Figure
 import folium
 from folium.plugins import MarkerCluster
+from folium.plugins import HeatMap
 import tempfile
 import shutil
 
@@ -34,6 +35,7 @@ def plotmap(value1, value2):
     m=folium.Map(location=[1.287953, 103.851784],zoom_start=12,prefer_canvas=True)
     coordinates = df_data_filtered.apply(lambda row: [row['Name'], row['latitude'], row['longitude']], axis=1)
     marker_cluster = MarkerCluster().add_to(m)
+    
     for coord in coordinates:
         folium.Marker(location=[coord[1], coord[2]], popup=str(coord[0]), tooltip='Click here to see restaurant').add_to(marker_cluster)
 
