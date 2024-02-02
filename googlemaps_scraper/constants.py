@@ -16,15 +16,13 @@ RUN_HEADLESS = False
 
 NUM_THREADS = 5
 
-CATEGORY_BLACKLISTED_WORDS = ["island", "temple", "park", "nature preserve", "shopping mall"]
+CATEGORY_BLACKLISTED_CATEGORIES = ["island", "temple", "park", "nature preserve", "shopping mall", ""]
 
 SECONDS_TO_WAIT_FOR_SCROLL = 120
 
 SECONDS_TO_WAIT_FOR_SCROLL_REVIEWS = 10
 
 OVERWRITE_CSV = False
-
-RECHECK_CSV = False
 
 CSV_HEADER = ['href', 'Planning Area', 'Subzone', 'Name', 'Search Engine Rating', 'Sponsored', 'Opening Hours', 'Popular Times', 'Average Star Rating', 'Individual Star Rating', 'Reviews', 'Category', 'Price Rating', 'Address', 'Metadata', 'Tags', 'About']
 

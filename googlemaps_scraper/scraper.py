@@ -18,11 +18,16 @@ import constants
 file_write_lock = threading.Lock()
 file_write_lock_reviews = threading.Lock()
 href_list = []
-# populate href_list with hrefs from csv
-with open(constants.CSV_FILE_NAME, 'r', newline='', encoding='utf-8') as csv_file:
-    csv_reader = csv.reader(csv_file)
-    for row in csv_reader:
-        href_list.append(row[0])
+# check if the csv file exists
+try:
+    # populate href_list with hrefs from csv
+    with open(constants.CSV_FILE_NAME, 'r', newline='', encoding='utf-8') as csv_file:
+        csv_reader = csv.reader(csv_file)
+        for row in csv_reader:
+            # append column href
+            href_list.append(row[0])
+except FileNotFoundError:
+    logging.info("FileNotFoundError - CSV file not found")
 href_list_lock = threading.Lock()
 
 def convert_relative_time(relative_time):
@@ -83,6 +88,9 @@ def wait_for_target_popup(element, browser):
             print("TimeoutException")
             print("Waiting for more elements to load")
         
+        # remove all zero width space like \u200b
+        location_name2 = location_name2.replace("\u200b", "")
+        location_name = location_name.replace("\u200b", "")
         if location_name == location_name2:
             break
         else:
@@ -106,9 +114,12 @@ def wait_for_target_popup(element, browser):
 
 def find_target_category(browser):
     category_name = ""
+    start_time = datetime.now()
     while True:
+        if (datetime.now() - start_time).seconds > 5:
+            return "Hotel"
         try:
-            # Find the category name e.g. "Japanese reaurant" using the class in <button class="DkEaL " jsaction="pane.rating.category">Japanese restaurant</button> ...
+            # Find the category name e.g. "Japanese restaurant" using the class in <button class="DkEaL " jsaction="pane.rating.category">Japanese restaurant</button> ...
             category_name = browser.find_element(By.CLASS_NAME, 'DkEaL').text
             # Print the category name
             print("Category:", category_name)
@@ -756,8 +767,6 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
 
     # Loop through list of restaurants
     while True:
-        # reset the timer to 10 mins everytime a new element is clicked
-        # timer.reset(600)
         # if lesser than 5 elements left, scroll and load more elements
         new_elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
         if len(new_elements) - element_index < 10:
@@ -827,9 +836,9 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
         
         category_name = find_target_category(browser)
 
-        for blacklisted_word in constants.CATEGORY_BLACKLISTED_WORDS:
-            if blacklisted_word in category_name.lower():
-                print("Blacklisted word found in category name:", blacklisted_word)
+        for blacklisted_category in constants.CATEGORY_BLACKLISTED_CATEGORIES:
+            if blacklisted_category.lower() in category_name.lower():
+                print("Blacklisted category name:", blacklisted_category)
                 print("Skipping this element")
                 continue
 
@@ -908,7 +917,7 @@ def main():
     # Create a CSV file and write the header, or open the existing file and append the new data
     # if the file doesn't exist, create a new file
     import os
-    if not os.path.isfile(constants.CSV_FILE_NAME):
+    if not os.path.isfile(constants.CSV_FILE_NAME) or constants.OVERWRITE_CSV:
         csv_file = open(constants.CSV_FILE_NAME + '.csv', 'w', encoding='utf-8-sig', newline='')
         csv_writer = csv.writer(csv_file)
         csv_writer.writerow(constants.CSV_HEADER)
@@ -918,7 +927,7 @@ def main():
 
     # Create a CSV file and write the header, or open the existing file and append the new data
     # if the file doesn't exist, create a new file
-    if not os.path.isfile(constants.CSV_REVIEWS_FILE_NAME):
+    if not os.path.isfile(constants.CSV_REVIEWS_FILE_NAME) or constants.OVERWRITE_CSV:
         csv_file_reviews = open(constants.CSV_REVIEWS_FILE_NAME, 'w', encoding='utf-8-sig', newline='')
         csv_writer_reviews = csv.writer(csv_file_reviews)
         csv_writer_reviews.writerow(constants.CSV_REVIEWS_HEADER)
