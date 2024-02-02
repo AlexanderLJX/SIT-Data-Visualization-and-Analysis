@@ -122,10 +122,11 @@ while True:
             filtered_df = filtered_df.loc[filtered_df['Category'] == value2]
         else :
             filtered_df=filtered_df
-            
-        destination = sg.popup_get_file('Select a file to save the filtered dataset CSV', save_as=True, file_types=(("CSV Files", "*.csv"),))
-        if destination:
-            filtered_df.to_csv(destination, index=False)
+        if value1!='' or value2!='': 
+            destination = sg.popup_get_file('Select a file to save the filtered dataset CSV', save_as=True, file_types=(("CSV Files", "*.csv"),))
+            if destination:
+                filtered_df.to_csv(destination, index=False)
+        
 
 
 # Close the PySimpleGUI window
