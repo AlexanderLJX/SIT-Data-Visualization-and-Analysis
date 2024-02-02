@@ -763,7 +763,7 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
 
     noMoreResults = False
     element_index = 0
-
+    refresh_count = 0
 
     # Loop through list of restaurants
     while True:
@@ -778,14 +778,17 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
         finish = False
         scroll_start_time = datetime.now()
         while len(new_elements) < element_index + 1:
-            if (datetime.now() - scroll_start_time).seconds > constants.SECONDS_TO_WAIT_FOR_SCROLL:
+            if (datetime.now() - scroll_start_time).seconds > constants.SCROLL_TIMEOUT:
                 finish = True
                 break
             new_elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
-            if len(new_elements) >= element_index + 1:
+            if len(new_elements) > element_index + 1:
                 break
             browser.execute_script("arguments[0].scrollIntoView();", new_elements[-1])
             new_elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
+
+        if finish:
+            break
                 
         # get the current element
         current_element = new_elements[element_index]
@@ -798,7 +801,7 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
         
         element_index += 1
         
-        if (noMoreResults and element_index >= len(new_elements)) or finish:
+        if (noMoreResults and element_index >= len(new_elements)):
             print("Finished scraping all elements")
             break
 
@@ -898,10 +901,7 @@ def scrape_area(area, subzone, csv_writer, csv_writer_reviews):
     # Execute JavaScript code to set the default zoom level
     browser.execute_script('chrome.settingsPrivate.setDefaultZoom(0.6);')
 
-    # set 10 mins timer to refresh browser
-    # timer = ResettableTimer(600, refresh_browser, args=(browser,))
-    # timer.start()
-    while True:
+    for i in range(constants.MAX_RETRY_AREA):
         try:
             find_targets_in_area(constants.URL + constants.TARGET, area, subzone, browser, csv_writer, csv_writer_reviews)
             break
