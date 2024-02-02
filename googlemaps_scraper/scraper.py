@@ -918,7 +918,7 @@ def main():
     # if the file doesn't exist, create a new file
     import os
     if not os.path.isfile(constants.CSV_FILE_NAME) or constants.OVERWRITE_CSV:
-        csv_file = open(constants.CSV_FILE_NAME + '.csv', 'w', encoding='utf-8-sig', newline='')
+        csv_file = open(constants.CSV_FILE_NAME, 'w', encoding='utf-8-sig', newline='')
         csv_writer = csv.writer(csv_file)
         csv_writer.writerow(constants.CSV_HEADER)
     else:
