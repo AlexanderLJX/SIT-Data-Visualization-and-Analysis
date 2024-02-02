@@ -18,6 +18,11 @@ import constants
 file_write_lock = threading.Lock()
 file_write_lock_reviews = threading.Lock()
 href_list = []
+# populate href_list with hrefs from csv
+with open(constants.CSV_FILE_NAME, 'r', newline='', encoding='utf-8') as csv_file:
+    csv_reader = csv.reader(csv_file)
+    for row in csv_reader:
+        href_list.append(row[0])
 href_list_lock = threading.Lock()
 
 def convert_relative_time(relative_time):
@@ -684,17 +689,19 @@ def scrape_all_reviews(browser, csv_writer_reviews, number_of_reviews, href):
 
 def get_tab_button(browser, tab_name):
     about_button = None
+    start_time = datetime.now()
     while True:
+        if (datetime.now() - start_time).seconds > 5:
+            break
         try:
             tab_list = browser.find_element(By.CLASS_NAME, 'RWPxGd')
-            buttons = tab_list.find_elements(By.TAG_NAME, 'button')
+            buttons = tab_list.find_elements(By.CLASS_NAME, 'hh2c6')
             for button in buttons:
                 if button.find_element(By.CLASS_NAME, 'Gpq6kf.fontTitleSmall').text == tab_name:
                     about_button = button
             break
         except NoSuchElementException:
             logging.info("NoSuchElementException - No " + tab_name + " tab")
-            break
         except StaleElementReferenceException:
             logging.info("StaleElementReferenceException - No " + tab_name + " tab")
     return about_button
@@ -704,8 +711,6 @@ def get_about_combined(browser, about_button):
     start_time = datetime.now()
     while True:
         try:
-            if (datetime.now() - start_time).seconds > 5:
-                break
             about_button.click()
             # wait till element present
             # WebDriverWait(browser, 4).until(EC.presence_of_element_located((By.CLASS_NAME, 'iP2t7d.fontBodyMedium')))
@@ -713,13 +718,16 @@ def get_about_combined(browser, about_button):
             break
         except NoSuchElementException:
             logging.info("NoSuchElementException - No About tab elements")
-            return about_combined
+            if (datetime.now() - start_time).seconds > 5:
+                return about_combined
         except ElementClickInterceptedException:
             logging.exception("ElementClickInterceptedException - No About tab elements")
-            return about_combined
+            if (datetime.now() - start_time).seconds > 5:
+                return about_combined
         except TimeoutException:
             logging.exception("TimeoutException - No About tab elements")
-            return about_combined
+            if (datetime.now() - start_time).seconds > 5:
+                return about_combined
 
     while True:
         try:
@@ -735,13 +743,12 @@ def get_about_combined(browser, about_button):
 
 
 def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_reviews):
+    global href_list
     url = url  + "+in+" + subzone + ",+" + area + ",+Singapore"
     browser.get(url)
     print(url)
     # wait for the element with class "hfpxzc" to be present
     WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'hfpxzc')))
-    # get all elements with class "hfpxzc"
-    elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
 
     noMoreResults = False
     element_index = 0
@@ -753,24 +760,26 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
         # timer.reset(600)
         # if lesser than 5 elements left, scroll and load more elements
         new_elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
-        if len(elements) - element_index < 10:
+        if len(new_elements) - element_index < 10:
             browser.execute_script("arguments[0].scrollIntoView();", new_elements[-1])
 
         # current_element = get_current_element(browser, elements, element_index)
         new_elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
-        for new_element in new_elements:
-            if new_element not in elements:
-                elements.append(new_element)
-        
-        while len(elements) < element_index + 1:
-            browser.execute_script("arguments[0].scrollIntoView();", elements[-1])
+
+        finish = False
+        scroll_start_time = datetime.now()
+        while len(new_elements) < element_index + 1:
+            if (datetime.now() - scroll_start_time).seconds > constants.SECONDS_TO_WAIT_FOR_SCROLL:
+                finish = True
+                break
             new_elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
-            for new_element in new_elements:
-                if new_element not in elements:
-                    elements.append(new_element)
+            if len(new_elements) >= element_index + 1:
+                break
+            browser.execute_script("arguments[0].scrollIntoView();", new_elements[-1])
+            new_elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
                 
         # get the current element
-        current_element = elements[element_index]
+        current_element = new_elements[element_index]
 
         # Check if the "You've reached the end of the list." message is present
         end_of_list_element = browser.find_elements(By.CLASS_NAME, 'HlvSq')
@@ -780,7 +789,7 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
         
         element_index += 1
         
-        if noMoreResults and element_index == len(elements):
+        if (noMoreResults and element_index >= len(new_elements)) or finish:
             print("Finished scraping all elements")
             break
 
@@ -877,14 +886,18 @@ def scrape_area(area, subzone, csv_writer, csv_writer_reviews):
 
     # Navigate to the Chrome settings page
     browser.get('chrome://settings/')
-    # Execute JavaScript code to set the default zoom level to 60%
+    # Execute JavaScript code to set the default zoom level
     browser.execute_script('chrome.settingsPrivate.setDefaultZoom(0.6);')
 
     # set 10 mins timer to refresh browser
     # timer = ResettableTimer(600, refresh_browser, args=(browser,))
     # timer.start()
-
-    find_targets_in_area(constants.URL + constants.TARGET, area, subzone, browser, csv_writer, csv_writer_reviews)
+    while True:
+        try:
+            find_targets_in_area(constants.URL + constants.TARGET, area, subzone, browser, csv_writer, csv_writer_reviews)
+            break
+        except Exception as e:
+            logging.exception(e)
 
     # delete the timer
     # timer.cancel()
@@ -892,15 +905,27 @@ def scrape_area(area, subzone, csv_writer, csv_writer_reviews):
     browser.quit()
 
 def main():
-    # Create a CSV file and write the header
-    csv_file = open('scraped_data_' + constants.TARGET.replace("+", "_") + '.csv', 'w', encoding='utf-8-sig', newline='')
-    csv_writer = csv.writer(csv_file)
-    csv_writer.writerow(['href', 'Planning Area', 'Subzone', 'Name', 'Search Engine Rating', 'Sponsored', 'Opening Hours', 'Popular Times', 'Average Star Rating', 'Individual Star Rating', 'Reviews', 'Category', 'Price Rating', 'Address', 'Metadata', 'Tags', 'About'])
+    # Create a CSV file and write the header, or open the existing file and append the new data
+    # if the file doesn't exist, create a new file
+    import os
+    if not os.path.isfile(constants.CSV_FILE_NAME):
+        csv_file = open(constants.CSV_FILE_NAME + '.csv', 'w', encoding='utf-8-sig', newline='')
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerow(constants.CSV_HEADER)
+    else:
+        csv_file = open(constants.CSV_FILE_NAME, 'a', encoding='utf-8-sig', newline='')
+        csv_writer = csv.writer(csv_file)
 
-    csv_file_reviews = open('scraped_data_reviews_' + constants.TARGET.replace("+", "_") + '.csv', 'w', encoding='utf-8-sig', newline='')
-    csv_writer_reviews = csv.writer(csv_file_reviews)
-    csv_writer_reviews.writerow(['href of Place', 'Review ID', 'Relavancy Ranking', 'Reviewer href', 'Reviewer Name', 'Local Guide', 'Total Reviews', 'Total Photos', 'Star Rating', 'Date', 'Review', 'Metadata', 'Likes', 'Review Images href'])
-
+    # Create a CSV file and write the header, or open the existing file and append the new data
+    # if the file doesn't exist, create a new file
+    if not os.path.isfile(constants.CSV_REVIEWS_FILE_NAME):
+        csv_file_reviews = open(constants.CSV_REVIEWS_FILE_NAME, 'w', encoding='utf-8-sig', newline='')
+        csv_writer_reviews = csv.writer(csv_file_reviews)
+        csv_writer_reviews.writerow(constants.CSV_REVIEWS_HEADER)
+    else:
+        csv_file_reviews = open(constants.CSV_REVIEWS_FILE_NAME, 'a', encoding='utf-8-sig', newline='')
+        csv_writer_reviews = csv.writer(csv_file_reviews)
+    
     list_of_subzones = []
     list_of_areas = []
     list_of_places = constants.LIST_OF_PLACES

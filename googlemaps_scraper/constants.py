@@ -4,6 +4,10 @@ URL = "https://www.google.com/maps/search/"
 
 TARGET = "food"
 
+CSV_FILE_NAME = 'scraped_data_' + TARGET.replace("+", "_") + '.csv'
+
+CSV_REVIEWS_FILE_NAME = 'scraped_reviews_' + TARGET.replace("+", "_") + '.csv'
+
 MAX_REVIEWS_PER_PLACE = 5
 
 RUN_MULTITHREADED = True
@@ -13,6 +17,18 @@ RUN_HEADLESS = False
 NUM_THREADS = 5
 
 CATEGORY_BLACKLISTED_WORDS = ["island", "temple", "park", "nature preserve", "shopping mall"]
+
+SECONDS_TO_WAIT_FOR_SCROLL = 120
+
+SECONDS_TO_WAIT_FOR_SCROLL_REVIEWS = 10
+
+OVERWRITE_CSV = False
+
+RECHECK_CSV = False
+
+CSV_HEADER = ['href', 'Planning Area', 'Subzone', 'Name', 'Search Engine Rating', 'Sponsored', 'Opening Hours', 'Popular Times', 'Average Star Rating', 'Individual Star Rating', 'Reviews', 'Category', 'Price Rating', 'Address', 'Metadata', 'Tags', 'About']
+
+CSV_REVIEWS_HEADER = ['href of Place', 'Review ID', 'Relavancy Ranking', 'Reviewer href', 'Reviewer Name', 'Local Guide', 'Total Reviews', 'Total Photos', 'Star Rating', 'Date', 'Review', 'Metadata', 'Likes', 'Review Images href']
 
 # scraped from https://en.wikipedia.org/wiki/List_of_places_in_Singapore
 # first key is the region, second key is the planning areas, the values are the subzones

@@ -104,6 +104,8 @@ You can either use the jupyter notebook extension in Visual Studio Code or use t
  - **Date:** The date and time when the review was posted. This is calculated based on the relative time from the current date. Format is a datetime string.
  - **Review:** The text content of the review. Format is a string.
  - **Metadata:** Additional information related to the review, such as ratings for specific aspects like food or service, meal type, price per person, recommended dishes, and atmosphere. This is provided as a list of strings or key-value pairs enclosed in brackets.
+ - **Likes:** The number of likes the review has received. Format is an integer.
+ - **Review Images href:** The URLs to the images attached to the review. Format is a list of strings.
 
  
 
@@ -113,3 +115,5 @@ You can either use the jupyter notebook extension in Visual Studio Code or use t
 https://www.google.com/maps/place/Poulet+-+Bugis%2B/@1.2995798,103.8520492,18z/data=!3m1!5s0x31da19bae819f967:0xb825fcec28837274!4m13!1m3!2m2!1sfood+in+Singapore,+Bencoolen!6e5!3m8!1s0x31da19bae87236f3:0x231d683b4f37b913!8m2!3d1.2995798!4d103.8543023!9m1!1b1!15sChxmb29kIGluIFNpbmdhcG9yZSwgQmVuY29vbGVuWh0iG2Zvb2QgaW4gc2luZ2Fwb3JlIGJlbmNvb2xlbpIBCnJlc3RhdXJhbnTgAQA!16s%2Fg%2F1ptwngs34?entry=ttu
 
 - close the browser and restart scraping area when detected browser out of memory error
+
+- Hotels have a 4th tab that makes the scraper stuck
