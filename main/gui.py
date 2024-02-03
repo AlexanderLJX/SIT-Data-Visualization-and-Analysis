@@ -29,7 +29,7 @@ except Exception as e:
 def plotmap(value1, value2):
     #if value 1 is not empty if filters out the data else it will take the whole dataset
     if value1!='':
-       df_data_filtered = df_data.loc[df_data['Sub Area'] == value1]
+       df_data_filtered = df_data.loc[df_data['Planning Area'] == value1]
     else: 
         df_data_filtered=df_data
    #if value 2 is not empty it filters out the data either from value or it does not 
@@ -62,7 +62,7 @@ unique_cat_list = list(map(str, unique_cat))
 
 
 # find the sub area types in the csv
-unique_Area = df_data['Subzone'].unique()
+unique_Area = df_data['Planning Area'].unique()
 unique_Area_list = list(map(str, unique_Area))
 
 #creating the gui / formatting the layout of the GUI
@@ -129,7 +129,7 @@ while True:
         value1 = values['-OPTION-']
         value2 = values['-OPTION2-']
         if value1!='':
-            filtered_df = df_data.loc[df_data['Sub Area'] == value1]
+            filtered_df = df_data.loc[df_data['Planning Area'] == value1]
         else: 
             filtered_df=df_data
         if value2!= '':
