@@ -101,7 +101,7 @@ while True:
         
     elif event == '-VIEW-DIAGRAMS-':
         # adding the viewing of the dataset diagrams that others supposed to create 
-        print('View Dataset diagrams')
+        sg.popup('View Dataset Diagrams', 'This feature is currently under development.')
 
 
     elif event == '-EXPORT-':
