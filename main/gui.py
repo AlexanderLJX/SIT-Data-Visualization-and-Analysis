@@ -14,15 +14,14 @@ sg.theme('DarkAmber')  # Add a touch of color
 
 # Read data from the file
 try:
-    df = pd.read_csv('main/scraped_data_food.csv')
-    df_data=pd.read_csv('main/modified_data.csv')
+    df_data=pd.read_csv('main/scraped_data_food_full.csv')
 #exception if the file cant be found 
 except FileNotFoundError:
-    print("One or both CSV files could not be found.")
+    print(" CSV file could not be found.")
     exit(1)
 #exception if there are issues reading the csv file
 except Exception as e:
-    print(f"An error occurred while reading the CSV files: {e}")
+    print(f"An error occurred while reading the CSV file: {e}")
     exit(1)
 
 
@@ -109,7 +108,7 @@ while True:
         #exporting the full dataset
         filename = sg.popup_get_file('Select a file to save to', save_as=True, file_types=(("CSV Files", "*.csv"),))
         if filename:
-            df.to_csv(filename, index=False)
+            df_data.to_csv(filename, index=False)
 
 
     elif event == 'Ok' :
