@@ -12,7 +12,7 @@ sg.theme('DarkAmber')  # Add a touch of color
 # Read data from the file
 try:
     df = pd.read_csv('main/scraped_data_food.csv')
-    df_data=pd.read_csv('main/modified_data.csv')
+    df_data=pd.read_csv('main/merged_data.csv')
 except FileNotFoundError:
     print("One or both CSV files could not be found.")
     exit(1)
@@ -55,7 +55,7 @@ unique_cat_list = list(map(str, unique_cat))
 
 
 # find the sub area types in the csv
-unique_Area = df_data['Sub Area'].unique()
+unique_Area = df_data['Subzone'].unique()
 unique_Area_list = list(map(str, unique_Area))
 
 #creatig the gui

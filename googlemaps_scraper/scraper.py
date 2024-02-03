@@ -66,13 +66,6 @@ def get_next_day(day_of_week):
         return "Sunday"
     elif day_of_week == "Sunday":
         return "Monday"
-    
-# def get_current_element(browser, elements, element_index):
-#     # more elements are loaded after scrolling, add the new elements to the list, but only if they are not already in the list
-    
-
-#     return current_element
-
 
 def wait_for_target_popup(element, browser):
     # find the aria-label of the element, which contains the location name
@@ -810,11 +803,6 @@ def find_targets_in_area(url, area, subzone, browser, csv_writer, csv_writer_rev
 
         # get the seo rating of the current element
         seo_rating = element_index
-
-        
-        # print(new_elements[0].get_attribute("href"))
-
-        
 
         # if href is already present in csv
         if href in href_list:

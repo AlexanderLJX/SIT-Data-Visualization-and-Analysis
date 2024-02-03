@@ -1,3 +1,4 @@
+import time
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -5,9 +6,11 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from queue import Queue
 
 # CSV file path
-CSV_FILE_PATH = 'scraped_data_food_processed.csv'
+CSV_FILE_PATH = 'scraped_data_food.csv'
 
-NEW_CSV_FILE_PATH = 'scraped_data_food_processed_coordinates.csv'
+NEW_CSV_FILE_PATH = 'scraped_data_food_coordinates.csv'
+
+NUM_OF_THREADS = 10
 
 from csv import writer
 
@@ -30,14 +33,17 @@ chrome_options = Options()
 prefs = {'profile.default_content_setting_values': {'images':2}}
 chrome_options.add_experimental_option('prefs', prefs)
 chrome_options.add_experimental_option("detach", True)
+# headless mode
+# chrome_options.add_argument("--headless=new")
 
 # Function to scrape data for a single row
-def scrape_data(row, queue):
+def scrape_data(queue):
     global counter
-    coordinates = []
     driver = webdriver.Chrome(options=chrome_options)
-    url = row['href']
+    start_time = time.time()
     while not queue.empty():
+        if time.time() - start_time > 60:
+            break # can't find another way to clear the memeory in the browser
         url = queue.get()
         driver.get(url)
         # Implement the scraping logic here, e.g., extract coordinates
@@ -56,7 +62,7 @@ def scrape_data(row, queue):
                 with lock:
                     csv_writer.writerow([url, lat, lng])
                     counter += 1
-                    print(f"Processed {counter} out of {len(df)} addresses. Latitude: {lat}, Longitude: {lng}")
+                    print(f"Processed {counter} of {len(df)} addresses. Latitude: {lat}, Longitude: {lng}")
                 break
             except Exception as exception:
                 if str(exception) != 'list index out of range':
@@ -73,19 +79,37 @@ futures = []
 
 queue = Queue()
 for index, row in df.iterrows():
-    queue.put(row['href'])
+    # if row doesn't have values in latitude and longitude
+    if pd.isna(row['latitude']) or pd.isna(row['longitude']):
+        queue.put(row['href'])
 
 # Use ThreadPoolExecutor to execute tasks concurrently
-with ThreadPoolExecutor(max_workers=10) as executor:
-    for index, row in df.iterrows():
-        # wait 2 second before starting a new thread
-        import time
-        time.sleep(2)
-        futures.append(executor.submit(scrape_data, row, queue))
+with ThreadPoolExecutor(max_workers=NUM_OF_THREADS) as executor:
+    while not queue.empty():
+        # wait 1 second before starting a new thread
+        time.sleep(1)
+        futures.append(executor.submit(scrape_data, queue))
 
 # Wait for all futures to complete
 for future in as_completed(futures):
     future.result()
 
-# close the writer
-csv_writer.close()
+
+
+# combine the two csv files
+# Load the first CSV file
+df1 = pd.read_csv('scraped_data_food.csv', encoding='utf-8-sig')
+
+# Load the second CSV file
+df2 = pd.read_csv('scraped_data_food_coordinates.csv', encoding='utf-8-sig')
+
+# for each href row in df1 check if the latitute and longitude is empty, if it is add the latitute and longitude from df2 based on the same href
+for index, row in df1.iterrows():
+    if pd.isna(row['latitude']) or pd.isna(row['longitude']):
+        df2_row = df2.loc[df2['href'] == row['href']]
+        if len(df2_row) > 0:
+            df1.loc[index, 'latitude'] = df2_row.iloc[0]['latitude']
+            df1.loc[index, 'longitude'] = df2_row.iloc[0]['longitude']
+
+# Save the merged dataframe to a new CSV file
+df1.to_csv('merged_data.csv', index=False, encoding='utf-8-sig')

@@ -6,7 +6,7 @@ TARGET = "food"
 
 CSV_FILE_NAME = 'scraped_data_' + TARGET.replace("+", "_") + '.csv'
 
-CSV_REVIEWS_FILE_NAME = 'scraped_reviews_' + TARGET.replace("+", "_") + '.csv'
+CSV_REVIEWS_FILE_NAME = 'scraped_data_reviews_' + TARGET.replace("+", "_") + '.csv'
 
 MAX_REVIEWS_PER_PLACE = 5
 
