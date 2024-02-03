@@ -70,27 +70,30 @@ font = ("Arial",11)
 layout = [
     
     [sg.Text('What would you like to do today?', font=font)],
+    [sg.Text()],
     [sg.Text('Choose one of the following options : ', font=font)],
     [],
     [sg.Button('View all food places', key='-VIEW-ALL-', size=(30, 2), pad=(10,10)), sg.Button('View Dataset diagrams', key='-VIEW-DIAGRAMS-', pad=(10,10), size=(30, 2)), sg.Button('Export Dataset', key='-EXPORT-', pad=(10,10), size=(30,2), font=font)],
+    [sg.Text()],
+    [sg.Text('Filter the data and see it on the map : ', font=font)],
     [],
     [sg.Text('Choose the area in Singapore : ', font=font),sg.Combo(values=unique_Area_list, key='-OPTION-', pad=(10,10), size=(30, 20), font=font),sg.Text('Choose the Category of Foodplace : ', font=font),sg.Combo(values=unique_cat_list, key='-OPTION2-', pad=(10,10), size=(30, 20), font=font)],
     [sg.Text( font=font)],
-    [sg.Button('Export Map', key='-EXPORT-MAP-', size=(15, 2),button_color=('white', 'orange'),font=font,border_width=0),sg.Button('Export Filtered Dataset', key='-EXPORT-FILTERED-', size=(20, 2), font=font,button_color=('white', 'orange'),border_width=0)],
+    [sg.Button('Export Map', key='-EXPORT-MAP-', size=(15, 2),font=font,border_width=0),sg.Button('Export Filtered Dataset', key='-EXPORT-FILTERED-', size=(20, 2), font=font,border_width=0),sg.Button('Show on Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),],
     [],
     [sg.Text( font=font)],
-    [sg.Button('Ok', size=(3, 2), font=font,border_width=0), sg.Button('Cancel', size=(6, 2), font=font,border_width=0)],
+    [ sg.Button('Close', size=(6, 2), font=font,border_width=0,button_color=('white', 'maroon'))],
     [],
 ]
 
-window = sg.Window('Foodplaces in Singapore', layout, size=(1000,350),element_justification='center', resizable=True, finalize=True)
+window = sg.Window('Foodplaces in Singapore', layout, size=(1000,400),element_justification='center', resizable=True, finalize=True)
 temp_file_name= None
 
 # Event Loop to process "events" and get the "values" of the inputs
 while True:
     event, values = window.read()
 
-    if event == sg.WIN_CLOSED or event == 'Cancel':
+    if event == sg.WIN_CLOSED or event == 'Close':
         if temp_file_name is not None:
             os.remove(temp_file_name)
         break
@@ -111,7 +114,7 @@ while True:
             df_data.to_csv(filename, index=False)
 
 
-    elif event == 'Ok' :
+    elif event == 'Show on Map' :
         #view the map with the Category of restaurant or the sub area that it is in
         value1 = values['-OPTION-']
         value2 = values['-OPTION2-']
