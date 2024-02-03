@@ -75,7 +75,8 @@ You can either use the jupyter notebook extension in Visual Studio Code or use t
 
 **Restaurants csv:**
  - **href:** Link to the restaurant. Format is a string.
- - **Sub Area:** Sub areas of the 55 Planning Areas in Singapore. Format is a string.
+ - **Planning Area** 1 of the 55 Planning Areas in Singapore. Format is a string
+ - **Subzone:** Subzone of planning area. Format is a string.
  - **Name:** Name of the restaurant. Format is a string.
  - **Search Engine Rating:** 1 means it it the first restaurant that appears in the list when searching that specific area, 2 means it's the second, and so on. Format is an integer.
  - **Sponsored:** Whether the restaurant paid for google advertising. This will probably mean it will be the first to appear in the list, search engine rating 1. Format is a string, either 'Yes' or 'No'.
