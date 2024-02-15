@@ -1,53 +1,68 @@
 
-##################### imported modules ######################
+##################### imported modules #####################
 
 import PySimpleGUI as sg
 import os
 import shutil
-from functions import plotmap , readfile
+from functions import plotmap , readfile , display_window
 
 
 
 df_data=readfile()
 
-
-
-
 #find the catgory types in the csv to use the values to create a dropdown list in the GUI
 unique_cat = df_data['Category'].unique()
 unique_cat_list = list(map(str, unique_cat))
 
-
 # find the sub area types in the csv
 unique_Area = df_data['Planning Area'].unique()
 unique_Area_list = list(map(str, unique_Area))
-
 
 sg.theme('DarkAmber')  # Add a touch of color to the gui
 #creating the gui / formatting the layout of the GUI
 font = ("Arial",11)
 layout = [
     
-    [sg.Text('What would you like to do today?', font=font)],
+    [sg.Text('Filter the data and see it on the map : ', font=("Arial",20))],
     [sg.Text()],
-    [sg.Text('Choose one of the following options : ', font=font)],
-    [],
-    [sg.Button('View all food places', key='-VIEW-ALL-', size=(30, 2), pad=(10,10)), sg.Button('View Dataset diagrams', key='-VIEW-DIAGRAMS-', pad=(10,10), size=(30, 2)), sg.Button('Export Dataset', key='-EXPORT-', pad=(10,10), size=(30,2), font=font)],
-    [sg.Text()],
-    [sg.Text('Filter the data and see it on the map : ', font=font)],
-    [],
-    [sg.Text('Choose the area in Singapore : ', font=font),sg.Combo(values=unique_Area_list, key='-OPTION-', pad=(10,10), size=(30, 20), font=font),sg.Text('Choose the Category of Foodplace : ', font=font),sg.Combo(values=unique_cat_list, key='-OPTION2-', pad=(10,10), size=(30, 20), font=font)],
+    [sg.Text('Area in Singapore : ', font=font),sg.Combo(values=unique_Area_list, key='-OPTION-', pad=(10,10), size=(30, 20), font=font),sg.Text('Category of Foodplace : ', font=font),sg.Combo(values=unique_cat_list, key='-OPTION2-', pad=(10,10), size=(30, 20), font=font)],
     [sg.Text( font=font)],
-    [sg.Button('Export Map', key='-EXPORT-MAP-', size=(15, 2),font=font,border_width=0),sg.Button('Export Filtered Dataset', key='-EXPORT-FILTERED-', size=(20, 2), font=font,border_width=0),sg.Button('Show on Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),],
-    [],
+    [sg.Button('Export Map', key='-EXPORT-MAP-', size=(15, 2),font=font,border_width=0),sg.Button('Export Filtered Dataset', key='-EXPORT-FILTERED-', size=(20, 2), font=font,border_width=0),sg.Button('Show on Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),sg.Button('Export Dataset', key='-EXPORT-', pad=(10,10), size=(15,2), font=font)],
     [sg.Text( font=font)],
-    [ sg.Button('Close', size=(6, 2), font=font,border_width=0,button_color=('white', 'maroon'))],
-    [],
+  
 ]
 
-window = sg.Window('Foodplaces in Singapore', layout, size=(1000,400),element_justification='center', resizable=True, finalize=True)
-temp_file_name= None
 
+layout2 = [
+            
+            [sg.Text('Display datagrams :', font=("Arial", 20))],
+            [sg.Text( )],
+            [sg.Text('Choose the diagram type: ', font=font),sg.Combo(values=["Pie Chart","Bar Graph"], key='-OPTION-', pad=(10,10), size=(30, 20), font=font),sg.Text('Choose the data you would like to view : ', font=font),sg.Combo(values= ["Average Star Rating","Takeaway"] ,key='-OPTION2-', pad=(10,10), size=(30, 20), font=font)],
+            [sg.Text( font=font)],
+            [sg.Button('Show Diagram', key='-SHOW-DIAGRAM-', size=(15, 2), font=font,border_width=0,button_color=('white', 'green'))],
+            [sg.Text( font=font)],
+            
+        ]
+
+
+
+
+
+# Define the tab group with the tabs
+tabgrp = [
+    [sg.TabGroup([
+        [sg.Tab('View Foodplaces', layout, element_justification='center',border_width=0)],
+        [sg.Tab('Data Diagrams', layout2, element_justification='center', border_width=0 )],
+    ], tab_location='centertop')],
+
+    [sg.Button('Close', size=(5,1))]
+]
+
+
+window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1200,350),element_justification='center', resizable=True,no_titlebar=True,grab_anywhere=True, finalize=True)
+
+
+temp_file_name= None
 # Event Loop to process "events" and get the "values" of the inputs
 while True:
     event, values = window.read()
@@ -57,14 +72,12 @@ while True:
             os.remove(temp_file_name)
         break
         
-    if event == '-VIEW-ALL-':
+    elif event == '-VIEW-ALL-':
         #viewing the map without any filters
         temp_file_name=plotmap('','',df_data)
         
     elif event == '-VIEW-DIAGRAMS-':
-        # adding the viewing of the dataset diagrams that others supposed to create 
-        sg.popup('View Dataset Diagrams', 'This feature is currently under development.')
-
+        display_window()
 
     elif event == '-EXPORT-':
         #exporting the full dataset
