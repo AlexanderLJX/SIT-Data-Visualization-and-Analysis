@@ -56,36 +56,6 @@ def plotmap(value1, value2, df_data):
     # Return the name of the temporary file so that we can delete the temp file after the user closes the window
     return tmp.name
 
-
-
-def display_window():
-    #creating the gui / formatting the layout of the GUI
-        
-        font = ("Arial",11)
-        layout = [
-            
-            [sg.Text('Display datagrams', font=("Arial", 20))],
-            [sg.Text( font=("Arial",30))],
-            [sg.Text('Choose the diagram type: ', font=font),sg.Combo(values=["Pie Chart","Bar Graph"], key='-OPTION-', pad=(10,10), size=(30, 20), font=font),sg.Text('Choose the data you would like to view : ', font=font),sg.Combo(values= ["Average Star Rating","Takeaway"] ,key='-OPTION2-', pad=(10,10), size=(30, 20), font=font)],
-            [sg.Text( font=font)],
-            [sg.Button('Show Diagram', key='-SHOW-DIAGRAM-', size=(15, 2), font=font,border_width=0,button_color=('white', 'green'))],
-            [sg.Text( font=font)],
-            [ sg.Button('Close', size=(5, 1), font=font,border_width=0)]
-        ]
-
-        window = sg.Window('Data Diagrams', layout, size=(1000,400),element_justification='center', resizable=True, finalize=True)
-        while True:
-            event, values = window.read()
-            if event == sg.WIN_CLOSED or event == 'Close':
-                break
-            elif event== '-SHOW-DIAGRAM-' and values["-OPTION-"]=="Pie Chart":
-                piechart()
-            elif event== '-SHOW-DIAGRAM-' and values["-OPTION-"]=="Bar Graph":
-                bargraph()
-        
-        # Close the PySimpleGUI window
-        window.close()
-
 def piechart():
     y = np.array([35, 25, 25, 15])
     plt.pie(y)

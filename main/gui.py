@@ -4,7 +4,7 @@
 import PySimpleGUI as sg
 import os
 import shutil
-from functions import plotmap , readfile , display_window
+from functions import plotmap , readfile ,piechart,bargraph
 
 
 
@@ -21,23 +21,24 @@ unique_Area_list = list(map(str, unique_Area))
 sg.theme('DarkAmber')  # Add a touch of color to the gui
 #creating the gui / formatting the layout of the GUI
 font = ("Arial",11)
+
+#layout of the first tab
 layout = [
     
     [sg.Text('Filter the data and see it on the map : ', font=("Arial",20))],
     [sg.Text()],
     [sg.Text('Area in Singapore : ', font=font),sg.Combo(values=unique_Area_list, key='-OPTION-', pad=(10,10), size=(30, 20), font=font),sg.Text('Category of Foodplace : ', font=font),sg.Combo(values=unique_cat_list, key='-OPTION2-', pad=(10,10), size=(30, 20), font=font)],
     [sg.Text( font=font)],
-    [sg.Button('Export Map', key='-EXPORT-MAP-', size=(15, 2),font=font,border_width=0),sg.Button('Export Filtered Dataset', key='-EXPORT-FILTERED-', size=(20, 2), font=font,border_width=0),sg.Button('Show on Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),sg.Button('Export Dataset', key='-EXPORT-', pad=(10,10), size=(15,2), font=font)],
+    [sg.Button('Export Map', key='-EXPORT-MAP-', size=(15, 2),font=font,border_width=0),sg.Button('Export Filtered Dataset', key='-EXPORT-FILTERED-', size=(20, 2), font=font,border_width=0),sg.Button('Export Entire Dataset', key='-EXPORT-', pad=(10,10), size=(20,2), font=font),sg.Button('Show on Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green'))],
     [sg.Text( font=font)],
   
 ]
 
-
+#layout of the second tab 
 layout2 = [
-            
             [sg.Text('Display datagrams :', font=("Arial", 20))],
             [sg.Text( )],
-            [sg.Text('Choose the diagram type: ', font=font),sg.Combo(values=["Pie Chart","Bar Graph"], key='-OPTION-', pad=(10,10), size=(30, 20), font=font),sg.Text('Choose the data you would like to view : ', font=font),sg.Combo(values= ["Average Star Rating","Takeaway"] ,key='-OPTION2-', pad=(10,10), size=(30, 20), font=font)],
+            [sg.Text('Choose the diagram type: ', font=font),sg.Combo(values=["Pie Chart","Bar Graph"], key='-OPTION3-', pad=(10,10), size=(30, 20), font=font),sg.Text('Choose the data you would like to view : ', font=font),sg.Combo(values= ["Average Star Rating","Takeaway"] ,key='-OPTION4-', pad=(10,10), size=(30, 20), font=font)],
             [sg.Text( font=font)],
             [sg.Button('Show Diagram', key='-SHOW-DIAGRAM-', size=(15, 2), font=font,border_width=0,button_color=('white', 'green'))],
             [sg.Text( font=font)],
@@ -54,7 +55,7 @@ tabgrp = [
         [sg.Tab('View Foodplaces', layout, element_justification='center',border_width=0)],
         [sg.Tab('Data Diagrams', layout2, element_justification='center', border_width=0 )],
     ], tab_location='centertop')],
-
+    [sg.Text( font=font)],
     [sg.Button('Close', size=(5,1))]
 ]
 
@@ -76,8 +77,10 @@ while True:
         #viewing the map without any filters
         temp_file_name=plotmap('','',df_data)
         
-    elif event == '-VIEW-DIAGRAMS-':
-        display_window()
+    elif event== '-SHOW-DIAGRAM-' and values["-OPTION3-"]=="Pie Chart":
+        piechart()
+    elif event== '-SHOW-DIAGRAM-' and values["-OPTION3-"]=="Bar Graph":
+        bargraph()
 
     elif event == '-EXPORT-':
         #exporting the full dataset
