@@ -37,7 +37,7 @@ layout = [
     [sg.Text( font=font)],
     [sg.Button('Export Map', key='-EXPORT-MAP-', size=(15, 2),font=font,border_width=0),sg.Button('Export Filtered Dataset', key='-EXPORT-FILTERED-', size=(20, 2), font=font,border_width=0),sg.Button('Export Entire Dataset', key='-EXPORT-', pad=(10,10), size=(20,2), font=font),sg.Button('Show on Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green'))],
     # add map status
-    [sg.Text('Map Status: ', font=font), sg.Text('', key='-MAP-STATUS-', font=font)],
+    [sg.Text('Status: ', font=font), sg.Text('', key='-MAP-STATUS-', font=font)],
     [sg.Text( font=font)],
   
 ]
@@ -83,7 +83,7 @@ while True:
 
     elif event == '-EXPORT-':
         #exporting the full dataset
-        filename = sg.popup_get_file('Select a file to save to', save_as=True, file_types=(("CSV Files", "*.csv")))
+        filename = sg.popup_get_file('Select a file to save to', save_as=True, file_types=(('CSV Files', '*.csv'),))
         if filename:
             df_data.to_csv(filename, index=False)
 
@@ -105,24 +105,34 @@ while True:
             destination = sg.popup_get_file('Select a file to save the map HTML', save_as=True, file_types=(("HTML Files", "*.html"),))
             if destination:
                 shutil.copy(temp_file_name, destination)
+        else :
+            # Update GUI to show "generating..." message
+            window['-MAP-STATUS-'].update('No Map generated before export')
 
     elif event == '-EXPORT-FILTERED-':
-        #exporting of the filtered dataset
         value1 = values['-OPTION-']
         value2 = values['-OPTION2-']
-        if value1!='':
-            filtered_df = df_data.loc[df_data['Planning Area'] == value1]
-        else: 
-            filtered_df=df_data
-        if value2!= '':
-            filtered_df = filtered_df.loc[filtered_df['Category'] == value2]
-        else :
-            filtered_df=filtered_df
-        if value1!='' or value2!='': 
-            destination = sg.popup_get_file('Select a file to save the filtered dataset CSV', save_as=True, file_types=(("CSV Files", "*.csv"),))
+    
+    # If there are any selected areas or categories, filter the dataframe accordingly
+        if value1 or value2:
+            # Use the 'isin' method to filter based on multiple values
+            if value1:
+                filtered_df = df_data.loc[df_data['Planning Area'].isin(value1)]
+            else:
+                filtered_df = df_data
+
+            if value2:
+                # If value2 is not empty, filter by category
+                filtered_df = filtered_df.loc[filtered_df['Category'].isin(value2)]
+
+            # Save the filtered dataframe to a CSV file
+            destination = sg.popup_get_file('Select a file to save the filtered dataset CSV', save_as=True, file_types=(('CSV Files', '*.csv'),))
             if destination:
                 filtered_df.to_csv(destination, index=False)
-
+        else :
+            # Update GUI to show  message
+            window['-MAP-STATUS-'].update('No Filtered Applied')
+        
 
 
 
