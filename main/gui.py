@@ -63,16 +63,20 @@ layout = [
     [sg.Text()],
     [
         # add text for the description of the input box
-        sg.Text('Filter: ', font=font),
+        sg.Text('JSON Filter: ', font=font),
         # add a text box for a user query input
         sg.InputText(default_text='', key='-FILTER-')
     ],
     [sg.Text()],
     [
         sg.Text('Area in Singapore : ', font=font),
-        sg.Combo(values=unique_Area_list, key='-OPTION-', pad=(10,10), size=(30, 20), font=font),
-        sg.Text('Category of Foodplace : ', font=font),
-        sg.Combo(values=unique_cat_list, key='-OPTION2-', pad=(10,10), size=(30, 20), font=font)
+        sg.Text(size=(16, 2)),
+        sg.Text('Category of Foodplace : ', font=font)
+    ],
+    [
+        sg.Listbox(unique_Area_list, size=(20,10), select_mode='multiple', key='-OPTION-'),
+        sg.Text(size=(14, 2)),
+        sg.Listbox(values=unique_cat_list, size=(20,10), select_mode='multiple', key='-OPTION2-')
     ],
     [sg.Text( font=font)],
     [
@@ -117,8 +121,7 @@ tabgrp = [
 ]
 
 
-window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1200,550),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
-window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1200,550),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
+window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1200,650),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
 
 
 temp_file_name= None
