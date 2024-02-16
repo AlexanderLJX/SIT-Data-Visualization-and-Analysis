@@ -4,16 +4,36 @@
 import PySimpleGUI as sg
 import os
 import shutil
-from functions import plotmap , readfile ,piechart,bargraph
+from functions import readfile, piechart, bargraph, filter_df, filter_df_json, plotmap, plotmap_3d, plotmap_with_animation
 import threading
+from gpt import generate_filter
+from data_visualizer import plot_distribution, plot_hexbin, plot_linear_regression
 
-def generate_map_thread(window, value1, value2, df_data):
+# long-running function
+def generate_map_thread(window, df_data, plot_function, filter_json):
     global temp_file_name
-    temp_file_name = plotmap(value1, value2, df_data)  # Call your long-running function
+    if filter_json is not None and filter_json != "":
+        filtered_df = filter_df_json(filter_json, df_data)
+    else:
+        filtered_df = filter_df(planning_area, category, df_data)
+    
+    if plot_function == "plotmap_3d":
+        temp_file_name = plotmap_3d(filtered_df)
+    elif plot_function == "plotmap_with_animation":
+        temp_file_name = plotmap_with_animation(filtered_df)
+    else: # else is plotmap
+        temp_file_name = plotmap(filtered_df)  
+
     window.write_event_value('-MAP-GENERATED-', None)  # Signal the GUI thread that the task is done
+
+def generate_filter_thread(window, query):
+    filter_json = generate_filter(query)
+    # Update the GUI with the generated filter
+    window.write_event_value('-FILTER-GENERATED-', filter_json)  # Signal the GUI thread that the task is done
 
 
 df_data=readfile()
+filter_json = None
 
 #find the catgory types in the csv to use the values to create a dropdown list in the GUI
 unique_cat = df_data['Category'].unique()
@@ -32,20 +52,54 @@ layout = [
     
     [sg.Text('Filter the data and see it on the map : ', font=("Arial",20))],
     [sg.Text()],
-    [sg.Text('Area in Singapore : ', font=font),sg.Combo(values=unique_Area_list, key='-OPTION-', pad=(10,10), size=(30, 20), font=font),sg.Text('Category of Foodplace : ', font=font),sg.Combo(values=unique_cat_list, key='-OPTION2-', pad=(10,10), size=(30, 20), font=font)],
+    [
+        # add text for the description of the input box
+        sg.Text('Natural Language query: ', font=font),
+        # add a text box for a user query input
+        sg.InputText(default_text='Filter out restaurants that are not LGBTQ!', key='-USER-QUERY-', font=font),
+        # add a button to submit the query
+        sg.Button('Generate', key='-SUBMIT-QUERY-', size=(10, 1), font=font,border_width=0),
+    ],
+    [sg.Text()],
+    [
+        # add text for the description of the input box
+        sg.Text('Filter: ', font=font),
+        # add a text box for a user query input
+        sg.InputText(default_text='', key='-FILTER-')
+    ],
+    [sg.Text()],
+    [
+        sg.Text('Area in Singapore : ', font=font),
+        sg.Combo(values=unique_Area_list, key='-OPTION-', pad=(10,10), size=(30, 20), font=font),
+        sg.Text('Category of Foodplace : ', font=font),
+        sg.Combo(values=unique_cat_list, key='-OPTION2-', pad=(10,10), size=(30, 20), font=font)
+    ],
     [sg.Text( font=font)],
-    [sg.Button('Export Map', key='-EXPORT-MAP-', size=(15, 2),font=font,border_width=0),sg.Button('Export Filtered Dataset', key='-EXPORT-FILTERED-', size=(20, 2), font=font,border_width=0),sg.Button('Export Entire Dataset', key='-EXPORT-', pad=(10,10), size=(20,2), font=font),sg.Button('Show on Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green'))],
+    [
+        sg.Button('Export Map', key='-EXPORT-MAP-', size=(15, 2),font=font,border_width=0), 
+        sg.Button('Export Filtered Dataset', key='-EXPORT-FILTERED-', size=(20, 2), font=font,border_width=0),
+        sg.Button('Export Entire Dataset', key='-EXPORT-', pad=(10,10), size=(20,2), font=font),
+    ],
+    [
+        sg.Button('Show on Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
+        sg.Button('Show on 3D Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
+        sg.Button('Show on Animated Map', size=(20, 2), font=font,border_width=0,button_color=('white', 'green')),
+    ],
     # add map status
-    [sg.Text('Map Status: ', font=font), sg.Text('', key='-MAP-STATUS-', font=font)],
+    [sg.Text('', key='-STATUS-', font=font)],
     [sg.Text( font=font)],
-  
 ]
 
 #layout of the second tab 
 layout2 = [
             [sg.Text('Display datagrams :', font=("Arial", 20))],
             [sg.Text( )],
-            [sg.Text('Choose the diagram type: ', font=font),sg.Combo(values=["Pie Chart","Bar Graph"], key='-OPTION3-', pad=(10,10), size=(30, 20), font=font),sg.Text('Choose the data you would like to view : ', font=font),sg.Combo(values= ["Average Star Rating","Takeaway"] ,key='-OPTION4-', pad=(10,10), size=(30, 20), font=font)],
+            [
+                sg.Text('Choose the diagram type: ', font=font),
+                sg.Combo(values=["Pie Chart","Bar Graph"], key='-OPTION3-', pad=(10,10), size=(30, 20), font=font),
+                sg.Text('Choose the data you would like to view : ', font=font),
+                sg.Combo(values= ["Average Star Rating","Takeaway"] ,key='-OPTION4-', pad=(10,10), size=(30, 20), font=font)
+            ],
             [sg.Text( font=font)],
             [sg.Button('Show Diagram', key='-SHOW-DIAGRAM-', size=(15, 2), font=font,border_width=0,button_color=('white', 'green'))],
             [sg.Text( font=font)],
@@ -67,7 +121,7 @@ tabgrp = [
 ]
 
 
-window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1200,350),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
+window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1200,550),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
 
 
 temp_file_name= None
@@ -87,34 +141,78 @@ while True:
     elif event== '-SHOW-DIAGRAM-' and values["-OPTION3-"]=="Pie Chart":
         piechart()
     elif event== '-SHOW-DIAGRAM-' and values["-OPTION3-"]=="Bar Graph":
-        bargraph()
+        plot_distribution(values["-OPTION4-"],df_data)
 
     elif event == '-EXPORT-':
-        #exporting the full dataset
+        # exporting the full dataset
         filename = sg.popup_get_file('Select a file to save to', save_as=True, file_types=(("CSV Files", "*.csv"),))
         if filename:
             df_data.to_csv(filename, index=False)
 
+    elif event == '-SUBMIT-QUERY-':
+        # Update GUI to show "generating..." message
+        window['-STATUS-'].update('Generating filter...')
+        # view the map with the Category of restaurant or the sub area that it is in
+        query = values['-USER-QUERY-']
+        threading.Thread(target=generate_filter_thread, args=(window, query), daemon=True).start()
+
+    elif event == '-FILTER-GENERATED-':
+        # Update the -FILTER- text box with the generated filter
+        filter_json = values[event]  # This accesses the event value for '-FILTER-GENERATED-'
+        if filter_json is not None:
+            window['-FILTER-'].update(filter_json)
+        # Update GUI after the filter is generated, e.g., display a message or update the map view
+        window['-STATUS-'].update('Filter generated successfully!')
+
 
     elif event == 'Show on Map' :
         # Update GUI to show "generating..." message
-        window['-MAP-STATUS-'].update('Generating...')
-        #view the map with the Category of restaurant or the sub area that it is in
-        value1 = values['-OPTION-']
-        value2 = values['-OPTION2-']
-        # temp_file_name = plotmap(value1,value2,df_data)
-        threading.Thread(target=generate_map_thread, args=(window, value1, value2, df_data), daemon=True).start()
+        window['-STATUS-'].update('Generating...')
+        # view the map with the Category of restaurant or the sub area that it is in
+        planning_area = values['-OPTION-']
+        category = values['-OPTION2-']
+        # get text in the filter box -FILTER-
+        filter_json = values['-FILTER-']
+        threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap", filter_json), daemon=True).start()
+
+    elif event == 'Show on 3D Map' :
+        # Update GUI to show "generating..." message
+        window['-STATUS-'].update('Generating...')
+        # view the map with the Category of restaurant or the sub area that it is in
+        planning_area = values['-OPTION-']
+        category = values['-OPTION2-']
+        # get text in the filter box -FILTER-
+        filter_json = values['-FILTER-']
+        threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap_3d", filter_json), daemon=True).start()
+    
+    elif event == 'Show on Animated Map' :
+        # Update GUI to show "generating..." message
+        window['-STATUS-'].update('Generating...')
+        # view the map with the Category of restaurant or the sub area that it is in
+        planning_area = values['-OPTION-']
+        category = values['-OPTION2-']
+        # get text in the filter box -FILTER-
+        filter_json = values['-FILTER-']
+        threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap_with_animation", filter_json), daemon=True).start()
 
     elif event == '-MAP-GENERATED-':
         # Update GUI after the map is generated, e.g., display a message or update the map view
-        window['-MAP-STATUS-'].update('Map generated successfully!')
+        window['-STATUS-'].update('Map generated successfully!')
     
     elif event == '-EXPORT-MAP-':
-        #exporting of the map 
+        #exporting of the map
         if temp_file_name is not None:
             destination = sg.popup_get_file('Select a file to save the map HTML', save_as=True, file_types=(("HTML Files", "*.html"),))
             if destination:
                 shutil.copy(temp_file_name, destination)
+                # set status
+                window['-STATUS-'].update('Map exported successfully!')
+            else:
+                # set status to error
+                window['-STATUS-'].update('Error: No file selected')
+        else:
+            # set status to error
+            window['-STATUS-'].update('Error: Map not generated yet!')
 
     elif event == '-EXPORT-FILTERED-':
         #exporting of the filtered dataset
@@ -132,6 +230,8 @@ while True:
             destination = sg.popup_get_file('Select a file to save the filtered dataset CSV', save_as=True, file_types=(("CSV Files", "*.csv"),))
             if destination:
                 filtered_df.to_csv(destination, index=False)
+        else:
+            window['-STATUS-'].update('Error: No filters applied')
         
 
 
