@@ -93,7 +93,6 @@ while True:
         #view the map with the Category of restaurant or the sub area that it is in
         value1 = values['-OPTION-']
         value2 = values['-OPTION2-']
-        print(value1,value2)
         threading.Thread(target=generate_map_thread, args=(window, value1, value2, df_data), daemon=True).start()
 
     elif event == '-MAP-GENERATED-':
