@@ -32,7 +32,8 @@ layout = [
     
     [sg.Text('Filter the data and see it on the map : ', font=("Arial",20))],
     [sg.Text()],
-    [sg.Text('Area in Singapore : ', font=font),sg.Combo(values=unique_Area_list, key='-OPTION-', pad=(10,10), size=(30, 20), font=font),sg.Text('Category of Foodplace : ', font=font),sg.Combo(values=unique_cat_list, key='-OPTION2-', pad=(10,10), size=(30, 20), font=font)],
+    [sg.Text('Area in Singapore : ', font=font),sg.Text(size=(16, 2)),sg.Text('Category of Foodplace : ', font=font)],
+    [sg.Listbox(unique_Area_list, size=(20,10), select_mode='multiple', key='-OPTION-'),sg.Text(size=(14, 2)),sg.Listbox(values=unique_cat_list, size=(20,10), select_mode='multiple', key='-OPTION2-')],
     [sg.Text( font=font)],
     [sg.Button('Export Map', key='-EXPORT-MAP-', size=(15, 2),font=font,border_width=0),sg.Button('Export Filtered Dataset', key='-EXPORT-FILTERED-', size=(20, 2), font=font,border_width=0),sg.Button('Export Entire Dataset', key='-EXPORT-', pad=(10,10), size=(20,2), font=font),sg.Button('Show on Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green'))],
     # add map status
@@ -52,10 +53,6 @@ layout2 = [
             
         ]
 
-
-
-
-
 # Define the tab group with the tabs
 tabgrp = [
     [sg.TabGroup([
@@ -67,7 +64,7 @@ tabgrp = [
 ]
 
 
-window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1200,350),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
+window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1200,550),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
 
 
 temp_file_name= None
@@ -79,22 +76,16 @@ while True:
         if temp_file_name is not None:
             os.remove(temp_file_name)
         break
-        
+    
     elif event == '-VIEW-ALL-':
         #viewing the map without any filters
         temp_file_name=plotmap('','',df_data)
-        
-    elif event== '-SHOW-DIAGRAM-' and values["-OPTION3-"]=="Pie Chart":
-        piechart()
-    elif event== '-SHOW-DIAGRAM-' and values["-OPTION3-"]=="Bar Graph":
-        bargraph()
 
     elif event == '-EXPORT-':
         #exporting the full dataset
-        filename = sg.popup_get_file('Select a file to save to', save_as=True, file_types=(("CSV Files", "*.csv"),))
+        filename = sg.popup_get_file('Select a file to save to', save_as=True, file_types=(("CSV Files", "*.csv")))
         if filename:
             df_data.to_csv(filename, index=False)
-
 
     elif event == 'Show on Map' :
         # Update GUI to show "generating..." message
@@ -102,7 +93,7 @@ while True:
         #view the map with the Category of restaurant or the sub area that it is in
         value1 = values['-OPTION-']
         value2 = values['-OPTION2-']
-        # temp_file_name = plotmap(value1,value2,df_data)
+        print(value1,value2)
         threading.Thread(target=generate_map_thread, args=(window, value1, value2, df_data), daemon=True).start()
 
     elif event == '-MAP-GENERATED-':
@@ -132,7 +123,14 @@ while True:
             destination = sg.popup_get_file('Select a file to save the filtered dataset CSV', save_as=True, file_types=(("CSV Files", "*.csv"),))
             if destination:
                 filtered_df.to_csv(destination, index=False)
-        
+
+
+
+
+    elif event== '-SHOW-DIAGRAM-' and values["-OPTION3-"]=="Pie Chart":
+        piechart()
+    elif event== '-SHOW-DIAGRAM-' and values["-OPTION3-"]=="Bar Graph":
+        bargraph()   
 
 
 # Close the PySimpleGUI window

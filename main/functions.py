@@ -29,16 +29,13 @@ def readfile():
 
 #defining a function to plot the locations on the map
 def plotmap(value1, value2, df_data):
-    #if value 1 is not empty if filters out the data else it will take the whole dataset
-    if value1!='':
-       df_data_filtered = df_data.loc[df_data['Planning Area'] == value1]
-    else: 
-        df_data_filtered=df_data
-   #if value 2 is not empty it filters out the data either from value or it does not 
-    if value2 != '':
-        df_data_filtered = df_data_filtered.loc[df_data_filtered['Category'] == value2]
-    else :
-        df_data_filtered=df_data_filtered
+    if value1:  # If value1 is not empty, it contains a list of selected areas
+        df_data_filtered = df_data.loc[df_data['Planning Area'].isin(value1)]
+    else:
+        df_data_filtered = df_data
+
+    if value2:  # If value2 is not empty, it contains a list of selected categories
+        df_data_filtered = df_data_filtered.loc[df_data_filtered['Category'].isin(value2)]
     #setting the map and the geo location that we want the users to focus on (e.g. Singapore) by using SG coordininates
     m=folium.Map(location=[1.287953, 103.851784],zoom_start=12,prefer_canvas=True)
     #getting the coordinates from the data set then adding the markers
