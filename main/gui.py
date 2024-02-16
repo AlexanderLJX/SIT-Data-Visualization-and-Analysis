@@ -106,10 +106,6 @@ layout2 = [
             
         ]
 
-
-
-
-
 # Define the tab group with the tabs
 tabgrp = [
     [sg.TabGroup([
@@ -122,6 +118,7 @@ tabgrp = [
 
 
 window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1200,550),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
+window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1200,550),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
 
 
 temp_file_name= None
@@ -133,7 +130,7 @@ while True:
         if temp_file_name is not None:
             os.remove(temp_file_name)
         break
-        
+    
     elif event == '-VIEW-ALL-':
         #viewing the map without any filters
         temp_file_name=plotmap('','',df_data)
@@ -215,19 +212,23 @@ while True:
             window['-STATUS-'].update('Error: Map not generated yet!')
 
     elif event == '-EXPORT-FILTERED-':
-        #exporting of the filtered dataset
         value1 = values['-OPTION-']
         value2 = values['-OPTION2-']
-        if value1!='':
-            filtered_df = df_data.loc[df_data['Planning Area'] == value1]
-        else: 
-            filtered_df=df_data
-        if value2!= '':
-            filtered_df = filtered_df.loc[filtered_df['Category'] == value2]
-        else :
-            filtered_df=filtered_df
-        if value1!='' or value2!='': 
-            destination = sg.popup_get_file('Select a file to save the filtered dataset CSV', save_as=True, file_types=(("CSV Files", "*.csv"),))
+    
+    # If there are any selected areas or categories, filter the dataframe accordingly
+        if value1 or value2:
+            # Use the 'isin' method to filter based on multiple values
+            if value1:
+                filtered_df = df_data.loc[df_data['Planning Area'].isin(value1)]
+            else:
+                filtered_df = df_data
+
+            if value2:
+                # If value2 is not empty, filter by category
+                filtered_df = filtered_df.loc[filtered_df['Category'].isin(value2)]
+
+            # Save the filtered dataframe to a CSV file
+            destination = sg.popup_get_file('Select a file to save the filtered dataset CSV', save_as=True, file_types=(('CSV Files', '*.csv'),))
             if destination:
                 filtered_df.to_csv(destination, index=False)
         else:
