@@ -28,13 +28,13 @@ def readfile():
         exit(1)
     
 def filter_df(planning_area, category, df_data):
-    if planning_area != '':
-        df_data_filtered = df_data[df_data['Planning Area'] == planning_area]
+    if planning_area != '' and planning_area != []:
+        df_data_filtered = df_data[df_data['Planning Area'] == planning_area[0]]
     else:
         df_data_filtered = df_data
 
-    if category != '':
-        df_data_filtered = df_data_filtered[df_data_filtered['Category'] == category]
+    if category != '' and category != []:
+        df_data_filtered = df_data_filtered[df_data_filtered['Category'] == category[0]]
 
     return df_data_filtered
 

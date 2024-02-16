@@ -10,7 +10,7 @@ from gpt import generate_filter
 from data_visualizer import plot_distribution, plot_hexbin, plot_linear_regression
 
 # long-running function
-def generate_map_thread(window, df_data, plot_function, filter_json):
+def generate_map_thread(window, df_data, plot_function, planning_area, category, filter_json):
     global temp_file_name
     if filter_json is not None and filter_json != "":
         filtered_df = filter_df_json(filter_json, df_data)
@@ -173,7 +173,7 @@ while True:
         category = values['-OPTION2-']
         # get text in the filter box -FILTER-
         filter_json = values['-FILTER-']
-        threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap", filter_json), daemon=True).start()
+        threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap", planning_area, category, filter_json), daemon=True).start()
 
     elif event == 'Show on 3D Map' :
         # Update GUI to show "generating..." message
@@ -183,7 +183,7 @@ while True:
         category = values['-OPTION2-']
         # get text in the filter box -FILTER-
         filter_json = values['-FILTER-']
-        threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap_3d", filter_json), daemon=True).start()
+        threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap_3d", planning_area, category, filter_json), daemon=True).start()
     
     elif event == 'Show on Animated Map' :
         # Update GUI to show "generating..." message
@@ -193,7 +193,7 @@ while True:
         category = values['-OPTION2-']
         # get text in the filter box -FILTER-
         filter_json = values['-FILTER-']
-        threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap_with_animation", filter_json), daemon=True).start()
+        threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap_with_animation", planning_area, category, filter_json), daemon=True).start()
 
     elif event == '-MAP-GENERATED-':
         # Update GUI after the map is generated, e.g., display a message or update the map view
