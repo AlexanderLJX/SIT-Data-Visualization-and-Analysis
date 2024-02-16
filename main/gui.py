@@ -5,7 +5,12 @@ import PySimpleGUI as sg
 import os
 import shutil
 from functions import plotmap , readfile ,piechart,bargraph
+import threading
 
+def generate_map_thread(window, value1, value2, df_data):
+    global temp_file_name
+    temp_file_name = plotmap(value1, value2, df_data)  # Call your long-running function
+    window.write_event_value('-MAP-GENERATED-', None)  # Signal the GUI thread that the task is done
 
 
 df_data=readfile()
@@ -30,6 +35,8 @@ layout = [
     [sg.Text('Area in Singapore : ', font=font),sg.Combo(values=unique_Area_list, key='-OPTION-', pad=(10,10), size=(30, 20), font=font),sg.Text('Category of Foodplace : ', font=font),sg.Combo(values=unique_cat_list, key='-OPTION2-', pad=(10,10), size=(30, 20), font=font)],
     [sg.Text( font=font)],
     [sg.Button('Export Map', key='-EXPORT-MAP-', size=(15, 2),font=font,border_width=0),sg.Button('Export Filtered Dataset', key='-EXPORT-FILTERED-', size=(20, 2), font=font,border_width=0),sg.Button('Export Entire Dataset', key='-EXPORT-', pad=(10,10), size=(20,2), font=font),sg.Button('Show on Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green'))],
+    # add map status
+    [sg.Text('Map Status: ', font=font), sg.Text('', key='-MAP-STATUS-', font=font)],
     [sg.Text( font=font)],
   
 ]
@@ -60,7 +67,7 @@ tabgrp = [
 ]
 
 
-window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1200,350),element_justification='center', resizable=True,no_titlebar=True,grab_anywhere=True, finalize=True)
+window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1200,350),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
 
 
 temp_file_name= None
@@ -90,11 +97,17 @@ while True:
 
 
     elif event == 'Show on Map' :
+        # Update GUI to show "generating..." message
+        window['-MAP-STATUS-'].update('Generating...')
         #view the map with the Category of restaurant or the sub area that it is in
         value1 = values['-OPTION-']
         value2 = values['-OPTION2-']
-        temp_file_name = plotmap(value1,value2,df_data)
+        # temp_file_name = plotmap(value1,value2,df_data)
+        threading.Thread(target=generate_map_thread, args=(window, value1, value2, df_data), daemon=True).start()
 
+    elif event == '-MAP-GENERATED-':
+        # Update GUI after the map is generated, e.g., display a message or update the map view
+        window['-MAP-STATUS-'].update('Map generated successfully!')
     
     elif event == '-EXPORT-MAP-':
         #exporting of the map 
