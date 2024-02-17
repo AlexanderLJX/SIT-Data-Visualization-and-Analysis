@@ -10,7 +10,7 @@ from gpt import generate_filter
 from data_visualizer import plot_distribution, plot_hexbin, plot_linear_regression
 
 # long-running function
-def generate_map_thread(window,value3, df_data, plot_function, planning_area, category, filter_json):
+def generate_map_thread(window, df_data, plot_function, planning_area, category, filter_json):
     global temp_file_name
     if filter_json is not None and filter_json != "":
         filtered_df = filter_df_json(filter_json, df_data)
