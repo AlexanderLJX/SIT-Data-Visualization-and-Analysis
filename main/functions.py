@@ -7,7 +7,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pydeck as pdk
-from folium.plugins import HeatMap
+from folium.plugins import HeatMapWithTime
 from folium.plugins import TimestampedGeoJson
 import json
 import ast
@@ -15,7 +15,7 @@ import ast
 # defining datas
 def readfile():
     try:
-        df_data=pd.read_csv('main/scraped_data_food_full_processed.csv')
+        df_data=pd.read_csv('main/main.csv')
         return df_data
     #exception if the file cant be found 
     except FileNotFoundError:
@@ -191,6 +191,36 @@ def plotmap_with_animation(df):
         date_options='HH:mm:ss',
         time_slider_drag_update=True
     ).add_to(m)
+    
+    # Save and open the map
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as tmp:
+        m.save(tmp.name)
+        webbrowser.open("file://" + os.path.realpath(tmp.name))
+    
+    return tmp.name
+
+def plotmap_with_heat(df):  
+    # Convert 'First Opening Time' to datetime and then to string
+    df['First Opening Time'] = pd.to_datetime(df['First Opening Time']).dt.strftime('%Y-%m-%dT%H:%M:%S')
+    
+    # Drop rows with NaN values
+    df = df.dropna(subset=['latitude', 'longitude', 'First Opening Time'])
+    
+    
+    # Sort by 'First Opening Time'
+    df['First Opening Time'] = pd.to_datetime(df['First Opening Time']).sort_values(ascending=True)
+    
+    # Group by 'First Opening Time' and create data for HeatMapWithTime
+    data = []
+    for _, d in df.groupby('First Opening Time'):
+        data.append([[row['latitude'], row['longitude'], 1] for _, row in d.iterrows()])
+    
+    # Create map
+    m = folium.Map(location=[1.287953,  103.851784], zoom_start=12)
+    
+    # Add HeatMapWithTime plugin
+    hm = HeatMapWithTime(data, auto_play=True, max_opacity=0.8)
+    hm.add_to(m)
     
     # Save and open the map
     with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as tmp:
