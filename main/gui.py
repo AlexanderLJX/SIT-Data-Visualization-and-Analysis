@@ -7,9 +7,9 @@ import shutil
 from functions import plotmap , readfile ,piechart,bargraph
 import threading
 
-def generate_map_thread(window, value1, value2, df_data):
+def generate_map_thread(window, value1, value2,value3, df_data):
     global temp_file_name
-    temp_file_name = plotmap(value1, value2, df_data)  # Call your long-running function
+    temp_file_name = plotmap(value1, value2,value3, df_data)  # Call your long-running function
     window.write_event_value('-MAP-GENERATED-', None)  # Signal the GUI thread that the task is done
 
 
@@ -32,8 +32,8 @@ layout = [
     
     [sg.Text('Filter the data and see it on the map : ', font=("Arial",20))],
     [sg.Text()],
-    [sg.Text('Area in Singapore : ', font=font),sg.Text(size=(16, 2)),sg.Text('Category of Foodplace : ', font=font)],
-    [sg.Listbox(unique_Area_list, size=(20,10), select_mode='multiple', key='-OPTION-'),sg.Text(size=(14, 2)),sg.Listbox(values=unique_cat_list, size=(20,10), select_mode='multiple', key='-OPTION2-')],
+    [sg.Text('Area in Singapore : ', font=font),sg.Text(size=(8)),sg.Text('Category of Foodplace : ', font=font),sg.Text(size=(10)),sg.Text('Other: ', font=font)],
+    [sg.Listbox(unique_Area_list, size=(20,10), select_mode='multiple', key='-OPTION-'),sg.Text(size=(10, 2)),sg.Listbox(values=unique_cat_list, size=(20,10), select_mode='multiple', key='-OPTION2-'),sg.Text(size=(10, 2)),sg.Listbox(values=["Dine In","Good for Kids","Takeaway","Delivery Service","Accept Reservation","Outdoor Seating","Wheelchair Accessibility","Family Friendly","Groups" ], size=(20,10), select_mode='multiple', key='-OPTION3-')],
     [sg.Text( font=font)],
     [sg.Button('Export Map', key='-EXPORT-MAP-', size=(15, 2),font=font,border_width=0),sg.Button('Export Filtered Dataset', key='-EXPORT-FILTERED-', size=(20, 2), font=font,border_width=0),sg.Button('Export Entire Dataset', key='-EXPORT-', pad=(10,10), size=(20,2), font=font),sg.Button('Show on Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green'))],
     # add map status
@@ -46,7 +46,7 @@ layout = [
 layout2 = [
             [sg.Text('Display datagrams :', font=("Arial", 20))],
             [sg.Text( )],
-            [sg.Text('Choose the diagram type: ', font=font),sg.Combo(values=["Pie Chart","Bar Graph"], key='-OPTION3-', pad=(10,10), size=(30, 20), font=font),sg.Text('Choose the data you would like to view : ', font=font),sg.Combo(values= ["Average Star Rating","Takeaway"] ,key='-OPTION4-', pad=(10,10), size=(30, 20), font=font)],
+            [sg.Text('Choose the diagram type: ', font=font),sg.Combo(values=["Pie Chart","Bar Graph"], key='-OPTION4-', pad=(10,10), size=(30, 20), font=font),sg.Text('Choose the data you would like to view : ', font=font),sg.Combo(values= ["Average Star Rating","Takeaway"] ,key='-OPTION5-', pad=(10,10), size=(30, 20), font=font)],
             [sg.Text( font=font)],
             [sg.Button('Show Diagram', key='-SHOW-DIAGRAM-', size=(15, 2), font=font,border_width=0,button_color=('white', 'green'))],
             [sg.Text( font=font)],
@@ -93,7 +93,8 @@ while True:
         #view the map with the Category of restaurant or the sub area that it is in
         value1 = values['-OPTION-']
         value2 = values['-OPTION2-']
-        threading.Thread(target=generate_map_thread, args=(window, value1, value2, df_data), daemon=True).start()
+        value3= values['-OPTION3-']
+        threading.Thread(target=generate_map_thread, args=(window, value1, value2,value3, df_data), daemon=True).start()
 
     elif event == '-MAP-GENERATED-':
         # Update GUI after the map is generated, e.g., display a message or update the map view
@@ -136,9 +137,9 @@ while True:
 
 
 
-    elif event== '-SHOW-DIAGRAM-' and values["-OPTION3-"]=="Pie Chart":
+    elif event== '-SHOW-DIAGRAM-' and values["-OPTION4-"]=="Pie Chart":
         piechart()
-    elif event== '-SHOW-DIAGRAM-' and values["-OPTION3-"]=="Bar Graph":
+    elif event== '-SHOW-DIAGRAM-' and values["-OPTION5-"]=="Bar Graph":
         bargraph()   
 
 

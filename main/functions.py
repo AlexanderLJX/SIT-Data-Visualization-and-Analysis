@@ -4,7 +4,6 @@ import folium
 from folium.plugins import MarkerCluster
 import tempfile
 import os
-import PySimpleGUI as sg
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -28,7 +27,7 @@ def readfile():
 
 
 #defining a function to plot the locations on the map
-def plotmap(value1, value2, df_data):
+def plotmap(value1, value2,value3, df_data):
     if value1:  # If value1 is not empty, it contains a list of selected areas
         df_data_filtered = df_data.loc[df_data['Planning Area'].isin(value1)]
     else:
@@ -36,6 +35,11 @@ def plotmap(value1, value2, df_data):
 
     if value2:  # If value2 is not empty, it contains a list of selected categories
         df_data_filtered = df_data_filtered.loc[df_data_filtered['Category'].isin(value2)]
+
+    if value3:
+        for option in value3:
+            df_data_filtered = df_data_filtered.loc[df_data_filtered[option]=='Yes']
+    
     #setting the map and the geo location that we want the users to focus on (e.g. Singapore) by using SG coordininates
     m=folium.Map(location=[1.287953, 103.851784],zoom_start=12,prefer_canvas=True)
     #getting the coordinates from the data set then adding the markers
