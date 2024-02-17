@@ -33,7 +33,9 @@ The project will be organized into the following sections:
 
 ## Getting Started
 
-To run and explore the project locally, follow these steps:
+To launch the GUI simply double click `launch_gui.py`
+
+Alternatively, you can follow these steps:
 
 1. **Clone the Repository:**
    ```bash
