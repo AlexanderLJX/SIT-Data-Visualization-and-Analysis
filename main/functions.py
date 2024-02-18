@@ -4,7 +4,6 @@ import folium
 from folium.plugins import MarkerCluster
 import tempfile
 import os
-import PySimpleGUI as sg
 import matplotlib.pyplot as plt
 import numpy as np
 import pydeck as pdk
@@ -12,12 +11,13 @@ from folium.plugins import HeatMap
 from folium.plugins import TimestampedGeoJson
 import json
 import ast
+import constants
 
 # defining datas
 def readfile():
     try:
-        df_data=pd.read_csv('main/scraped_data_food_full_processed.csv')
-        return df_data
+        df_data=pd.read_csv('main/main.csv')
+        return process_csv(df_data)
     #exception if the file cant be found 
     except FileNotFoundError:
         print(" CSV file could not be found.")
@@ -26,6 +26,82 @@ def readfile():
     except Exception as e:
         print(f"An error occurred while reading the CSV file: {e}")
         exit(1)
+
+def process_csv(df_data):
+    # convert based on the features_datatypes
+    for feature, datatype in constants.FEATURES_DATATYPES.items():
+        if datatype == "string":
+            df_data[feature] = df_data[feature].astype(str)
+        elif datatype == "integer":
+            df_data[feature] = pd.to_numeric(df_data[feature], errors='coerce')
+        elif datatype == "float":
+            df_data[feature] = pd.to_numeric(df_data[feature], errors='coerce')
+        elif datatype == "dictionary":
+            df_data[feature] = df_data[feature].apply(lambda x: ast.literal_eval(x) if pd.notnull(x) else x)
+        elif datatype == "list":
+            df_data[feature] = df_data[feature].apply(lambda x: ast.literal_eval(x) if pd.notnull(x) else x)
+        elif datatype == "ISO8601":
+            df_data[feature] = pd.to_datetime(df_data[feature], errors='coerce')
+    
+    return df_data
+
+def validate_filter_json(filter_json):
+    try:
+        # convert the json string to a list of dictionaries
+        filter_list = json.loads(filter_json)
+        # iterate through the list of dictionaries
+        for filter_dict in filter_list:
+            # get the column name from the dictionary
+            column = filter_dict['column']
+            # verify that the column is a key in the feature list
+            if column not in constants.FEATURES_DATATYPES.keys():
+                return f"{column} not a valid column"
+            # get the value from the dictionary
+            value = filter_dict['value']
+            # verify that the value is the correct data type
+            # TODO: verify that the value is the correct data type
+            # get the operator from the dictionary
+            operator = filter_dict['operator']
+            # if the operator is not one of the valid operators
+            if operator not in constants.OPERATORS:
+                return f"{operator} not a valid operator"
+    except:
+        return "Not valid JSON"
+
+    return "Valid JSON"
+
+def validate_plot_json(plot_json):
+    try:
+        # convert the json string to a list of dictionaries
+        plot_dict = json.loads(plot_json)
+        # if json is a list of dictionaries
+        if isinstance(plot_dict, list):
+            return "Only one plot is allowed"
+        if 'feature1' not in plot_dict:
+            return "feature1 not in the JSON"
+        if 'plot' not in plot_dict:
+            return "plot not in the JSON"
+        # get the column name from the dictionary
+        column = plot_dict['feature1']
+        # verify that the column is in feature list
+        if column not in constants.FEATURES_DATATYPES.keys():
+            return f"{column} not a valid column"
+        # if there is a feature2 check it too
+        if 'feature2' in plot_dict:
+            column = plot_dict['feature2']
+            # verify that the column is in feature list
+            if column not in constants.FEATURES_DATATYPES.keys():
+                return f"{column} not a valid column"
+        
+        # check if the plot type is valid
+        plot_type = plot_dict['plot']
+        if plot_type not in constants.PLOT_TYPES:
+            return f"{plot_type} not a valid plot type"
+    # except and print the error
+    except Exception as e:
+        return "Not valid JSON"
+    
+    return "Valid JSON"
     
 def filter_df(planning_area, category, df_data):
     if planning_area != '' and planning_area != []:
@@ -40,52 +116,104 @@ def filter_df(planning_area, category, df_data):
 
 def filter_df_json(filter_json, df_data):
     # {"column": "About", "value": "LGBTQ friendly restaurants", "operator": "=="
-    # convert the json string to a dictionary
-    filter_dict = json.loads(filter_json)
-    # get the column name from the dictionary
-    column = filter_dict['column']
-    # drop rows with NaN values or empty strings or lists or dictionaries
-    df_data = df_data.dropna(subset=[column])
-    # get the value from the dictionary
-    value = filter_dict['value']
-    # try converting the value to a float
-    try:
-        value = float(value)
-        # try converting hte df column to a float as well
-        df_data[column] = df_data[column].astype(float)
-    except:
-        pass
-    # get the operator from the dictionary
-    operator = filter_dict['operator']
+    # convert the json string to a list of dictionaries
+    filter_list = json.loads(filter_json)
+    # make a copy of the dataframe so that the original dataframe is not modified
+    df_data_filtered = df_data.copy()
+    for filter_dict in filter_list:
+        # get the column name from the dictionary
+        column = filter_dict['column']
+        # drop rows with NaN values or empty strings or lists or dictionaries
+        df_data_filtered = df_data_filtered.dropna(subset=[column])
+        # get the value from the dictionary
+        value = filter_dict['value']
+        # try converting the value to a float
+        try:
+            value = float(value)
+            # try converting hte df column to a float as well
+            df_data_filtered[column] = df_data_filtered[column].astype(float)
+        except:
+            pass
+        # get the operator from the dictionary
+        operator = filter_dict['operator']
 
-    # if column = "About"
-    if column == "About":
-        # convert the value of the column which is string of a list to an actual list with ast.literal_eval
-        df_data[column] = df_data[column].apply(lambda x: ast.literal_eval(x))
+        # if column = "About"
+        if column == "About":
+            # filter the dataframe based on the column, value and operator
+            if operator == "==":
+                df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: value in x)]
+            elif operator == "!=":
+                df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: value in x)]
+            else:
+                df_data_filtered = df_data_filtered
+            continue
+        if column == "Tags":
+            # Tags is a dictionary the value should be a key in the dictionary
+            # convert value to lowercase
+            value = value.lower()
+            # convert keys to lowercase
+            df_data_filtered[column] = df_data_filtered[column].apply(lambda x: {k.lower(): v for k, v in x.items()})
+            # filter the dataframe based on the column, value and operator, some values are not in the dictionary
+            if operator == "==":
+                df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: value == x.keys())]
+            elif operator == "!=":
+                df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: value == x.keys())]
+            elif operator == "in":
+                df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: value in x.keys())]
+            elif operator == "not in":
+                df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: value in x.keys())]
+            else:
+                df_data_filtered = df_data_filtered
+            continue
+        if "Time" in column:
+            # convert the column to a string
+            df_data_filtered[column] = df_data_filtered[column].apply(lambda x: str(x))
+            # filter the dataframe based on the column, value and operator
+            if operator == "==":
+                df_data_filtered = df_data_filtered[df_data_filtered[column] == value]
+            elif operator == "!=":
+                df_data_filtered = df_data_filtered[df_data_filtered[column] != value]
+            elif operator == "largest":
+                # sort by the column and get the top x latest times
+                df_data_filtered = df_data_filtered.sort_values(by=column, ascending=False).head(int(value))
+            elif operator == "smallest":
+                # sort by the column and get the top x earliest times
+                df_data_filtered = df_data_filtered.sort_values(by=column, ascending=True).head(int(value))
+            else:
+                df_data_filtered = df_data_filtered
+            continue
+        # convert the column to lowercase if it's a string
+        df_data_filtered[column] = df_data_filtered[column].apply(lambda x: x.lower() if isinstance(x, str) else x)
+        # convert value to lowercase if it's a string
+        value = value.lower() if isinstance(value, str) else value
+        # if column is a int or float, convert the value to a float
+        if df_data_filtered[column].dtype == 'float' or df_data_filtered[column].dtype == 'int':
+            value = float(value)
         # filter the dataframe based on the column, value and operator
         if operator == "==":
-            df_data_filtered = df_data[df_data[column].apply(lambda x: value in x)]
+            df_data_filtered = df_data_filtered[df_data_filtered[column] == value]
+        elif operator == ">":
+            df_data_filtered = df_data_filtered[df_data_filtered[column] > value]
+        elif operator == "<":
+            df_data_filtered = df_data_filtered[df_data_filtered[column] < value]
+        elif operator == ">=":
+            df_data_filtered = df_data_filtered[df_data_filtered[column] >= value]
+        elif operator == "<=":
+            df_data_filtered = df_data_filtered[df_data_filtered[column] <= value]
         elif operator == "!=":
-            df_data_filtered = df_data[~df_data[column].apply(lambda x: value in x)]
+            df_data_filtered = df_data_filtered[df_data_filtered[column] != value]
+        elif operator == "largest":
+            # filter using list slicing, sort df in descending order by column and get the first x rows
+            df_data_filtered = df_data_filtered.sort_values(by=column, ascending=False).head(int(value))
+        elif operator == "smallest":
+            # filter using list slicing, sort df in ascending order by column and get the first x rows
+            df_data_filtered = df_data_filtered.sort_values(by=column, ascending=True).head(int(value))
+        elif operator == "in":
+            df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: value in x)]
+        elif operator == "not in":
+            df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: value in x)]
         else:
-            df_data_filtered = df_data
-        
-        return df_data_filtered
-    # filter the dataframe based on the column, value and operator
-    if operator == "==":
-        df_data_filtered = df_data[df_data[column] == value]
-    elif operator == ">":
-        df_data_filtered = df_data[df_data[column] > value]
-    elif operator == "<":
-        df_data_filtered = df_data[df_data[column] < value]
-    elif operator == ">=":
-        df_data_filtered = df_data[df_data[column] >= value]
-    elif operator == "<=":
-        df_data_filtered = df_data[df_data[column] <= value]
-    elif operator == "!=":
-        df_data_filtered = df_data[df_data[column] != value]
-    else:
-        df_data_filtered = df_data
+            df_data_filtered = df_data_filtered
     
     return df_data_filtered
 
