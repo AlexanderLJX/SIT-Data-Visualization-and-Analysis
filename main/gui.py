@@ -15,22 +15,26 @@ import constants
 
 # long-running function
 def generate_map_thread(window, df_data, plot_function, planning_area, category, filter_json):
-    global temp_file_name
-    if filter_json is not None and filter_json != "":
-        filtered_df = filter_df_json(filter_json, df_data)
-    else:
-        filtered_df = filter_df(planning_area, category, df_data)
-    
-    if plot_function == "plotmap_3d":
-        temp_file_name = plotmap_3d(filtered_df)
-    elif plot_function == "plotmap_with_animation":
-        temp_file_name = plotmap_with_animation(filtered_df)
-    elif plot_function =="plotmap_with_heat":
-        temp_file_name= plotmap_with_heat(filtered_df)
-    else: # else is plotmap
-        temp_file_name = plotmap(filtered_df)  
+    try:
+        global temp_file_name
+        if filter_json is not None and filter_json != "":
+            filtered_df = filter_df_json(filter_json, df_data)
+        else:
+            filtered_df = filter_df(planning_area, category, df_data)
+        
+        if plot_function == "plotmap_3d":
+            temp_file_name = plotmap_3d(filtered_df)
+        elif plot_function == "plotmap_with_animation":
+            temp_file_name = plotmap_with_animation(filtered_df)
+        elif plot_function =="plotmap_with_heat":
+            temp_file_name= plotmap_with_heat(filtered_df)
+        else: # else is plotmap
+            temp_file_name = plotmap(filtered_df)  
 
-    window.write_event_value('-MAP-GENERATED-', None)  # Signal the GUI thread that the task is done
+        window.write_event_value('-MAP-GENERATED-', None)  # Signal the GUI thread that the task is done
+    except Exception as e:
+        print(e)
+        window.write_event_value('-MAP-FAILED-', None)
 
 def generate_filter_thread(window, query):
     filter_json = generate_filter(query)
@@ -57,21 +61,25 @@ def validate_json_plot_thread(window, json_str):
     validating_plot_json = False
 
 def plot_thread(window, plot_dict, df, plot_on_canvas, filter_json=None):
-    global canvas_figure
-    if plot_dict["plot"] == "pie chart":
-        canvas_figure = plot_pie_chart(plot_dict["feature1"], df)
-    elif plot_dict["plot"] == "bar chart":
-        canvas_figure = plot_bar_chart(plot_dict["feature1"], plot_dict["feature2"] if "feature2" in plot_dict else None, df, filter_json)
-    elif plot_dict["plot"] == "line chart":
-        canvas_figure = plot_line_chart(plot_dict["feature1"], plot_dict["feature2"], df)
-    elif plot_dict["plot"] == "scatter":
-        canvas_figure = plot_scatter(plot_dict["feature1"], plot_dict["feature2"], df)
-    elif plot_dict["plot"] == "hexbin":
-        canvas_figure = plot_hexbin(plot_dict["feature1"], plot_dict["feature2"], df)
-    elif plot_dict["plot"] == "distribution":
-        canvas_figure = plot_distribution(plot_dict["feature1"], df)
-    # set window event
-    window.write_event_value('-PLOT-GENERATED-', None)
+    try:
+        global canvas_figure
+        if plot_dict["plot"] == "pie chart":
+            canvas_figure = plot_pie_chart(plot_dict["feature1"], df)
+        elif plot_dict["plot"] == "bar chart":
+            canvas_figure = plot_bar_chart(plot_dict["feature1"], plot_dict["feature2"] if "feature2" in plot_dict else None, df, filter_json)
+        elif plot_dict["plot"] == "line chart":
+            canvas_figure = plot_line_chart(plot_dict["feature1"], plot_dict["feature2"], df)
+        elif plot_dict["plot"] == "scatter":
+            canvas_figure = plot_scatter(plot_dict["feature1"], plot_dict["feature2"], df)
+        elif plot_dict["plot"] == "hexbin":
+            canvas_figure = plot_hexbin(plot_dict["feature1"], plot_dict["feature2"], df)
+        elif plot_dict["plot"] == "distribution":
+            canvas_figure = plot_distribution(plot_dict["feature1"], df)
+        # set window event
+        window.write_event_value('-PLOT-GENERATED-', None)
+    except Exception as e:
+        print(e)
+        window.write_event_value('-PLOT-FAILED-', None)
 
 # Function to draw matplotlib figure on PySimpleGUI Canvas
 def draw_figure(canvas, figure):
@@ -416,11 +424,14 @@ while True:
         filter_json = values['-FILTER-']
         threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap_with_heat", planning_area, category, filter_json), daemon=True).start()
 
-
-
     elif event == '-MAP-GENERATED-':
-        # Update GUI after the map is generated, e.g., display a message or update the map view
         window['-STATUS-'].update('Map generated successfully!')
+
+    elif event == '-MAP-FAILED-':
+        window['-STATUS-'].update('Error: Map generation failed')
+
+    elif event == '-PLOT-FAILED-':
+        window['-PLOT-STATUS-'].update('Error: Plot generation failed')
     
     elif event == '-EXPORT-MAP-':
         #exporting of the map
