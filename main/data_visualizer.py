@@ -5,23 +5,33 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 
 def plot_distribution(feature, df):
-    # Convert "NAN" to actual NaN and change dtype to float
-    df[feature] = pd.to_numeric(df[feature], errors='coerce')
+    # if column is int or float
+    if df[feature].dtype == 'int64' or df[feature].dtype == 'float64':
+        # Convert "NAN" to actual NaN and change dtype to float
+        df[feature] = pd.to_numeric(df[feature], errors='coerce')
+        # Convert "NAN" to actual NaN and change dtype to float
+        df[feature] = pd.to_numeric(df[feature], errors='coerce')
 
-    # Drop NaN values for the plot (or you can fill them with a value like 0 or the mean)
-    df = df.dropna()
-    # Plotting
-    plt.hist(df[feature], bins=np.arange(0, 5.1, 0.25), edgecolor='k', alpha=0.7)
-    plt.title('Distribution of '+feature)
-    plt.xlabel(feature)
-    plt.ylabel('Number of Restaurants')
-    plt.grid(axis='y', alpha=0.75)
+        # Drop NaN values for the plot (or you can fill them with a value like 0 or the mean)
+        df = df.dropna()
+        # Plotting
+        # get maximum value of the column
+        max_value = max(df[feature])
+        # get the range of the column
+        range_value = max_value - min(df[feature])
+        plt.hist(df[feature], bins=np.arange(0, max_value+0.1, range_value/20), edgecolor='k', alpha=0.7)
+        plt.title('Distribution of '+feature)
+        plt.xlabel(feature)
+        plt.ylabel('Number of Restaurants')
+        plt.grid(axis='y', alpha=0.75)
 
-    # if not plot_on_canvas:
-    #     plt.show() # needs to run in new process so there are no conflicts with the thread
+        # Return the figure object
+        return plt.gcf()
+    else:
+        return "Invalid feature type for distribution plot. Please select a numerical feature."
 
-    # Return the figure object
-    return plt.gcf()
+
+    
 
 
 def plot_hexbin(feature1, feature2, df):

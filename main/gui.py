@@ -76,10 +76,10 @@ def plot_thread(window, plot_dict, df, plot_on_canvas, filter_json=None):
         elif plot_dict["plot"] == "distribution":
             canvas_figure = plot_distribution(plot_dict["feature1"], df)
         # set window event
-        window.write_event_value('-PLOT-GENERATED-', None)
+        window.write_event_value('-PLOT-GENERATED-', "Plotting finished successfully!")
     except Exception as e:
         print(e)
-        window.write_event_value('-PLOT-FAILED-', None)
+        window.write_event_value('-PLOT-FAILED-', "Error occurred while plotting")
 
 # Function to draw matplotlib figure on PySimpleGUI Canvas
 def draw_figure(canvas, figure):
@@ -361,7 +361,7 @@ while True:
 
     elif event == "-PLOT-GENERATED-":
         # update plot status
-        window['-PLOT-STATUS-'].update('Plot generated successfully!')
+        window['-PLOT-STATUS-'].update(values[event])
         # Remove previous drawings
         canvas_elem = window['-CANVAS-']
         canvas = canvas_elem.TKCanvas
@@ -431,7 +431,7 @@ while True:
         window['-STATUS-'].update('Error: Map generation failed')
 
     elif event == '-PLOT-FAILED-':
-        window['-PLOT-STATUS-'].update('Error: Plot generation failed')
+        window['-PLOT-STATUS-'].update(values[event])
     
     elif event == '-EXPORT-MAP-':
         #exporting of the map

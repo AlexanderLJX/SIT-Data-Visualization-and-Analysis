@@ -42,7 +42,8 @@ def process_csv(df_data):
             df_data[feature] = df_data[feature].apply(lambda x: ast.literal_eval(x) if pd.notnull(x) else x)
         elif datatype == "ISO8601":
             df_data[feature] = pd.to_datetime(df_data[feature], errors='coerce')
-    
+    # print dtypes
+    print(df_data.dtypes)
     return df_data
 
 def validate_filter_json(filter_json):
@@ -74,32 +75,39 @@ def validate_plot_json(plot_json):
     try:
         # convert the json string to a list of dictionaries
         plot_dict = json.loads(plot_json)
-        # if json is a list of dictionaries
-        if isinstance(plot_dict, list):
-            return "Only one plot is allowed"
-        if 'feature1' not in plot_dict:
-            return "feature1 not in the JSON"
-        if 'plot' not in plot_dict:
-            return "plot not in the JSON"
-        # get the column name from the dictionary
-        column = plot_dict['feature1']
-        # verify that the column is in feature list
-        if column not in constants.FEATURES_DATATYPES.keys():
-            return f"{column} not a valid column"
-        # if there is a feature2 check it too
-        if 'feature2' in plot_dict:
-            column = plot_dict['feature2']
-            # verify that the column is in feature list
-            if column not in constants.FEATURES_DATATYPES.keys():
-                return f"{column} not a valid column"
-        
-        # check if the plot type is valid
-        plot_type = plot_dict['plot']
-        if plot_type not in constants.PLOT_TYPES:
-            return f"{plot_type} not a valid plot type"
     # except and print the error
     except Exception as e:
         return "Not valid JSON"
+    
+    if 'feature1' not in plot_dict:
+        return "feature1 not in the JSON"
+    if 'plot' not in plot_dict:
+        return "plot not in the JSON"
+    
+    # if json is a list of dictionaries
+    if isinstance(plot_dict, list):
+        return "Only one plot is allowed"
+    
+    # check if the plot type is valid
+    if plot_dict['plot'] not in constants.PLOT_TYPES:
+        return f"{plot_dict['plot']} not a valid plot type"
+    # verify that the column is in feature list
+    if plot_dict['feature1'] not in constants.FEATURES_DATATYPES.keys():
+        return f"{plot_dict['feature1']} not a valid column"
+    
+    # if there is a feature2 check it too
+    if 'feature2' in plot_dict:
+        # verify that the column is in feature list
+        if plot_dict['feature2'] not in constants.FEATURES_DATATYPES.keys():
+            return f"{plot_dict['feature2']} not a valid column"
+    
+    # if plot is distribution make sure feature1 is in the JSON is a int or float
+    if plot_dict['plot'] == "distribution":
+        if constants.FEATURES_DATATYPES[plot_dict['feature1']] not in ["integer", "float"]:
+            return f"{plot_dict['feature1']} not a valid column for distribution plot"
+    
+        
+    
     
     return "Valid JSON"
     
@@ -187,8 +195,10 @@ def filter_df_json(filter_json, df_data):
         # convert value to lowercase if it's a string
         value = value.lower() if isinstance(value, str) else value
         # if column is a int or float, convert the value to a float
-        if df_data_filtered[column].dtype == 'float' or df_data_filtered[column].dtype == 'int':
+        if df_data_filtered[column].dtype == 'float64':
             value = float(value)
+        if df_data_filtered[column].dtype == 'int64':
+            value = int(value)
         # filter the dataframe based on the column, value and operator
         if operator == "==":
             df_data_filtered = df_data_filtered[df_data_filtered[column] == value]
