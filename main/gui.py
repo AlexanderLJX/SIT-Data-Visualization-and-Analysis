@@ -4,7 +4,7 @@
 import PySimpleGUI as sg
 import os
 import shutil
-from functions import readfile, validate_filter_json, validate_plot_json, filter_df, filter_df_json, plotmap, plotmap_3d, plotmap_with_animation
+from functions import readfile, validate_filter_json, validate_plot_json, filter_df, filter_df_json, plotmap, plotmap_3d, plotmap_with_animation,plotmap_with_heat
 import threading
 from gpt import generate_filter, generate_plot_json
 from data_visualizer import plot_distribution, plot_hexbin, plot_scatter, plot_line_chart, plot_bar_chart, plot_pie_chart
@@ -25,6 +25,8 @@ def generate_map_thread(window, df_data, plot_function, planning_area, category,
         temp_file_name = plotmap_3d(filtered_df)
     elif plot_function == "plotmap_with_animation":
         temp_file_name = plotmap_with_animation(filtered_df)
+    elif plot_function =="plotmap_with_heat":
+        temp_file_name= plotmap_with_heat(filtered_df)
     else: # else is plotmap
         temp_file_name = plotmap(filtered_df)  
 
@@ -157,11 +159,15 @@ layout = [
         sg.Button('Show on Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
         sg.Button('Show on 3D Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
         sg.Button('Show on Animated Map', size=(20, 2), font=font,border_width=0,button_color=('white', 'green')),
+        sg.Button('Show on Heat Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
     ],
     # add map status
     [sg.Text('', key='-STATUS-', font=font)],
     [sg.Text( font=font)],
 ]
+
+
+
 
 #layout of the second tab 
 layout2 = [
@@ -239,7 +245,7 @@ tabgrp = [
 ]
 
 
-window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1200,650),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
+window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1200,750),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
 
 
 temp_file_name= None
@@ -411,6 +417,16 @@ while True:
         else:
             # set status to error
             window['-STATUS-'].update('Error: Invalid JSON filter')
+    
+    elif event == "Show on Heat Map":
+        # Update GUI to show "generating..." message
+        window['-STATUS-'].update('Generating...')
+        planning_area = values['-OPTION-']
+        category = values['-OPTION2-']
+        filter_json = values['-FILTER-']
+        threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap_with_heat", planning_area, category, filter_json), daemon=True).start()
+
+
 
     elif event == '-MAP-GENERATED-':
         # Update GUI after the map is generated, e.g., display a message or update the map view
