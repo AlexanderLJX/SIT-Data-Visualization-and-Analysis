@@ -106,18 +106,8 @@ sg.theme('DarkAmber')  # Add a touch of color to the gui
 #creating the gui / formatting the layout of the GUI
 font = ("Arial",11)
 
-default_filter_text = """[
-  {
-    "column": "Price Rating",
-    "value": "$$$$",
-    "operator": "=="
-  },
-  {
-    "column": "Bayesian Rating",
-    "value": "10",
-    "operator": "smallest"
-  }
-]"""
+default_filter_text = """"""
+default_filter_query = "dinein and takeaway and region is central and top 10 on bayesian rating"
 
 #layout of the first tab
 layout = [
@@ -128,7 +118,7 @@ layout = [
         # add text for the description of the input box
         sg.Text('Natural Language query: ', font=font),
         # add a text box for a user query input
-        sg.Multiline(size=(50, 3), default_text='Filter out restaurants that are not LGBTQ and less than 4 stars!', key='-USER-QUERY-', font=font),
+        sg.Multiline(size=(50, 3), default_text=default_filter_query, key='-USER-QUERY-', font=font),
         # add a button to submit the query
         sg.Button('Generate', key='-SUBMIT-QUERY-', size=(10, 1), font=font,border_width=0),
     ],

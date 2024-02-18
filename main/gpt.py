@@ -10,11 +10,13 @@ def generate_filter(query):
         messages=[{
                 "role": "user",
                 "content": """You are an AI intepreter that will translate the user's queries into json format based on the following information:
-                These are the features and data types of the dataframe:
+                These are the features and data types of the dataframe, you can only filter based on these columns:
                 """ + str(constants.FEATURES_DATATYPES) + """
                 These are the values of the About column:
                 ['Outdoor seating', 'Delivery', 'Takeaway', 'Dine-in', 'Wheelchair-accessible entrance', 'Alcohol', 'Beer', 'Coffee', 'Late-night food', 'Small plates', 'Lunch', 'Dinner', 'Catering', 'Dessert', 'Seating', 'Gender-neutral toilets', 'Toilets', 'Casual', 'Family friendly', 'Groups', 'LGBTQ+ friendly', 'Transgender safe space', 'Debit cards', 'NFC mobile payments', 'Good for kids', 'High chairs', 'Free parking lot', 'Somewhat difficult to find a space']
-                These are the valid operators:
+                These are the values in the Region column:
+                ['Central Region', 'East Region', 'North Region', 'North-East Region', 'West Region']
+                These are the valid operators, you can only use these operators to filter the dataframe:
                 """ + str(constants.OPERATORS) + """
                 1. The first key of the json is the dataframe column name.
                 2. the value of the key will be the value of the column that the user wants to filter
@@ -118,6 +120,25 @@ def generate_filter(query):
     "column": "First Opening Time",
     "value": "10",
     "operator": "smallest"
+  }
+]"""
+            },
+            {
+                "role": "user",
+                "content": """top 10 restaurants based on star rating where price rating more or equals to $$$"""
+            },
+            {
+                "role": "assistant",
+                "content": """[
+  {
+    "column": "Price Rating",
+    "value": "$$$",
+    "operator": ">="
+  },
+  {
+    "column": "Average Star Rating",
+    "value": "10",
+    "operator": "largest"
   }
 ]"""
             },
