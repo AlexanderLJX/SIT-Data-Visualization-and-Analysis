@@ -13,6 +13,7 @@ import json
 import matplotlib.pyplot as plt
 import constants
 import webbrowser
+import logging
 
 # long-running function
 def generate_map_thread(window, df_data, plot_function, planning_area, category, filter_json):
@@ -34,7 +35,7 @@ def generate_map_thread(window, df_data, plot_function, planning_area, category,
 
         window.write_event_value('-MAP-GENERATED-', None)  # Signal the GUI thread that the task is done
     except Exception as e:
-        print(e)
+        logging.exception("Exception occurred in generate_map_thread")
         window.write_event_value('-MAP-FAILED-', None)
 
 def generate_filter_thread(window, query):
@@ -79,7 +80,7 @@ def plot_thread(window, plot_dict, df, plot_on_canvas, filter_json=None):
         # set window event
         window.write_event_value('-PLOT-GENERATED-', "Plotting finished successfully!")
     except Exception as e:
-        print(e)
+        logging.exception("Exception occurred in plot_thread")
         window.write_event_value('-PLOT-FAILED-', "Error occurred while plotting")
 
 # Function to draw matplotlib figure on PySimpleGUI Canvas
@@ -90,6 +91,10 @@ def draw_figure(canvas, figure):
     return figure_canvas_agg
 
 # Below code is for the GUI
+
+# Configure logging
+logging.basicConfig(filename='gui_error.txt', level=logging.ERROR, format='%(asctime)s:%(levelname)s:%(message)s')
+
 
 plt.switch_backend('agg')
 df_data=readfile()
