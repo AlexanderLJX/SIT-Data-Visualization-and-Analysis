@@ -12,6 +12,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import json
 import matplotlib.pyplot as plt
 import constants
+import webbrowser
 
 # long-running function
 def generate_map_thread(window, df_data, plot_function, planning_area, category, filter_json):
@@ -231,12 +232,22 @@ layout3 = [
             [sg.Text( font=font)],
         ]
 
+# Define the layout for the Help tab
+help_tab_layout = [
+    [sg.Text('How to Use This Application', font=("Arial", 20))],
+    [sg.Text('1. Start by selecting a category or area you are interested in.', font=font)],
+    [sg.Text('2. Use the "Generate" button to apply filters based on your query.', font=font)],
+    [sg.Text('3. Explore the different visualization tabs to see the data in various forms.', font=font)],
+    [sg.Text('For detailed documentation, visit ', font=font), sg.Text('https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis', font=('Arial', 10, 'underline'), text_color='blue', key='-HELP-LINK-', enable_events=True)]
+]
+
 # Define the tab group with the tabs
 tabgrp = [
     [sg.TabGroup([
         [sg.Tab('View Foodplaces', layout, element_justification='center',border_width=0)],
         [sg.Tab('Data Diagrams', layout2, element_justification='center', border_width=0 )],
         [sg.Tab('Train ML Models', layout3, element_justification='center', border_width=0 )],
+        [sg.Tab('Help', help_tab_layout, element_justification='center', border_width=0)]
     ], tab_location='centertop')],
     [sg.Text( font=font)],
     [sg.Button('Close', size=(5,1))]
@@ -451,8 +462,7 @@ while True:
     elif event == '-EXPORT-FILTERED-':
         value1 = values['-OPTION-']
         value2 = values['-OPTION2-']
-    
-    # If there are any selected areas or categories, filter the dataframe accordingly
+        # If there are any selected areas or categories, filter the dataframe accordingly
         if value1 or value2:
             # Use the 'isin' method to filter based on multiple values
             if value1:
@@ -470,6 +480,9 @@ while True:
                 filtered_df.to_csv(destination, index=False)
         else:
             window['-STATUS-'].update('Error: No filters applied')
+
+    elif event == '-HELP-LINK-':
+        webbrowser.open('https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis')
         
 
 
