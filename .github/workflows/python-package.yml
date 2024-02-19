@@ -36,8 +36,10 @@ jobs:
           python main/data_processing.py
           echo "data_processing.py execution completed."
         fi
-    - name: Run GUI
+    - name: Run application with virtual display
       run: |
+        Xvfb :99 &
+        export DISPLAY=:99
         echo "Running gui.py..."
         python main/gui.py
         echo "gui.py execution completed."
