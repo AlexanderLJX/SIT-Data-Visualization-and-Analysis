@@ -147,8 +147,11 @@ df.rename(columns={
 # process opening hours .replace(". Hide open hours for the week", "").strip()
 df['Opening Hours'] = df['Opening Hours'].apply(lambda x: x.replace(". Hide open hours for the week", "").strip() if isinstance(x, str) else x)
 
-# convert str to dict
-df['Opening Hours'] = df['Opening Hours'].apply(ast.literal_eval)
+# convert to str
+df['Opening Hours'] = df['Opening Hours'].astype(str)
+
+# convert str to dict and nan to empty dict
+df['Opening Hours'] = df['Opening Hours'].apply(lambda x: ast.literal_eval(x) if pd.notnull(x) else {})
 
 # drop if open is Closed
 for index, row in df.iterrows():
