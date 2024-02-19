@@ -87,8 +87,6 @@ def filter_df(planning_area, category, df_data):
     return df_data_filtered
 
 def filter_df_json(filter_json, df_data):
-    if filter_json == "":
-        return df_data
     # convert the json string to a list of dictionaries
     filter_list = json.loads(filter_json)
     # make a copy of the dataframe so that the original dataframe is not modified
