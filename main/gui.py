@@ -22,6 +22,7 @@ def generate_map_thread(window, df_data, plot_function, planning_area, category,
         global temp_file_name
         if filter_json is not None and filter_json != "":
             filtered_df = filter_df_json(filter_json, df_data)
+            filtered_df = filter_df(planning_area, category, filtered_df)
         else:
             filtered_df = filter_df(planning_area, category, df_data)
         
@@ -83,6 +84,46 @@ def plot_thread(window, plot_dict, df, plot_on_canvas, filter_json=None):
     except Exception as e:
         logging.exception("Exception occurred in plot_thread")
         window.write_event_value('-PLOT-FAILED-', "Error occurred while plotting")
+
+def generate_train_json_thread(window, query):
+    try:
+        # Simulate processing the query to generate JSON arguments
+        # For demonstration, let's create a simple JSON structure based on the query length
+        train_json = {
+            "model": "example_model",
+            "parameters": {
+                "param1": len(query) % 5,
+                "param2": len(query) % 3,
+            }
+        }
+        # Convert the dictionary to a JSON string
+        train_json_str = json.dumps(train_json)
+        # Signal the GUI thread that the JSON generation is done
+        window.write_event_value('-TRAIN-JSON-GENERATED-', train_json_str)
+    except Exception as e:
+        logging.exception("Exception occurred in generate_train_json_thread")
+        window.write_event_value('-TRAIN-JSON-FAILED-', None)
+
+def train_and_predict_thread(window, train_args):
+    try:
+        # Extract model name and parameters from the train_args dictionary
+        model_name = train_args["model"]
+        parameters = train_args["parameters"]
+        
+        # Placeholder for model training and prediction
+        # This is where you would load your dataset, initialize your model, and train it
+        
+        
+        # Simulate a prediction outcome
+        prediction_result = "success"  # This would be replaced with actual model predictions
+        
+        # Signal the GUI thread that the training and prediction are done
+        window.write_event_value('-TRAINING-SUCCESS-', prediction_result)
+    except Exception as e:
+        logging.exception("Exception occurred in train_and_predict_thread")
+        window.write_event_value('-TRAINING-FAILED-', None)
+
+
 
 # Function to draw matplotlib figure on PySimpleGUI Canvas
 def draw_figure(canvas, figure):
@@ -414,6 +455,31 @@ while True:
             # Draw new figure
             draw_figure(canvas, canvas_figure)
 
+    elif event == '-SUBMIT-TRAIN-QUERY-':
+        query = values['-TRAIN-QUERY-']
+        # Logic to process query and generate JSON arguments
+        # For demonstration, let's assume we have a function named `generate_train_json`
+        threading.Thread(target=generate_train_json_thread, args=(window, query), daemon=True).start()
+
+    elif event == '-TRAIN-JSON-GENERATED-':
+        train_json = values[event]  # Assuming this is the event value from your generation function
+        window['-TRAIN-JSON-'].update(train_json)
+
+    elif event == '-TRAIN-AND-PREDICT-':
+        try:
+            train_json = values['-TRAIN-JSON-']
+            # Assuming we have a function `train_and_predict` that accepts JSON arguments
+            # Convert string JSON to dictionary
+            train_args = json.loads(train_json)
+            threading.Thread(target=train_and_predict_thread, args=(window, train_args), daemon=True).start()
+        except json.JSONDecodeError:
+            window['-PRED-STATUS-'].update('Error: Invalid JSON')
+
+    elif event == '-TRAINING-SUCCESS-':
+        window['-PRED-STATUS-'].update('Training and prediction completed successfully!')
+    elif event == '-TRAINING-FAILED-':
+        window['-PRED-STATUS-'].update('Error during training and prediction')
+
 
     elif event == 'Show on Map' :
         # check that the text of  json status is valid
@@ -476,7 +542,7 @@ while True:
         window['-PLOT-STATUS-'].update(values[event])
     
     elif event == '-EXPORT-MAP-':
-        #exporting of the map
+        # exporting of the map
         if temp_file_name is not None:
             destination = sg.popup_get_file('Select a file to save the map HTML', save_as=True, file_types=(("HTML Files", "*.html"),))
             if destination:
@@ -491,24 +557,22 @@ while True:
             window['-STATUS-'].update('Error: Map not generated yet!')
 
     elif event == '-EXPORT-FILTERED-':
-        value1 = values['-OPTION-']
-        value2 = values['-OPTION2-']
+        planning_area = values['-OPTION-']
+        category = values['-OPTION2-']
+        filter_json = values['-FILTER-']
         # If there are any selected areas or categories, filter the dataframe accordingly
-        if value1 or value2:
-            # Use the 'isin' method to filter based on multiple values
-            if value1:
-                filtered_df = df_data.loc[df_data['Planning Area'].isin(value1)]
+        if planning_area or category or filter_json != "":
+            if filter_json is not None and filter_json != "":
+                filtered_df = filter_df_json(filter_json, df_data)
+                filtered_df = filter_df(planning_area, category, filtered_df)
             else:
-                filtered_df = df_data
-
-            if value2:
-                # If value2 is not empty, filter by category
-                filtered_df = filtered_df.loc[filtered_df['Category'].isin(value2)]
+                filtered_df = filter_df(planning_area, category, df_data)
 
             # Save the filtered dataframe to a CSV file
             destination = sg.popup_get_file('Select a file to save the filtered dataset CSV', save_as=True, file_types=(('CSV Files', '*.csv'),))
             if destination:
                 filtered_df.to_csv(destination, index=False)
+                window['-STATUS-'].update('Filtered dataset exported successfully!')
         else:
             window['-STATUS-'].update('Error: No filters applied')
 
