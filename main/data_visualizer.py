@@ -17,6 +17,7 @@ def plot_distribution(feature, df):
     max_value = max(df[feature])
     # get the range of the column
     range_value = max_value - min(df[feature])
+    plt.figure(figsize=(20, 20))
     plt.hist(df[feature], bins=np.arange(0, max_value+0.1, range_value/20), edgecolor='k', alpha=0.7)
     plt.title('Distribution of '+feature)
     plt.xlabel(feature)
@@ -29,6 +30,7 @@ def plot_distribution(feature, df):
 
 def plot_hexbin(feature1, feature2, df):
     # Plotting the hexbin plot
+    plt.figure(figsize=(20, 20))
     plt.hexbin(df[feature1], df[feature2], gridsize=25, cmap='Blues', bins='log')
     plt.colorbar(label='Count in Bin')
     plt.title('Density Plot of ' + feature1 + ' and ' + feature2)
@@ -41,6 +43,7 @@ def plot_hexbin(feature1, feature2, df):
 
 def plot_scatter(feature1, feature2, df):
     # Plotting the scatter plot
+    plt.figure(figsize=(20, 20))
     plt.scatter(df[feature1], df[feature2], alpha=0.7)
     plt.title('Scatter Plot of Average Opening Hours and Star Rating')
     plt.xlabel(feature1)
@@ -61,6 +64,8 @@ def plot_line_chart(feature1, feature2, df):
     aggregated_data = aggregated_data.sort_values(by=feature1)
 
     # Plotting the line chart
+    # make plot larger
+    plt.figure(figsize=(20, 20))
     plt.plot(aggregated_data[feature1], aggregated_data[feature2], marker='o', linestyle='-', alpha=0.7)
     plt.title(f'Line Chart of {feature1} and Mean of {feature2}')
     plt.xlabel(feature1)
@@ -100,6 +105,7 @@ def plot_bar_chart(feature1, feature2=None, df=None, filter_json=None):
             plt.bar(mean_df[feature1], mean_df[feature2], alpha=0.7)
             plt.title('Bar Chart of ' + feature1 + ' and Mean of ' + feature2)
     
+    plt.figure(figsize=(20, 20))
     plt.xlabel(feature1)
     plt.ylabel('Count' if feature2 is None or df[feature2].dtype == 'object' else 'Mean of ' + feature2)
     plt.grid(True)
@@ -123,6 +129,7 @@ def plot_pie_chart(feature1, df):
     sizes = counts.values
 
     # Plotting the pie chart
+    plt.figure(figsize=(20, 20))
     fig, ax = plt.subplots()  # This allows for more customization, such as adding a legend
     ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
     ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
@@ -152,6 +159,7 @@ def plot_linear_regression(feature1, feature2, df):
     y_pred = model.predict(X_test)
 
     # Plot results
+    plt.figure(figsize=(20, 20))
     plt.scatter(X, y, color='blue', label='Actual data')  # Actual data points
     plt.plot(X_test, y_pred, color='red', linewidth=2, label='Linear regression line')  # Regression line
     plt.title('Relationship between', feature1, 'and', feature2)
