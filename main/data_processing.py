@@ -145,7 +145,7 @@ df.rename(columns={
 
 
 # process opening hours .replace(". Hide open hours for the week", "").strip()
-df['Opening Hours'] = df['Opening Hours'].apply(lambda x: x.replace(". Hide open hours for the week", "").strip())
+df['Opening Hours'] = df['Opening Hours'].apply(lambda x: x.replace(". Hide open hours for the week", "").strip() if isinstance(x, str) else x)
 
 # convert str to dict
 df['Opening Hours'] = df['Opening Hours'].apply(ast.literal_eval)

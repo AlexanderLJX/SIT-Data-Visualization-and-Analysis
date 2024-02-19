@@ -111,11 +111,12 @@ validating_train_json = False
 
 #find the catgory types in the csv to use the values to create a dropdown list in the GUI
 unique_cat = df_data['Category'].unique()
-unique_cat_list = list(map(str, unique_cat))
+unique_cat_list = sorted(list(map(str, unique_cat)))
+
 
 # find the sub area types in the csv
 unique_Area = df_data['Planning Area'].unique()
-unique_Area_list = list(map(str, unique_Area))
+unique_Area_list = sorted(list(map(str, unique_Area)))
 
 sg.theme('DarkAmber')  # Add a touch of color to the gui
 #creating the gui / formatting the layout of the GUI
@@ -260,7 +261,7 @@ tabgrp = [
 ]
 
 
-window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1200,750),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
+window = sg.Window('Foodplaces in Singapore', tabgrp, size=(900,750),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
 
 
 temp_file_name= None
