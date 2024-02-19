@@ -348,4 +348,3 @@ def plotmap(df):
     webbrowser.open("file://" + os.path.realpath(tmp.name))
     # Return the name of the temporary file so that we can delete the temp file after the user closes the window
     return tmp.name
-

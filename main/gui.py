@@ -4,7 +4,7 @@
 import PySimpleGUI as sg
 import os
 import shutil
-from functions import *
+from functions import validate_filter_json, validate_plot_json, filter_df, filter_df_json, plotmap, plotmap_3d, plotmap_with_animation,plotmap_with_heat
 from util import readfile
 import threading
 from gpt import generate_filter, generate_plot_json
