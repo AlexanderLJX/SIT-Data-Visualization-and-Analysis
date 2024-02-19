@@ -33,7 +33,13 @@ The project will be organized into the following sections:
 
 ## Getting Started
 
-To launch the GUI simply double click `launch_gui.py`
+To launch the GUI, you can simply double click `launch_gui.bat`
+
+1. **Paste the following into command prompt:**
+   ```bash
+   git clone https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis.git
+   cd SIT-Data-Visualization-and-Analysis
+   launch_gui.bat
 
 Alternatively, you can follow these steps:
 

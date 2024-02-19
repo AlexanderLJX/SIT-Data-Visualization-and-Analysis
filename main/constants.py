@@ -17,7 +17,14 @@ FEATURES_DATATYPES = {
     "Metadata": "list",  # List of strings with additional information
     "Tags": "dictionary",  # Dictionary where keys are tags and values are integers
     "About": "list",  # List of features, services, or attributes
-    "First Opening Time": "ISO8601"  # ISO8601 format for the first opening time
+    "Service Rating": "float",  # Decimal number for service rating
+    "Food Rating": "float",  # Decimal number for food rating
+    "Atmosphere Rating": "float",  # Decimal number for atmosphere rating
+    "Price Per Person": "float",  # Decimal number for price per person
+    "Recommended Dishes": "list",  # String with recommended dishes
+    "First Opening Time": "ISO8601",  # ISO8601 format for the first opening time
+    "Last Opening Time": "ISO8601",  # ISO8601 format for the last opening time
+    "Average Opening Time": "float",  # Decimal number for average opening time in hours
 }
 
 PLOT_FEATURES_DATATYPES = {
@@ -39,7 +46,14 @@ PLOT_FEATURES_DATATYPES = {
     # "Metadata": "list",  # List of strings with additional information
     # "Tags": "dictionary",  # Dictionary where keys are tags and values are integers
     # "About": "list",  # List of features, services, or attributes
-    "First Opening Time": "ISO8601"  # ISO8601 format for the first opening time
+    "Service Rating": "float",  # Decimal number for service rating
+    "Food Rating": "float",  # Decimal number for food rating
+    "Atmosphere Rating": "float",  # Decimal number for atmosphere rating
+    "Price Per Person": "float",  # Decimal number for price per person
+    # "Recommended Dishes": "list",  # String with recommended dishes
+    "First Opening Time": "ISO8601",  # ISO8601 format for the first opening time
+    "Last Opening Time": "ISO8601",  # ISO8601 format for the last opening time
+    "Average Opening Time": "float",  # Decimal number for average opening time in hours
 }
 
 LIST_OF_PLACES = {
@@ -60,3 +74,16 @@ DEFAULT_PLOT_JSON = """{
   "feature2": "Average Star Rating",
   "plot": "line chart"
 }"""
+
+FOOD_CSV_URL = "https://huggingface.co/datasets/AlexanderLJX/Dining-Insights/resolve/main/scraped_data_food_full.csv?download=true"
+REVIEW_CSV_URL = "https://huggingface.co/datasets/AlexanderLJX/Dining-Insights/resolve/main/scraped_data_reviews_food_full.csv?download=true"
+
+INCLUDED_CATEGORIES_KEYWORDS = ["restaurant", "cafe", "bar", "takeaway", "food court", "bakery", "pub", "beer", "patisserie", 
+                       "creperie", "diner", "bistro", "live music venue", "hawker", "grill", "kiosk", "stand", "BBQ","brewery",
+                       "delicatessen", "deli", "shopping mall", "gift shop", "butcher shop", "chicken shop", "rice shop",
+                       "convenience store", "fruit and vegetable store", "furniture store", "gourmet grocery store", "grocery store", 
+                       "meat products store"]
+
+EXCLUDED_CATEGORIES = ["townhouse complex", "warehouse","shopping mall", "gift shop", "butcher shop", 
+                                "chicken shop", "rice shop", "convenience store", "fruit and vegetable store", 
+                                "furniture store", "gourmet grocery store", "grocery store", "meat products store"]

@@ -10,43 +10,11 @@ import pydeck as pdk
 from folium.plugins import HeatMapWithTime
 from folium.plugins import TimestampedGeoJson
 import json
-import ast
 import constants
 
-# defining datas
-def readfile():
-    try:
-        df_data=pd.read_csv('main/main.csv')
-        return process_csv(df_data)
-    #exception if the file cant be found 
-    except FileNotFoundError:
-        print(" CSV file could not be found.")
-        exit(1)
-    #exception if there are issues reading the csv file
-    except Exception as e:
-        print(f"An error occurred while reading the CSV file: {e}")
-        exit(1)
-
-def process_csv(df_data):
-    # convert based on the features_datatypes
-    for feature, datatype in constants.FEATURES_DATATYPES.items():
-        if datatype == "string":
-            df_data[feature] = df_data[feature].astype(str)
-        elif datatype == "integer":
-            df_data[feature] = pd.to_numeric(df_data[feature], errors='coerce')
-        elif datatype == "float":
-            df_data[feature] = pd.to_numeric(df_data[feature], errors='coerce')
-        elif datatype == "dictionary":
-            df_data[feature] = df_data[feature].apply(lambda x: ast.literal_eval(x) if pd.notnull(x) else x)
-        elif datatype == "list":
-            df_data[feature] = df_data[feature].apply(lambda x: ast.literal_eval(x) if pd.notnull(x) else x)
-        elif datatype == "ISO8601":
-            df_data[feature] = pd.to_datetime(df_data[feature], errors='coerce')
-    # print dtypes
-    print(df_data.dtypes)
-    return df_data
-
 def validate_filter_json(filter_json):
+    if filter_json == "":
+        return "Valid JSON"
     try:
         # convert the json string to a list of dictionaries
         filter_list = json.loads(filter_json)
@@ -94,7 +62,6 @@ def validate_plot_json(plot_json):
     # verify that the column is in feature list
     if plot_dict['feature1'] not in constants.FEATURES_DATATYPES.keys():
         return f"{plot_dict['feature1']} not a valid column"
-    
     # if there is a feature2 check it too
     if 'feature2' in plot_dict:
         # verify that the column is in feature list
@@ -105,10 +72,7 @@ def validate_plot_json(plot_json):
     if plot_dict['plot'] == "distribution":
         if constants.FEATURES_DATATYPES[plot_dict['feature1']] not in ["integer", "float"]:
             return f"{plot_dict['feature1']} not a valid column for distribution plot"
-    
-        
-    
-    
+
     return "Valid JSON"
     
 def filter_df(planning_area, category, df_data):
@@ -123,7 +87,6 @@ def filter_df(planning_area, category, df_data):
     return df_data_filtered
 
 def filter_df_json(filter_json, df_data):
-    # {"column": "About", "value": "LGBTQ friendly restaurants", "operator": "=="
     # convert the json string to a list of dictionaries
     filter_list = json.loads(filter_json)
     # make a copy of the dataframe so that the original dataframe is not modified
@@ -145,8 +108,7 @@ def filter_df_json(filter_json, df_data):
         # get the operator from the dictionary
         operator = filter_dict['operator']
 
-        # if column = "About"
-        if column == "About":
+        if column == "About" or column == "Recommended Dishes":
             # filter the dataframe based on the column, value and operator
             if operator == "==":
                 df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: value in x)]
@@ -386,15 +348,3 @@ def plotmap(df):
     webbrowser.open("file://" + os.path.realpath(tmp.name))
     # Return the name of the temporary file so that we can delete the temp file after the user closes the window
     return tmp.name
-
-def piechart():
-    y = np.array([35, 25, 25, 15])
-    plt.pie(y)
-    plt.show()
-
-def bargraph():
-    x = np.array(["A", "B", "C", "D"])
-    y = np.array([3, 8, 1, 10])
-
-    plt.bar(x,y)
-    plt.show()

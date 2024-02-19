@@ -1,145 +1,275 @@
+# Imports and Constants
 import pandas as pd
 import ast  # To safely evaluate strings containing Python expressions from a string-based input
-
-# download csv from hugging face
-food_csv_url = "https://huggingface.co/datasets/AlexanderLJX/Dining-Insights/resolve/main/scraped_data_food_full.csv?download=true"
-reviews_csv_url = "https://huggingface.co/datasets/AlexanderLJX/Dining-Insights/resolve/main/scraped_data_reviews_food_full.csv?download=true"
-# Read the original main food CSV file
-df = pd.read_csv(food_csv_url)
-original_rows = len(df)
-print("Number of rows in the original CSV file: %d" % len(df))
-
-# Remove duplicate rows with the same 'href', and adjust the index accordingly
-df.drop_duplicates(subset='href', inplace=True)
-# Reset the index
-df.reset_index(drop=True, inplace=True)
-
-print("Number of rows after removing duplicates: %d" % len(df))
-print("Number of rows removed: %d" % (original_rows - len(df)))
-
-# Cleaning of dataset by categories
-# Get list of unique categories, there should be no duplicates
-original_category_list = df['Category'].tolist()
-original_category_list.sort()
-
-# print length of original category list
-print("Length of Original Category List: "+ str(len(original_category_list)))
-
-
-non_dine_in_categories = ["restaurant", "cafe", "bar", "takeaway", "food court", "bakery", "pub", "beer", "patisserie", 
-                      "creperie", "diner", "bistro", "live music venue", "hawker", "grill", "kiosk", "stand", "BBQ","brewery",
-                      "delicatessen", "deli"]
-
-excluded_category_with_word_shop = ["shopping mall", "gift shop", "butcher shop", "chicken shop", "rice shop"]
-
-excluded_category_with_word_store = ["convenience store", "fruit and vegetable store", "furniture store", "gourmet grocery store", "grocery store", "meat products store" ]
-
-blacklisted_keywords = ["townhouse complex", "warehouse"]
-
-excluded_categories = non_dine_in_categories + excluded_category_with_word_shop + excluded_category_with_word_store
-
-# Remove excluded categories frome df
-df = df[~df['Category'].isin(excluded_categories)]
-
-# Remove all rows if any element contains any element of blacklisted_keywords
-df = df[~df['Name'].str.contains('|'.join(blacklisted_keywords), case=False)]
-
-
-df.reset_index(drop=True, inplace=True)
-
-
 import constants
+from datetime import datetime
+from util import readfile
+import os
 
+## Data Loading and Preprocessing
+# check if file exists
+main_csv_path = 'main/main_preprocessed.csv'
+review_csv_path = 'main/review_preprocessed.csv'
+if os.path.isfile(main_csv_path):
+    df = pd.read_csv(main_csv_path)
+else:
+    df = readfile(constants.FOOD_CSV_URL)
+    df.to_csv(main_csv_path, encoding='utf-8-sig', index=False)
+if os.path.isfile(review_csv_path):
+    review_df = pd.read_csv(review_csv_path, encoding='utf-8-sig')
+else:
+    review_df = pd.read_csv(constants.REVIEW_CSV_URL, encoding='utf-8-sig')
+    review_df.to_csv(review_csv_path, encoding='utf-8-sig', index=False)
+
+# drop duplicates
+df.drop_duplicates(subset='href', inplace=True)
+df.reset_index(drop=True, inplace=True)
+review_df.drop_duplicates(subset=['Review ID'], inplace=True)
+review_df.reset_index(drop=True, inplace=True)
+
+## Data Cleaning
+# print all unique values in the 'Category' column
+print(df['Category'].unique())
+
+# remove all categories that are NOT in constants.INCLUDED_CATEGORIES_KEYWORDS
+df = df[df['Category'].str.contains('|'.join(constants.INCLUDED_CATEGORIES_KEYWORDS), case=False)]
+# Remove excluded categories
+df = df[~df['Category'].str.contains('|'.join(constants.EXCLUDED_CATEGORIES), case=False)]
+
+df.reset_index(drop=True, inplace=True)
+
+# Process the 'Date' column to keep only the date part
+review_df['Date'] = pd.to_datetime(review_df['Date']).dt.date
+
+## Feature Engineering
+# keywords_mapping = {
+#     'Dine In': ['Dine-in'], 'Takeaway': ['Takeaway'], 'Delivery Service': ['Delivery'], 
+#     'Accept Reservations': ['Accepts reservations'], 'Outdoor Seating': ['Outdoor seating'], 
+#     'Wheelchair Accessibility': ['Wheelchair-accessible car park', 'Wheelchair-accessible entrance', 
+#                                  'Wheelchair-accessible seating', 'Wheelchair-accessible toilet'], 
+#     'Family Friendly': ['Family friendly'], 'Groups': ['Groups'], 'Good for Kids': ['Good for kids']
+# }
+# for column, keywords in keywords_mapping.items():
+#     df[column] = df['About'].apply(lambda x: 'Yes' if any(keyword in x for keyword in keywords) else 'No')
+
+# Create new column region
 def find_region(row, places_dict):
     for region, areas in places_dict.items():
-        for area, sub_areas in areas.items():
+        for area in areas:
             if row['Planning Area'] in area:
                 return region
     return None
 
-# add a new column "Region" to the dataframe from based on the "Planning Area" column
 df['Region'] = df.apply(find_region, axis=1, args=(constants.LIST_OF_PLACES,))
 
-
-# Extracting useful information from About Column
-# Assuming df is your DataFrame and it already exists
-
+# add new columns to df based on the review_df metadata
 # Safely convert the string representation of list of strings into a list of strings
-df['About'] = df['About'].apply(ast.literal_eval)
-# print(df["About"])
+def process_value(value, key):
+    if "$" in value or key == "Price per person":
+        value = value.replace("$", "").replace("RM ", "").replace("SGD ", "")
+        if "+" in value:
+            value = value.replace("+", "")
+            return float(value)*1.5
+        if "–" in value:
+            parts = value.split("–")
+            return sum(float(part) for part in parts) / len(parts)
+        # if value is float
+        if value.replace(".", "").isdigit():
+            return float(value)
+        else:
+            return value
+    if value.isdigit():
+        return int(value)
+    return value
+def process_metadata(review_df): # convert metadata column into multiple columns
+    for index, metadata_list in enumerate(review_df['Metadata']):
+        for item in metadata_list:
+            # if key has no value or no ": "
+            if item == "" or ": " not in item:
+                continue
+            key, value = item.split(": ", 1)
+            if key == "Service":
+                # check if the string value can be converted to a int
+                if value.isdigit():
+                    int(value)
+                    key = "Service Rating"
+                else:
+                    key = "Service Type"
+            review_df.at[index, key] = process_value(value, key)
+        if (index+1) % 10000 == 0:
+            print(f"Processed {(index+1)} rows")
+    # Drop the columns in which there is less than 20% of non-null values
+    review_df.dropna(thresh=len(review_df) * 0.2, axis=1, inplace=True)
+    # Drop the original 'Metadata' column
+    review_df.drop(columns=['Metadata'], inplace=True)
 
-# New Columns for Classifying Dining Options
-df['Dine In'] = None
-df['Takeaway'] = None
-df['Delivery Service'] = None
-df['Accept Reservations'] = None
-df['Outdoor Seating'] = None
+    return review_df
 
-# New columns for Classifying Accessibility Options
-df['Wheelchair Accessibility'] = None
+# convert reivew_df metadata column into list
+review_df['Metadata'] = review_df['Metadata'].apply(ast.literal_eval)
+# # cut to 1000 rows for testing
+# review_df = review_df.head(1000)
+review_df = process_metadata(review_df)
 
-# New columns for Classifying Customer Groups
-df['Family Friendly'] = None
-df['Groups'] = None
-df['Good for Kids'] = None
+# First, rename 'href of Place' in review_df to 'href' to match the column name in df
+review_df.rename(columns={'href of Place': 'href'}, inplace=True)
 
-# Define keywords for each column
-keywords_mapping = {
-    'Dine In': ['Dine-in'],
-    'Takeaway': ['Takeaway'],
-    'Delivery Service': ['Delivery'],
-    'Accept Reservations': ['Accepts reservations'],
-    'Outdoor Seating': ['Outdoor seating'],
-    'Wheelchair Accessibility': ['Wheelchair-accessible car park', 'Wheelchair-accessible entrance', 'Wheelchair-accessible seating', 'Wheelchair-accessible toilet'],
-    'Family Friendly': ['Family friendly'],
-    'Groups': ['Groups'],
-    'Good for Kids': ['Good for kids']
-}
+# drop all columns except href, Service Rating, Food, Atmosphere, Price per person, Recommended dishes
+review_df = review_df[['href', 'Service Rating', 'Food', 'Atmosphere', 'Price per person', 'Recommended dishes']]
 
-# Iterate over each column and set values based on keywords
-for column, keywords in keywords_mapping.items():
-    df[column] = df['About'].apply(lambda x: 'Yes' if any(keyword in x for keyword in keywords) else 'No')
+# Now perform the aggregation on merged_df
+aggregated_df = review_df.groupby('href').agg({
+    'Service Rating': 'mean',
+    'Food': 'mean',
+    'Atmosphere': 'mean',
+    'Price per person': 'mean',
+    # convert to list
+    'Recommended dishes': lambda x: ', '.join(x.dropna()).replace(' and ', ', ').split(', ')
+}).reset_index()
 
-# Temporary test column for time animation
-# apply ast to convert string to dictionary
+# save to csv
+aggregated_df.to_csv('main/review.csv', encoding='utf-8-sig', index=False)
+
+# If you want to join this aggregated information back to the original df DataFrame:
+df = pd.merge(df, aggregated_df, on='href', how='left')
+
+# Assuming you want to rename some columns to match your original naming
+df.rename(columns={
+    'Food': 'Food Rating',
+    'Price per person': 'Price Per Person',
+    'Recommended dishes': 'Recommended Dishes'
+}, inplace=True)
+
+
+
+
+
+# process opening hours .replace(". Hide open hours for the week", "").strip()
+df['Opening Hours'] = df['Opening Hours'].apply(lambda x: x.replace(". Hide open hours for the week", "").strip())
+
+# convert str to dict
 df['Opening Hours'] = df['Opening Hours'].apply(ast.literal_eval)
+
+# drop if open is Closed
+for index, row in df.iterrows():
+    for key, item in row['Opening Hours'].items():
+            for x in item:
+                if x['open'] == 'Closed':
+                    df.at[index, 'Opening Hours'][key].remove(x)
+
+def convert_to_24_hour(time_str, am_pm=None):
+    if time_str == 'Closed':
+        return time_str
+    # if time_str does not have a am or pm
+    if 'am' not in time_str and 'pm' not in time_str:
+        time_str = time_str + ' ' + am_pm
+    # format for parsing example: 12 pm or 11:30 am
+    fmt = '%I %p'
+    fmt2 = '%I:%M %p'
+    try:
+        time = datetime.strptime(time_str, fmt)
+    except:
+        time = datetime.strptime(time_str, fmt2)
+
+    return time.strftime('%H:%M')
+
+# create new column "First Opening Time"
 df['First Opening Time'] = None
-# add a first opening time column
+# Iterate through DataFrame rows
+for index, row in df.iterrows():
+    if not row['Opening Hours']:  # Check if 'Opening Hours' is empty
+        df.at[index, 'First Opening Time'] = None
+        continue
+    
+    first_opening_time = None
+    for day, timings in row['Opening Hours'].items():
+        if timings:  # Ensure there are timings for the day
+            opening_time_str = timings[0]['open']  # Get opening time string
+            closing_time_str = timings[0]['close']  # Get closing time string
+            am_pm = None
+            # get am or pm of close
+            if 'am' in closing_time_str:
+                am_pm = 'am'
+            elif 'pm' in closing_time_str:
+                am_pm = 'pm'
+            opening_time_24hr = convert_to_24_hour(opening_time_str, am_pm)  # Convert to 24-hour format
+            if opening_time_24hr and opening_time_24hr != 'Closed':  # Ensure conversion was successful
+                # Update first_opening_time if it's either not set or later than the current opening time
+                if first_opening_time is None or opening_time_24hr < first_opening_time:
+                    first_opening_time = opening_time_24hr
+    
+    df.at[index, 'First Opening Time'] = first_opening_time
+
+# create new column "Last Closing Time"
+df['Last Closing Time'] = None
+# Iterate through DataFrame rows
+for index, row in df.iterrows():
+    if not row['Opening Hours']:  # Check if 'Opening Hours' is empty
+        df.at[index, 'Last Closing Time'] = None
+        continue
+    
+    last_closing_time = None
+    for day, timings in row['Opening Hours'].items():
+        if timings:  # Ensure there are timings for the day
+            closing_time_str = timings[0]['close']  # Get closing time string
+            am_pm = None
+            # get am or pm of open
+            if 'am' in timings[0]['open']:
+                am_pm = 'am'
+            elif 'pm' in timings[0]['open']:
+                am_pm = 'pm'
+            closing_time_24hr = convert_to_24_hour(closing_time_str, am_pm)  # Convert to 24-hour format
+            if closing_time_24hr and closing_time_24hr != 'Closed':  # Ensure conversion was successful
+                # Update last_closing_time if it's either not set or earlier than the current closing time
+                if last_closing_time is None or closing_time_24hr > last_closing_time:
+                    last_closing_time = closing_time_24hr
+    
+    df.at[index, 'Last Closing Time'] = last_closing_time
+
+# create new column "Average Opening Hours"
+def calculate_hours(open_close_times):
+    if open_close_times['open'] == 'Closed':
+        return 0
+    elif open_close_times['open'] == '12 am' and open_close_times['close'] == '12 am':
+        return 24
+    else:
+        # if open close times does not have a am or pm
+        if 'am' not in open_close_times['open'] and 'pm' not in open_close_times['open']:
+            open_close_times['open'] = open_close_times['open'] + ' pm'
+        # format for parsing example: 12 pm or 11:30 am
+        fmt = '%I %p'
+        fmt2 = '%I:%M %p'
+        try:
+            open_time = datetime.strptime(open_close_times['open'], fmt)
+        except:
+            open_time = datetime.strptime(open_close_times['open'], fmt2)
+        try:
+            close_time = datetime.strptime(open_close_times['close'], fmt)
+        except:
+            close_time = datetime.strptime(open_close_times['close'], fmt2)
+        delta = close_time - open_time
+        return delta.seconds / 3600  # Convert seconds to hours
+
+df['Average Opening Hours'] = None
 for index, row in df.iterrows():
     # if not empty dictionary
-    try:
-        # get the first opening time of friday
-        first_opening_time = row['Opening Hours']['Friday'][0]['open']
-        df.at[index, 'First Opening Time'] = first_opening_time
-    except:
-        first_opening_time = None
-        df.at[index, 'First Opening Time'] = first_opening_time
-# make time ISO string format if not None
-df['First Opening Time'] = pd.to_datetime(df['First Opening Time'], errors='coerce').dt.strftime('%H:%M')
+    if row['Opening Hours'] == {}:
+        df.at[index, 'Average Opening Hours'] = None
+        continue
+    total_hours = 0
+    # loop through dict row['Opening Hours']
+    for key, item in row['Opening Hours'].items():
+        for x in item:
+            total_hours += calculate_hours(x)
 
-# convert to int
-df['Reviews'] = pd.to_numeric(df['Reviews'], errors='coerce')
-# convert to float, if not possible, convert to NaN
-df['Average Star Rating'] = pd.to_numeric(df['Average Star Rating'], errors='coerce')
-# Step 1: Calculate the overall average rating (m) and the average number of reviews (C)
-m = df['Average Star Rating'].mean()
-C = df['Reviews'].mean()
+    df.at[index, 'Average Opening Hours'] = total_hours / len(row['Opening Hours'])
 
-# Step 2: Define a function to calculate the Bayesian Rating
-def calculate_bayesian_rating(N, R, C=C, m=m):
+## Analysis and Calculations
+# Calculate bayesian rating based on the number of reviews and the average star rating
+def calculate_bayesian_rating(N, R, C=5, m=3):
     return ((C * m) + (N * R)) / (C + N)
 
-# Step 3: Apply the Bayesian Rating formula to each restaurant
 df['Bayesian Rating'] = df.apply(lambda x: calculate_bayesian_rating(x['Reviews'], x['Average Star Rating']), axis=1)
 
-# Now your DataFrame has a new column 'Bayesian Rating' with the calculated ratings for each restaurant.
-
-# convert Price Rating to dollar sign
-df['Price Rating'] = df['Price Rating'].replace(' Moderate', '$$')
-df['Price Rating'] = df['Price Rating'].replace(' Inexpensive', '$')
-df['Price Rating'] = df['Price Rating'].replace(' Very Expensive', '$$$$')
-df['Price Rating'] = df['Price Rating'].replace(' Expensive', '$$$')
-df['Price Rating'] = df['Price Rating'].replace('NAN', '')
-
-# Update the CSV File
+## Exporting Data
 df.to_csv('main/main.csv', encoding='utf-8-sig', index=False)

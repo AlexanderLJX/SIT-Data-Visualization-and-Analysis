@@ -24,10 +24,7 @@ def plot_distribution(feature, df):
     plt.grid(axis='y', alpha=0.75)
 
     # Return the figure object
-    return plt.gcf()
-
-
-    
+    return plt.gcf()    
 
 
 def plot_hexbin(feature1, feature2, df):
@@ -158,7 +155,9 @@ def plot_linear_regression(feature1, feature2, df):
     plt.xlabel(feature1)
     plt.ylabel(feature2)
     plt.legend()
-    plt.show()
+    # plt.show()
+
+    return plt.gcf()
 
 def plot_anomaly_detection(feature, df):
     # Convert "NAN" to actual NaN and change dtype to float
@@ -173,4 +172,6 @@ def plot_anomaly_detection(feature, df):
     plt.xlabel('Index')
     plt.ylabel(feature)
     plt.grid(True)
-    plt.show()
+    # plt.show()
+
+    return plt.gcf()

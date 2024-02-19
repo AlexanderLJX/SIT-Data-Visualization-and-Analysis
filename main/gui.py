@@ -4,7 +4,8 @@
 import PySimpleGUI as sg
 import os
 import shutil
-from functions import readfile, validate_filter_json, validate_plot_json, filter_df, filter_df_json, plotmap, plotmap_3d, plotmap_with_animation,plotmap_with_heat
+from functions import validate_filter_json, validate_plot_json, filter_df, filter_df_json, plotmap, plotmap_3d, plotmap_with_animation,plotmap_with_heat
+from util import readfile
 import threading
 from gpt import generate_filter, generate_plot_json
 from data_visualizer import plot_distribution, plot_hexbin, plot_scatter, plot_line_chart, plot_bar_chart, plot_pie_chart
@@ -93,11 +94,11 @@ def draw_figure(canvas, figure):
 # Below code is for the GUI
 
 # Configure logging
-logging.basicConfig(filename='gui_error.txt', level=logging.ERROR, format='%(asctime)s:%(levelname)s:%(message)s')
+logging.basicConfig(filename='gui_error.log', level=logging.ERROR, format='%(asctime)s:%(levelname)s:%(message)s')
 
 
 plt.switch_backend('agg')
-df_data=readfile()
+df_data=readfile("main/main.csv")
 filter_json = None
 json_queue_full = False
 validating_json = False
@@ -263,6 +264,12 @@ window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1200,750),element_ju
 
 
 temp_file_name= None
+
+# validate json
+# get value of filter json
+filter_json = window['-FILTER-'].get()
+threading.Thread(target=validate_json_thread, args=(window, filter_json), daemon=True).start()
+
 # Event Loop to process "events" and get the "values" of the inputs
 while True:
     event, values = window.read()
