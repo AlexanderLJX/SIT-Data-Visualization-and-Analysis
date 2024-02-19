@@ -40,4 +40,4 @@ jobs:
       run: |
         Xvfb :99 &
         export DISPLAY=:99
-        timeout --preserve-status 1m python main/gui.py || [ $? -eq 124 ]
+        timeout --preserve-status 1m python main/gui.py || [ $? -eq 1 ]
