@@ -4,11 +4,11 @@
 import PySimpleGUI as sg
 import os
 import shutil
-from functions import validate_filter_json, validate_plot_json, filter_df, filter_df_json, plotmap, plotmap_3d, plotmap_with_animation,plotmap_with_heat
+from functions import *
 from util import readfile
 import threading
-from gpt import generate_filter, generate_plot_json
-from data_visualizer import plot_distribution, plot_hexbin, plot_scatter, plot_line_chart, plot_bar_chart, plot_pie_chart
+from gpt import *
+from data_visualizer import *
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import json
 import matplotlib.pyplot as plt
@@ -169,12 +169,12 @@ default_filter_query = "dinein and takeaway and region is central and top 10 on 
 #layout of the first tab
 layout = [
     
-   
+    [sg.Text()],
     [sg.Text('Filter data by Natural Language Query: ', font=("Arial",16))],
  
     [
         # add text for the description of the input box
-        sg.Text('Natural Language query: ', font=font),
+        sg.Text('NLQ: ', font=font),
         # add a text box for a user query input
         sg.Multiline(size=(50, 3), default_text=default_filter_query, key='-USER-QUERY-', font=font),
         # add a button to submit the query
@@ -224,7 +224,6 @@ layout = [
 layout2 = [
             [sg.Text('Display datagrams :', font=("Arial", 20))],
             [sg.Text('Instructions :', font=("Arial", 20))],
-            # [sg.Text('1.', font=("Arial", 14))],
             [
                 # add text for the description of the input box
                 sg.Text('Natural Language query: ', font=font),
@@ -303,7 +302,7 @@ tabgrp = [
 ]
 
 
-window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1000,950),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
+window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1200,1000),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
 
 
 temp_file_name= None
