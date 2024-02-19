@@ -128,8 +128,11 @@ default_filter_query = "dinein and takeaway and region is central and top 10 on 
 #layout of the first tab
 layout = [
     
-    [sg.Text('Filter the data and see it on the map : ', font=("Arial",20))],
-    [sg.Text()],
+    # [sg.Text('Filter the data and see it on the map : ', font=("Arial",16))],
+    [sg.Text('Filter data by Natural Language Query: ', font=("Arial",16))],
+    # [sg.Text('1. Write a Natural language Query', font= ("Arial", 10))],
+    # [sg.Text('2. Click the \"Generate\" Button', font= ("Arial", 10))],
+    # [sg.Text('3. View the data by clicking on one of the 4 maps below', font= ("Arial", 10))],
     [
         # add text for the description of the input box
         sg.Text('Natural Language query: ', font=font),
@@ -146,26 +149,31 @@ layout = [
         # add text displaying json validation
         sg.Text('', size=(15, 1), key='-JSON-STATUS-')
     ],
-    [
+
+    [sg.Text('Filter data by Area in Singapore and Categories of Foodplace: ', font=("Arial",16))],
+    # [sg.Text('1. Select an area and a category from the list below.', font= ("Arial", 10))],
+    # [sg.Text('2. Generate the Filtered Dataset by clicking on \"Export Filtered Dataset\".', font= ("Arial", 10))],
+    # [sg.Text('3. You can also view the original raw datset by clicking on \"Export Entire Dataset\".', font= ("Arial", 10))],
+    [ 
         sg.Text('Area in Singapore : ', font=font),
         sg.Text(size=(16, 2)),
         sg.Text('Category of Foodplace : ', font=font)
     ],
     [
-        sg.Listbox(unique_Area_list, size=(20,10), select_mode='multiple', key='-OPTION-'),
+        sg.Listbox(unique_Area_list, size=(20,6), select_mode='multiple', key='-OPTION-'),
         sg.Text(size=(14, 2)),
-        sg.Listbox(values=unique_cat_list, size=(20,10), select_mode='multiple', key='-OPTION2-')
-    ],
-    [
-        sg.Button('Export Map', key='-EXPORT-MAP-', size=(15, 2),font=font,border_width=0), 
-        sg.Button('Export Filtered Dataset', key='-EXPORT-FILTERED-', size=(20, 2), font=font,border_width=0),
-        sg.Button('Export Entire Dataset', key='-EXPORT-', pad=(10,10), size=(20,2), font=font),
+        sg.Listbox(values=unique_cat_list, size=(20,6), select_mode='multiple', key='-OPTION2-')
     ],
     [
         sg.Button('Show on Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
         sg.Button('Show on 3D Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
         sg.Button('Show on Animated Map', size=(20, 2), font=font,border_width=0,button_color=('white', 'green')),
         sg.Button('Show on Heat Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
+    ],
+    [
+        sg.Button('Export Map', key='-EXPORT-MAP-', size=(15, 2),font=font,border_width=0), 
+        sg.Button('Export Filtered Dataset', key='-EXPORT-FILTERED-', size=(20, 2), font=font,border_width=0),
+        sg.Button('Export Entire Dataset', key='-EXPORT-', pad=(10,10), size=(20,2), font=font),
     ],
     # add map status
     [sg.Text('', key='-STATUS-', font=font)],
@@ -178,6 +186,8 @@ layout = [
 #layout of the second tab 
 layout2 = [
             [sg.Text('Display datagrams :', font=("Arial", 20))],
+            [sg.Text('Instructions :', font=("Arial", 20))],
+            # [sg.Text('1.', font=("Arial", 14))],
             [
                 # add text for the description of the input box
                 sg.Text('Natural Language query: ', font=font),
