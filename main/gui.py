@@ -175,8 +175,6 @@ layout = [
     
     [sg.Text()],
     [sg.Text('Filter data by Natural Language Query: ', font=("Arial",16))],
-    [sg.Text(size=(10,2))],
-
     [
         # add text for the description of the input box
         sg.Text('NLQ: ', font=font),
@@ -291,7 +289,9 @@ layout3 = [
 # Define the layout for the Help tab
 help_tab_layout = [
     [sg.Text('Instructions', font=("Arial", 16, "underline bold")), ],
-    [sg.Text(size=(5,2))],
+    [sg.Text(size=(5,1))],
+    [sg.Text('View Foodplaces Page', font=("Arial", 14, "underline bold"))],
+    [sg.Text(size=(5,1))],
     [sg.Text('Filtering Data by Natural Language Query', font=("Arial", 12, "underline bold"))],
     [sg.Text(size=(5,1))],
     [sg.Text('1. Write a Natural language Query.', font= ("Arial", 10))],
@@ -306,7 +306,9 @@ help_tab_layout = [
     [sg.Text('4. You can also view the original raw datset by clicking on \"Export Entire Dataset\".', font= ("Arial", 10))],
     
     [sg.Text(size=(5,1))],
-    [sg.Text('For detailed documentation, visit ', font=font), sg.Text('https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis', font=('Arial', 10, 'underline'), text_color='light blue', key='-HELP-LINK-', enable_events=True)]
+    [sg.Text('For detailed documentation on the rest of the other pages, visit ', font=font), 
+     sg.Text('https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis', font=('Arial', 11, 'underline'), text_color='light blue', key='-HELP-LINK-', enable_events=True),
+     sg.Text('for more information.', font=font)]
 ]
 
 # Define the tab group with the tabs
