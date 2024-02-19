@@ -7,7 +7,6 @@ import shutil
 from functions import *
 from util import readfile
 import threading
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import json
 import matplotlib.pyplot as plt
 import constants

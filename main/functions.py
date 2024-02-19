@@ -4,8 +4,6 @@ import folium
 from folium.plugins import MarkerCluster
 import tempfile
 import os
-import matplotlib.pyplot as plt
-import numpy as np
 import pydeck as pdk
 from folium.plugins import HeatMapWithTime
 from folium.plugins import TimestampedGeoJson
@@ -13,7 +11,8 @@ import json
 import constants
 from data_visualizer import plot_distribution, plot_hexbin, plot_scatter, plot_line_chart, plot_bar_chart, plot_pie_chart
 from gpt import generate_filter, generate_plot_json
-
+import logging
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 def validate_filter_json(filter_json):
     if filter_json == "":
