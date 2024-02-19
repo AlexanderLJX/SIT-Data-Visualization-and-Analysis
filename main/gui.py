@@ -131,7 +131,7 @@ def train_and_predict_thread(window, train_args):
 def draw_figure(canvas, figure):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
     figure_canvas_agg.draw()
-    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=3)
+    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
     return figure_canvas_agg
 
 # Below code is for the GUI
@@ -166,7 +166,9 @@ sg.theme('DarkAmber')  # Add a touch of color to the gui
 font = ("Arial",11)
 
 default_filter_text = """"""
-default_filter_query = "dinein and takeaway and region is central and top 10 on bayesian rating"
+default_filter_query = "dine in and takeaway and region is central and top 10 on bayesian rating"
+
+
 
 #layout of the first tab
 layout = [
@@ -199,7 +201,8 @@ layout = [
         sg.Text(size=(16, 2)),
         sg.Text('Category of Foodplace : ', font=font)
     ],
-    [
+    
+    [   
         sg.Listbox(unique_Area_list, size=(20,6), select_mode='multiple', key='-OPTION-'),
         sg.Text(size=(14, 2)),
         sg.Listbox(values=unique_cat_list, size=(20,6), select_mode='multiple', key='-OPTION2-')
@@ -342,9 +345,10 @@ while True:
             os.remove(temp_file_name)
         break
     
-    elif event == '-VIEW-ALL-':
-        #viewing the map without any filters
-        temp_file_name=plotmap('','',df_data)
+    elif event == 'Search':
+        search_term = values['-SEARCH-'].lower()
+        filtered_data = [item for item in unique_Area_list if search_term in item.lower()]
+        window['-OPTION-'].update(values=filtered_data)
         
     elif event== '-SHOW-DIAGRAM-':
         # show plotting diagram on the plot status

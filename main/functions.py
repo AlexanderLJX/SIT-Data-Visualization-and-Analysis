@@ -5,9 +5,6 @@ from folium.plugins import MarkerCluster
 import tempfile
 import os
 import matplotlib.pyplot as plt
-import numpy as np
-import pydeck as pdk
-from folium.plugins import HeatMapWithTime
 from folium.plugins import TimestampedGeoJson
 import json
 import constants
@@ -267,8 +264,7 @@ def plotmap_with_animation(df):
 
     # drop rows with NaN values
     df = df.dropna(subset=['latitude', 'longitude', 'First Opening Time'])
-    
-    # Create GeoJSON features
+
     features = []
     for _, row in df.iterrows():
         feature = {
@@ -362,6 +358,6 @@ def plotmap_with_animation(df):
 #         m.save(tmp.name)
 #         webbrowser.open("file://" + os.path.realpath(tmp.name))
     
-    # return tmp.name
+#     return tmp.name
 
 #defining a function to plot the locations on the map
