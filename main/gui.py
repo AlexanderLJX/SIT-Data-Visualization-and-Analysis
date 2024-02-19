@@ -175,8 +175,6 @@ layout = [
     
     [sg.Text()],
     [sg.Text('Filter data by Natural Language Query: ', font=("Arial",16))],
-    [sg.Text(size=(10,2))],
-
     [
         # add text for the description of the input box
         sg.Text('NLQ: ', font=font),
