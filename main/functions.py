@@ -11,6 +11,9 @@ from folium.plugins import HeatMapWithTime
 from folium.plugins import TimestampedGeoJson
 import json
 import constants
+from data_visualizer import plot_distribution, plot_hexbin, plot_scatter, plot_line_chart, plot_bar_chart, plot_pie_chart
+from gpt import generate_filter, generate_plot_json
+
 
 def validate_filter_json(filter_json):
     if filter_json == "":
@@ -348,3 +351,93 @@ def plotmap(df):
     webbrowser.open("file://" + os.path.realpath(tmp.name))
     # Return the name of the temporary file so that we can delete the temp file after the user closes the window
     return tmp.name
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# long-running function
+def generate_map_thread(window, df_data, plot_function, planning_area, category, filter_json):
+    try:
+        global temp_file_name
+        if filter_json is not None and filter_json != "":
+            filtered_df = filter_df_json(filter_json, df_data)
+        else:
+            filtered_df = filter_df(planning_area, category, df_data)
+        
+        if plot_function == "plotmap_3d":
+            temp_file_name = plotmap_3d(filtered_df)
+        elif plot_function == "plotmap_with_animation":
+            temp_file_name = plotmap_with_animation(filtered_df)
+        elif plot_function =="plotmap_with_heat":
+            temp_file_name= plotmap_with_heat(filtered_df)
+        else: # else is plotmap
+            temp_file_name = plotmap(filtered_df)  
+
+        window.write_event_value('-MAP-GENERATED-', None)  # Signal the GUI thread that the task is done
+    except Exception as e:
+        logging.exception("Exception occurred in generate_map_thread")
+        window.write_event_value('-MAP-FAILED-', None)
+
+def generate_filter_thread(window, query):
+    filter_json = generate_filter(query)
+    # Update the GUI with the generated filter
+    window.write_event_value('-FILTER-GENERATED-', filter_json)  # Signal the GUI thread that the task is done
+
+def generate_plot_json_thread(window, query):
+    plot_json = generate_plot_json(query)
+    # Update the GUI with the generated filter
+    window.write_event_value('-PLOT-JSON-GENERATED-', plot_json)  # Signal the GUI thread that the task is done
+
+def validate_json_thread(window, json_str):
+    global validating_json
+    validating_json = True
+    validation_result = validate_filter_json(json_str)
+    window.write_event_value('-JSON-VALIDATED-', validation_result)
+    validating_json = False
+
+def validate_json_plot_thread(window, json_str):
+    global validating_plot_json
+    validating_plot_json = True
+    validation_result = validate_plot_json(json_str)
+    window.write_event_value('-PLOT-JSON-VALIDATED-', validation_result)
+    validating_plot_json = False
+
+def plot_thread(window, plot_dict, df, plot_on_canvas, filter_json=None):
+    try:
+        global canvas_figure
+        if plot_dict["plot"] == "pie chart":
+            canvas_figure = plot_pie_chart(plot_dict["feature1"], df)
+        elif plot_dict["plot"] == "bar chart":
+            canvas_figure = plot_bar_chart(plot_dict["feature1"], plot_dict["feature2"] if "feature2" in plot_dict else None, df, filter_json)
+        elif plot_dict["plot"] == "line chart":
+            canvas_figure = plot_line_chart(plot_dict["feature1"], plot_dict["feature2"], df)
+        elif plot_dict["plot"] == "scatter":
+            canvas_figure = plot_scatter(plot_dict["feature1"], plot_dict["feature2"], df)
+        elif plot_dict["plot"] == "hexbin":
+            canvas_figure = plot_hexbin(plot_dict["feature1"], plot_dict["feature2"], df)
+        elif plot_dict["plot"] == "distribution":
+            canvas_figure = plot_distribution(plot_dict["feature1"], df)
+        # set window event
+        window.write_event_value('-PLOT-GENERATED-', "Plotting finished successfully!")
+    except Exception as e:
+        logging.exception("Exception occurred in plot_thread")
+        window.write_event_value('-PLOT-FAILED-', "Error occurred while plotting")
+
+# Function to draw matplotlib figure on PySimpleGUI Canvas
+def draw_figure(canvas, figure):
+    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
+    figure_canvas_agg.draw()
+    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+    return figure_canvas_agg
