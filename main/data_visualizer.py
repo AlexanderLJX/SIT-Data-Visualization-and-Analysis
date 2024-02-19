@@ -88,7 +88,6 @@ def plot_bar_chart(feature1, feature2=None, df=None, filter_json=None):
         plt.bar(xticks_label, mean_value, alpha=0.7)
         plt.title(f'Mean of {feature1}')
         plt.ylabel(f'Mean of {feature1}')
-        plt.grid(True)
         # Adjusting plot aesthetics for clarity
     else:
         # Original functionality for handling two features
@@ -106,6 +105,10 @@ def plot_bar_chart(feature1, feature2=None, df=None, filter_json=None):
     plt.grid(True)
     plt.xticks(rotation=20)  # Rotate x-axis labels for better readability if needed
     plt.subplots_adjust(bottom=0.3)  # Adjust the bottom margin to fit the x-axis labels
+
+    # if more the 10 values in legends then remove the legends
+    if feature2 is not None and len(df[feature2].unique()) > 10:
+        plt.legend().remove()
     # plt.show()
 
     return plt.gcf()
