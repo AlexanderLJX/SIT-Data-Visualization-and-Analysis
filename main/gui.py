@@ -101,8 +101,9 @@ logging.basicConfig(filename='gui_error.log', level=logging.ERROR, format='%(asc
 # read the first system argument as a test value, if it exists
 test = False
 if len(sys.argv) > 1:
-    if sys.argv[1] == "test":
+    if str(sys.argv[1]) == "test":
         test = True
+        print("Running in test mode")
 plt.switch_backend('agg')
 df_data=readfile("main/main.csv")
 filter_json = None
