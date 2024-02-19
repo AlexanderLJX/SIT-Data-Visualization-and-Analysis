@@ -80,10 +80,8 @@ REVIEW_CSV_URL = "https://huggingface.co/datasets/AlexanderLJX/Dining-Insights/r
 
 INCLUDED_CATEGORIES_KEYWORDS = ["restaurant", "cafe", "bar", "takeaway", "food court", "bakery", "pub", "beer", "patisserie", 
                        "creperie", "diner", "bistro", "live music venue", "hawker", "grill", "kiosk", "stand", "BBQ","brewery",
-                       "delicatessen", "deli", "shopping mall", "gift shop", "butcher shop", "chicken shop", "rice shop",
-                       "convenience store", "fruit and vegetable store", "furniture store", "gourmet grocery store", "grocery store", 
-                       "meat products store"]
+                       "delicatessen", "deli"]
 
-EXCLUDED_CATEGORIES = ["townhouse complex", "warehouse","shopping mall", "gift shop", "butcher shop", 
+EXCLUDED_CATEGORIES = ["townhouse complex", "furniture store", "warehouse","shopping mall", "gift shop", "butcher shop", 
                                 "chicken shop", "rice shop", "convenience store", "fruit and vegetable store", 
                                 "furniture store", "gourmet grocery store", "grocery store", "meat products store"]
