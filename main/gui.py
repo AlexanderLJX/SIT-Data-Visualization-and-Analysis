@@ -131,7 +131,7 @@ def train_and_predict_thread(window, train_args):
 def draw_figure(canvas, figure):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
     figure_canvas_agg.draw()
-    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=3)
+    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
     return figure_canvas_agg
 
 # Below code is for the GUI
@@ -166,7 +166,9 @@ sg.theme('DarkAmber')  # Add a touch of color to the gui
 font = ("Arial",11)
 
 default_filter_text = """"""
-default_filter_query = "dinein and takeaway and region is central and top 10 on bayesian rating"
+default_filter_query = "dine in and takeaway and region is central and top 10 on bayesian rating"
+
+
 
 #layout of the first tab
 layout = [
