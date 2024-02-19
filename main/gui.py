@@ -15,6 +15,8 @@ import matplotlib.pyplot as plt
 import constants
 import webbrowser
 import logging
+import sys
+import time
 
 # long-running function
 def generate_map_thread(window, df_data, plot_function, planning_area, category, filter_json):
@@ -96,7 +98,11 @@ def draw_figure(canvas, figure):
 # Configure logging
 logging.basicConfig(filename='gui_error.log', level=logging.ERROR, format='%(asctime)s:%(levelname)s:%(message)s')
 
-
+# read the first system argument as a test value, if it exists
+test = False
+if len(sys.argv) > 1:
+    if sys.argv[1] == "test":
+        test = True
 plt.switch_backend('agg')
 df_data=readfile("main/main.csv")
 filter_json = None
@@ -171,8 +177,6 @@ layout = [
     [sg.Text('', key='-STATUS-', font=font)],
     [sg.Text( font=font)],
 ]
-
-
 
 
 #layout of the second tab 
@@ -273,6 +277,11 @@ threading.Thread(target=validate_json_thread, args=(window, filter_json), daemon
 
 # Event Loop to process "events" and get the "values" of the inputs
 while True:
+    if test:
+        # window.write_event_value('-MAP-GENERATED-', None)
+        # window.write_event_value('-PLOT-GENERATED-', "Plotting finished successfully!")
+        # window.write_event_value('-PRED-STATUS-', "Model trained and predicted successfully!")
+        window.write_event_value('Close', None)
     event, values = window.read()
 
     if event == sg.WIN_CLOSED or event == 'Close':
