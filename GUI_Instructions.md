@@ -1,8 +1,8 @@
 # Instructions for Using the PySimpleGUI Application for Data Visualisation and Analysis
 
-## DISCLAIMER: THIS GUI APPLICATION WORKS BEST WITH A COMPUTER SYSTEM SCALE OF 125%. PLEASE ADJUST BASE ON YOUR COMPUTER SYSTEM'S SCALE FOR THE BEST VIEW.
+## DISCLAIMER: THIS GUI APPLICATION WORKS BEST WITH A COMPUTER SYSTEM SCALE OF 125%. PLEASE ADJUST BASE ON YOUR COMPUTER SYSTEM'S SCALE THAT GIVES YOU THE BEST VIEW.
 
-## <ins>View Foodplaces Tab</ins>
+## <ins>1. View Foodplaces Tab</ins>
 
 The View foodplaces tab is used to view the list of foodplaces in Singapore on the map where users can set up to 3 filters -- entering a Natural Language Query, 
 Areas of Singapore and also the Categories of Foodplaces.
@@ -37,3 +37,6 @@ any symbols.
 ### <ins>Saving Raw Dataset CSV File</ins>
 If you would like to view the entire raw dataset without any filtering, click "Export Entire Dataset". Save the raw dataset CSV file at the desired location of 
 your file system.
+
+
+## <ins>2. Data Diagrams Tab</ins>
