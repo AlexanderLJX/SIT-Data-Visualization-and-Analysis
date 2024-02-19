@@ -1,5 +1,5 @@
 # Dining Insights: Singapore
-
+[![Python package](https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis/actions/workflows/python-package.yml/badge.svg)](https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis/actions/workflows/python-package.yml)
 ## Overview
 
 Welcome to the Dining Insights project by Group 3! This Python project focuses on analyzing and visualizing data from dine-in food places, including restaurants and coffee shops, in Singapore. Our objective aligns with the requirements of the ICT1002 Programming Fundamentals course, aiming to apply and deepen our Python programming skills, practice team collaboration using Python tools and libraries, and gain hands-on experience in solving real-world problems.
