@@ -169,11 +169,9 @@ default_filter_query = "dinein and takeaway and region is central and top 10 on 
 #layout of the first tab
 layout = [
     
-    # [sg.Text('Filter the data and see it on the map : ', font=("Arial",16))],
+   
     [sg.Text('Filter data by Natural Language Query: ', font=("Arial",16))],
-    # [sg.Text('1. Write a Natural language Query', font= ("Arial", 10))],
-    # [sg.Text('2. Click the \"Generate\" Button', font= ("Arial", 10))],
-    # [sg.Text('3. View the data by clicking on one of the 4 maps below', font= ("Arial", 10))],
+ 
     [
         # add text for the description of the input box
         sg.Text('Natural Language query: ', font=font),
@@ -192,9 +190,7 @@ layout = [
     ],
 
     [sg.Text('Filter data by Area in Singapore and Categories of Foodplace: ', font=("Arial",16))],
-    # [sg.Text('1. Select an area and a category from the list below.', font= ("Arial", 10))],
-    # [sg.Text('2. Generate the Filtered Dataset by clicking on \"Export Filtered Dataset\".', font= ("Arial", 10))],
-    # [sg.Text('3. You can also view the original raw datset by clicking on \"Export Entire Dataset\".', font= ("Arial", 10))],
+
     [ 
         sg.Text('Area in Singapore : ', font=font),
         sg.Text(size=(16, 2)),
@@ -245,12 +241,7 @@ layout2 = [
                 # add text displaying json validation
                 sg.Text('', size=(15, 1), key='-PLOT-JSON-STATUS-'),
             ],
-            # [
-            #     sg.Text('Choose the diagram type: ', font=font),
-            #     sg.Combo(values=["Pie Chart","Bar Graph"], key='-OPTION3-', pad=(10,10), size=(30, 20), font=font),
-            #     sg.Text('Choose the data you would like to view : ', font=font),
-            #     sg.Combo(values= ["Average Star Rating","Takeaway"] ,key='-OPTION4-', pad=(10,10), size=(30, 20), font=font)
-            # ],
+    
             [
                 sg.Button('Show Diagram', key='-SHOW-DIAGRAM-', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
                 # add a checkbox to apply the filter to the diagram
@@ -312,7 +303,7 @@ tabgrp = [
 ]
 
 
-window = sg.Window('Foodplaces in Singapore', tabgrp, size=(900,750),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
+window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1000,950),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
 
 
 temp_file_name= None
