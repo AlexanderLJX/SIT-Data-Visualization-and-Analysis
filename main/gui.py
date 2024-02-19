@@ -307,9 +307,13 @@ while True:
             filter_json_status = window['-JSON-STATUS-'].get()
             if values['-APPLY-FILTER-'] and filter_json_status == "Valid JSON":
                 filter_json = values['-FILTER-']
-                filtered_df = filter_df_json(filter_json, df_data)
-                # json load
-                filter_json = json.loads(filter_json)
+                if filter_json == "":
+                    filter_json = None
+                    filtered_df = df_data
+                else:
+                    filtered_df = filter_df_json(filter_json, df_data)
+                    # json load
+                    filter_json = json.loads(filter_json)
                 threading.Thread(target=plot_thread, args=(window, plot_dict, filtered_df, plot_on_canvas, filter_json), daemon=True).start()
             else:
                 threading.Thread(target=plot_thread, args=(window, plot_dict, df_data, plot_on_canvas), daemon=True).start()
