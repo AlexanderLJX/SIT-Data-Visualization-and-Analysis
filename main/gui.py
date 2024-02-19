@@ -271,6 +271,10 @@ temp_file_name= None
 filter_json = window['-FILTER-'].get()
 threading.Thread(target=validate_json_thread, args=(window, filter_json), daemon=True).start()
 
+# get value of plot json
+plot_json = window['-PLOT-JSON-'].get()
+threading.Thread(target=validate_json_plot_thread, args=(window, plot_json), daemon=True).start()
+
 # Event Loop to process "events" and get the "values" of the inputs
 while True:
     event, values = window.read()
