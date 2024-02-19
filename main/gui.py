@@ -228,15 +228,16 @@ layout = [
 #layout of the second tab 
 layout2 = [
             [sg.Text('Display datagrams :', font=("Arial", 20))],
-            [sg.Text('Instructions :', font=("Arial", 20))],
+            [sg.Text(size=(5,2))],
             [
                 # add text for the description of the input box
-                sg.Text('Natural Language query: ', font=font),
+                sg.Text('NLQ: ', font=font),
                 # add a text box for a user query input
                 sg.Multiline(size=(50, 3), default_text='Plot the relationship between number of reviews and star rating!', key='-PLOT-QUERY-', font=font),
                 # add a button to submit the query
                 sg.Button('Generate', key='-SUBMIT-PLOT-QUERY-', size=(10, 1), font=font,border_width=0),
             ],
+            [sg.Text(size=(5,1))],
             [
                 # add text for the description of the input box
                 sg.Text('Plot JSON: ', font=font),
@@ -245,7 +246,7 @@ layout2 = [
                 # add text displaying json validation
                 sg.Text('', size=(15, 1), key='-PLOT-JSON-STATUS-'),
             ],
-
+            [sg.Text(size=(5,1))],
             [
                 sg.Button('Show Diagram', key='-SHOW-DIAGRAM-', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
                 # add a checkbox to apply the filter to the diagram
@@ -287,21 +288,22 @@ layout3 = [
 # Define the layout for the Help tab
 help_tab_layout = [
     [sg.Text('Instructions', font=("Arial", 16, "underline bold")), ],
+    [sg.Text(size=(5,2))],
     [sg.Text('Filtering Data by Natural Language Query', font=("Arial", 12, "underline bold"))],
+    [sg.Text(size=(5,1))],
     [sg.Text('1. Write a Natural language Query.', font= ("Arial", 10))],
     [sg.Text('2. Click the \"Generate\" Button.', font= ("Arial", 10))],
     [sg.Text('3. View and Display the data on the map by clicking on one of the 4 maps.', font= ("Arial", 10))],
-    
+    [sg.Text(size=(5,1))],
     [sg.Text('Filtering Data by Area in Singapore and Categories of Foodplace', font=("Arial", 12, "underline bold"))],
+    [sg.Text(size=(5,1))],
     [sg.Text('1. Select an area and a category from the list below.', font= ("Arial", 10))],
     [sg.Text('2. Generate the Filtered Dataset by clicking on \"Export Filtered Dataset\".', font= ("Arial", 10))],
     [sg.Text('3. View and Display the data on the map by clicking on the "Export Map" button.', font= ("Arial", 10))],
     [sg.Text('4. You can also view the original raw datset by clicking on \"Export Entire Dataset\".', font= ("Arial", 10))],
     
-    # [sg.Text('1. Start by selecting a category or area you are interested in.', font=font)],
-    # [sg.Text('2. Use the "Generate" button to apply filters based on your query.', font=font)],
-    # [sg.Text('3. Explore the different visualization tabs to see the data in various forms.', font=font)],
-    # [sg.Text('For detailed documentation, visit ', font=font), sg.Text('https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis', font=('Arial', 10, 'underline'), text_color='blue', key='-HELP-LINK-', enable_events=True)]
+    [sg.Text(size=(5,1))],
+    [sg.Text('For detailed documentation, visit ', font=font), sg.Text('https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis', font=('Arial', 10, 'underline'), text_color='light blue', key='-HELP-LINK-', enable_events=True)]
 ]
 
 # Define the tab group with the tabs
@@ -317,7 +319,7 @@ tabgrp = [
 ]
 
 
-window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1250,1000),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
+window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1250,1050),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
 
 
 temp_file_name= None
@@ -354,6 +356,7 @@ while True:
         if window['-PLOT-JSON-STATUS-'].get() == 'Valid JSON':
             # convert the json to a dictionary
             plot_dict = json.loads(plot_json)
+
             # plot_on_canvas = values["-SHOW-ON-CANVAS-"] # True if checked, False if unchecked
             plot_on_canvas = True
             # check if the clear plot checkbox is checked
