@@ -4,7 +4,6 @@ import folium
 from folium.plugins import MarkerCluster
 import tempfile
 import os
-import matplotlib.pyplot as plt
 from folium.plugins import TimestampedGeoJson
 import json
 import constants
@@ -259,8 +258,8 @@ def plotmap(df):
     return tmp.name
 
 def plotmap_with_animation(df):
-    # Convert 'Time' to string in ISO format if it's not already
-    df['First Opening Time'] = pd.to_datetime(df['First Opening Time']).dt.strftime('%Y-%m-%dT%H:%M:%S')
+    # Convert 'Time' to string in ISO format if it's not already, eg 11:00:00, there is no date, only time, so make it today's date
+    df['First Opening Time'] = pd.to_datetime(df['First Opening Time']).dt.strftime('2024-02-19T%H:%M:%S')
 
     # drop rows with NaN values
     df = df.dropna(subset=['latitude', 'longitude', 'First Opening Time'])

@@ -15,6 +15,8 @@ FEATURES_DATATYPES = {
     "Price Rating": "string",  # Price range ('Moderate', 'Inexpensive', 'Very Expensive', or 'NAN')
     "Address": "string",  # Address of the restaurant
     "Metadata": "list",  # List of strings with additional information
+    "longitude": "float",  # Decimal number for longitude
+    "latitude": "float",  # Decimal number for latitude
     "Tags": "dictionary",  # Dictionary where keys are tags and values are integers
     "About": "list",  # List of features, services, or attributes
     "Service Rating": "float",  # Decimal number for service rating
