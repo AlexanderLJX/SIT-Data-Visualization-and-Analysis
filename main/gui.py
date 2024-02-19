@@ -171,7 +171,9 @@ layout = [
     
     [sg.Text()],
     [sg.Text('Filter data by Natural Language Query: ', font=("Arial",16))],
- 
+    # [sg.Text('1. Write a Natural language Query', font= ("Arial", 10))],
+    # [sg.Text('2. Click the \"Generate\" Button', font= ("Arial", 10))],
+    # [sg.Text('3. View the data by clicking on one of the 4 maps below', font= ("Arial", 10))],
     [
         # add text for the description of the input box
         sg.Text('NLQ: ', font=font),
@@ -190,7 +192,9 @@ layout = [
     ],
 
     [sg.Text('Filter data by Area in Singapore and Categories of Foodplace: ', font=("Arial",16))],
-
+    # [sg.Text('1. Select an area and a category from the list below.', font= ("Arial", 10))],
+    # [sg.Text('2. Generate the Filtered Dataset by clicking on \"Export Filtered Dataset\".', font= ("Arial", 10))],
+    # [sg.Text('3. You can also view the original raw datset by clicking on \"Export Entire Dataset\".', font= ("Arial", 10))],
     [ 
         sg.Text('Area in Singapore : ', font=font),
         sg.Text(size=(16, 2)),
@@ -240,7 +244,7 @@ layout2 = [
                 # add text displaying json validation
                 sg.Text('', size=(15, 1), key='-PLOT-JSON-STATUS-'),
             ],
-    
+
             [
                 sg.Button('Show Diagram', key='-SHOW-DIAGRAM-', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
                 # add a checkbox to apply the filter to the diagram
@@ -256,7 +260,6 @@ layout2 = [
 
 layout3 = [
             [sg.Text('Train ML models:', font=("Arial", 20))],
-            [sg.Text( )],
             [
                 # add text for the description of the input box
                 sg.Text('Natural Language query: ', font=font),
@@ -282,11 +285,22 @@ layout3 = [
 
 # Define the layout for the Help tab
 help_tab_layout = [
-    [sg.Text('How to Use This Application', font=("Arial", 20))],
-    [sg.Text('1. Start by selecting a category or area you are interested in.', font=font)],
-    [sg.Text('2. Use the "Generate" button to apply filters based on your query.', font=font)],
-    [sg.Text('3. Explore the different visualization tabs to see the data in various forms.', font=font)],
-    [sg.Text('For detailed documentation, visit ', font=font), sg.Text('https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis', font=('Arial', 10, 'underline'), text_color='blue', key='-HELP-LINK-', enable_events=True)]
+    [sg.Text('Instructions', font=("Arial", 16, "underline bold")), ],
+    [sg.Text('Filtering Data by Natural Language Query', font=("Arial", 12, "underline bold"))],
+    [sg.Text('1. Write a Natural language Query.', font= ("Arial", 10))],
+    [sg.Text('2. Click the \"Generate\" Button.', font= ("Arial", 10))],
+    [sg.Text('3. View and Display the data on the map by clicking on one of the 4 maps.', font= ("Arial", 10))],
+    
+    [sg.Text('Filtering Data by Area in Singapore and Categories of Foodplace', font=("Arial", 12, "underline bold"))],
+    [sg.Text('1. Select an area and a category from the list below.', font= ("Arial", 10))],
+    [sg.Text('2. Generate the Filtered Dataset by clicking on \"Export Filtered Dataset\".', font= ("Arial", 10))],
+    [sg.Text('3. View and Display the data on the map by clicking on the "Export Map" button.', font= ("Arial", 10))],
+    [sg.Text('4. You can also view the original raw datset by clicking on \"Export Entire Dataset\".', font= ("Arial", 10))],
+    
+    # [sg.Text('1. Start by selecting a category or area you are interested in.', font=font)],
+    # [sg.Text('2. Use the "Generate" button to apply filters based on your query.', font=font)],
+    # [sg.Text('3. Explore the different visualization tabs to see the data in various forms.', font=font)],
+    # [sg.Text('For detailed documentation, visit ', font=font), sg.Text('https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis', font=('Arial', 10, 'underline'), text_color='blue', key='-HELP-LINK-', enable_events=True)]
 ]
 
 # Define the tab group with the tabs
