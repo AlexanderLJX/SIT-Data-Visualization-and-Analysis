@@ -41,16 +41,16 @@ df.reset_index(drop=True, inplace=True)
 # Process the 'Date' column to keep only the date part
 review_df['Date'] = pd.to_datetime(review_df['Date']).dt.date
 
-## Feature Engineering
-# keywords_mapping = {
-#     'Dine In': ['Dine-in'], 'Takeaway': ['Takeaway'], 'Delivery Service': ['Delivery'], 
-#     'Accept Reservations': ['Accepts reservations'], 'Outdoor Seating': ['Outdoor seating'], 
-#     'Wheelchair Accessibility': ['Wheelchair-accessible car park', 'Wheelchair-accessible entrance', 
-#                                  'Wheelchair-accessible seating', 'Wheelchair-accessible toilet'], 
-#     'Family Friendly': ['Family friendly'], 'Groups': ['Groups'], 'Good for Kids': ['Good for kids']
-# }
-# for column, keywords in keywords_mapping.items():
-#     df[column] = df['About'].apply(lambda x: 'Yes' if any(keyword in x for keyword in keywords) else 'No')
+# Feature Engineering
+keywords_mapping = {
+    'Dine In': ['Dine-in'], 'Takeaway': ['Takeaway'], 'Delivery Service': ['Delivery'], 
+    'Accept Reservations': ['Accepts reservations'], 'Outdoor Seating': ['Outdoor seating'], 
+    'Wheelchair Accessibility': ['Wheelchair-accessible car park', 'Wheelchair-accessible entrance', 
+                                 'Wheelchair-accessible seating', 'Wheelchair-accessible toilet'], 
+    'Family Friendly': ['Family friendly'], 'Groups': ['Groups'], 'Good for Kids': ['Good for kids']
+}
+for column, keywords in keywords_mapping.items():
+    df[column] = df['About'].apply(lambda x: 'Yes' if any(keyword in x for keyword in keywords) else 'No')
 
 # Create new column region
 def find_region(row, places_dict):
