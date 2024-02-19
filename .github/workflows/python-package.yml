@@ -29,13 +29,13 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Check for main/main.csv and process data
-      run: |
-        if [ ! -f main/main.csv ]; then
-          echo "main/main.csv not found. Running data_processing.py..."
-          python main/data_processing.py
-          echo "data_processing.py execution completed."
-        fi
+    # - name: Check for main/main.csv and process data
+    #   run: |
+    #     if [ ! -f main/main.csv ]; then
+    #       echo "main/main.csv not found. Running data_processing.py..."
+    #       python main/data_processing.py
+    #       echo "data_processing.py execution completed."
+    #     fi
     - name: Run GUI
       run: |
         echo "Running gui.py..."
