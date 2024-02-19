@@ -30,10 +30,10 @@ Examples of Natural Language Query:
 4. To save a copy of the map, click "Export Map". Save the map HTML file at the desired location of your file system.
 5. To save a copy of the filtered dataet, click "Export Filtered Datasset". Save the filtered dataset CSV file at the desired location of your file system.
 
-### Combining Filters
+### <ins>Combining Filters</ins>
 Users can filter the dataset up to 3 filters. Do note that certain filters that are set when generating will not produce any results if there are none available, resulting in a clean map without
 any symbols.
 
-### Saving Raw Dataset CSV File
+### <ins>Saving Raw Dataset CSV File</ins>
 If you would like to view the entire raw dataset without any filtering, click "Export Entire Dataset". Save the raw dataset CSV file at the desired location of 
 your file system.
