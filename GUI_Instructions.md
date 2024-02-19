@@ -27,13 +27,13 @@ Examples of Natural Language Query:
 ### <ins>For all 3 Filtering Methods (after Step 1 is completed)</ins>
 2. Click on the "Generate" button.
 3. View and Display the data results on the map by clicking on one of the 2 map options (green buttons).
-4. To save a copy of the map, click "Export Map". Save the map file at the desired location of your file system.
-5. To save a copy of the filtered dataet, click "Export Filtered Datasset". Save the filtered dataset file at the desired location of your file system.
+4. To save a copy of the map, click "Export Map". Save the map HTML file at the desired location of your file system.
+5. To save a copy of the filtered dataet, click "Export Filtered Datasset". Save the filtered dataset CSV file at the desired location of your file system.
 
 ### Combining Filters
 Users can filter the dataset up to 3 filters. Do note that certain filters that are set when generating will not produce any results if there are none available, resulting in a clean map without
 any symbols.
 
 ### Saving Raw Dataset CSV File
-If you would like to view the entire raw dataset without any filtering, click "Export Entire Dataset". Save the dataset file at the desired location of 
+If you would like to view the entire raw dataset without any filtering, click "Export Entire Dataset". Save the raw dataset CSV file at the desired location of 
 your file system.
