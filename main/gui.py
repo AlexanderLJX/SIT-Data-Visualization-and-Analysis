@@ -25,16 +25,18 @@ def generate_map_thread(window, df_data, plot_function, planning_area, category,
             filtered_df = filter_df(planning_area, category, filtered_df)
         else:
             filtered_df = filter_df(planning_area, category, df_data)
-        
-        if plot_function == "plotmap_3d":
-            temp_file_name = plotmap_3d(filtered_df)
-        elif plot_function == "plotmap_with_animation":
-            temp_file_name = plotmap_with_animation(filtered_df)
-        elif plot_function =="plotmap_with_heat":
-            temp_file_name= plotmap_with_heat(filtered_df)
-        else: # else is plotmap
-            temp_file_name = plotmap(filtered_df)  
 
+        if plot_function == "plotmap_with_animation":
+            temp_file_name = plotmap_with_animation(filtered_df)
+        else: # else is plotmap
+            temp_file_name = plotmap(filtered_df) 
+
+
+        # elif plot_function == "plotmap_3d":
+        #     temp_file_name = plotmap_3d(filtered_df)
+        # elif plot_function =="plotmap_with_heat":
+        #     temp_file_name= plotmap_with_heat(filtered_df)
+            
         window.write_event_value('-MAP-GENERATED-', None)  # Signal the GUI thread that the task is done
     except Exception as e:
         logging.exception("Exception occurred in generate_map_thread")
@@ -129,7 +131,7 @@ def train_and_predict_thread(window, train_args):
 def draw_figure(canvas, figure):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
     figure_canvas_agg.draw()
-    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=3)
     return figure_canvas_agg
 
 # Below code is for the GUI
@@ -171,9 +173,8 @@ layout = [
     
     [sg.Text()],
     [sg.Text('Filter data by Natural Language Query: ', font=("Arial",16))],
-    # [sg.Text('1. Write a Natural language Query', font= ("Arial", 10))],
-    # [sg.Text('2. Click the \"Generate\" Button', font= ("Arial", 10))],
-    # [sg.Text('3. View the data by clicking on one of the 4 maps below', font= ("Arial", 10))],
+    [sg.Text(size=(10,2))],
+
     [
         # add text for the description of the input box
         sg.Text('NLQ: ', font=font),
@@ -182,6 +183,7 @@ layout = [
         # add a button to submit the query
         sg.Button('Generate', key='-SUBMIT-QUERY-', size=(10, 1), font=font,border_width=0),
     ],
+    [sg.Text(size=(5,1))],
     [
         # add text for the description of the input box
         sg.Text('JSON Filter: ', font=font),
@@ -190,11 +192,8 @@ layout = [
         # add text displaying json validation
         sg.Text('', size=(15, 1), key='-JSON-STATUS-')
     ],
-
-    [sg.Text('Filter data by Area in Singapore and Categories of Foodplace: ', font=("Arial",16))],
-    # [sg.Text('1. Select an area and a category from the list below.', font= ("Arial", 10))],
-    # [sg.Text('2. Generate the Filtered Dataset by clicking on \"Export Filtered Dataset\".', font= ("Arial", 10))],
-    # [sg.Text('3. You can also view the original raw datset by clicking on \"Export Entire Dataset\".', font= ("Arial", 10))],
+    [sg.Text(size=(10,1))],
+    [sg.Text('Additional Filters:', font=("Arial",16))],
     [ 
         sg.Text('Area in Singapore : ', font=font),
         sg.Text(size=(16, 2)),
@@ -205,12 +204,14 @@ layout = [
         sg.Text(size=(14, 2)),
         sg.Listbox(values=unique_cat_list, size=(20,6), select_mode='multiple', key='-OPTION2-')
     ],
+    [sg.Text(size=(5,1))],
     [
         sg.Button('Show on Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
-        sg.Button('Show on 3D Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
+       # sg.Button('Show on 3D Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
         sg.Button('Show on Animated Map', size=(20, 2), font=font,border_width=0,button_color=('white', 'green')),
-        sg.Button('Show on Heat Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
+       # sg.Button('Show on Heat Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
     ],
+    [sg.Text(size=(5,1))],
     [
         sg.Button('Export Map', key='-EXPORT-MAP-', size=(15, 2),font=font,border_width=0), 
         sg.Button('Export Filtered Dataset', key='-EXPORT-FILTERED-', size=(20, 2), font=font,border_width=0),
@@ -308,15 +309,15 @@ tabgrp = [
     [sg.TabGroup([
         [sg.Tab('View Foodplaces', layout, element_justification='center',border_width=0)],
         [sg.Tab('Data Diagrams', layout2, element_justification='center', border_width=0 )],
-        [sg.Tab('Train ML Models', layout3, element_justification='center', border_width=0 )],
+        [sg.Tab('Train ML Models', layout3, element_justification='center', border_width=0)],
         [sg.Tab('Help', help_tab_layout, element_justification='center', border_width=0)]
-    ], tab_location='centertop')],
+    ], tab_location='centertop' , size=(1100,900))],
     [sg.Text( font=font)],
     [sg.Button('Close', size=(5,1))]
 ]
 
 
-window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1200,1000),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
+window = sg.Window('Foodplaces in Singapore', tabgrp, size=(1250,1000),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
 
 
 temp_file_name= None
@@ -500,20 +501,6 @@ while True:
             # set status to error
             window['-STATUS-'].update('Error: Invalid JSON filter')
 
-    elif event == 'Show on 3D Map' :
-        if window['-JSON-STATUS-'].get() == 'Valid JSON':
-            # Update GUI to show "generating..." message
-            window['-STATUS-'].update('Generating...')
-            # view the map with the Category of restaurant or the sub area that it is in
-            planning_area = values['-OPTION-']
-            category = values['-OPTION2-']
-            # get text in the filter box -FILTER-
-            filter_json = values['-FILTER-']
-            threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap_3d", planning_area, category, filter_json), daemon=True).start()
-        else:
-            # set status to error
-            window['-STATUS-'].update('Error: Invalid JSON filter')
-        
     elif event == 'Show on Animated Map' :
         if window['-JSON-STATUS-'].get() == 'Valid JSON':
             # Update GUI to show "generating..." message
@@ -527,14 +514,30 @@ while True:
         else:
             # set status to error
             window['-STATUS-'].update('Error: Invalid JSON filter')
+
+    # elif event == 'Show on 3D Map' :
+    #     if window['-JSON-STATUS-'].get() == 'Valid JSON':
+    #         # Update GUI to show "generating..." message
+    #         window['-STATUS-'].update('Generating...')
+    #         # view the map with the Category of restaurant or the sub area that it is in
+    #         planning_area = values['-OPTION-']
+    #         category = values['-OPTION2-']
+    #         # get text in the filter box -FILTER-
+    #         filter_json = values['-FILTER-']
+    #         threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap_3d", planning_area, category, filter_json), daemon=True).start()
+    #     else:
+    #         # set status to error
+    #         window['-STATUS-'].update('Error: Invalid JSON filter')
+        
+
     
-    elif event == "Show on Heat Map":
-        # Update GUI to show "generating..." message
-        window['-STATUS-'].update('Generating...')
-        planning_area = values['-OPTION-']
-        category = values['-OPTION2-']
-        filter_json = values['-FILTER-']
-        threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap_with_heat", planning_area, category, filter_json), daemon=True).start()
+    # elif event == "Show on Heat Map":
+    #     # Update GUI to show "generating..." message
+    #     window['-STATUS-'].update('Generating...')
+    #     planning_area = values['-OPTION-']
+    #     category = values['-OPTION2-']
+    #     filter_json = values['-FILTER-']
+    #     threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap_with_heat", planning_area, category, filter_json), daemon=True).start()
 
     elif event == '-MAP-GENERATED-':
         window['-STATUS-'].update('Map generated successfully!')
