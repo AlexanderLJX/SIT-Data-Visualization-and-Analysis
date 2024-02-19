@@ -75,9 +75,6 @@ def plot_line_chart(feature1, feature2, df):
     # Adjust the bottom margin if the labels are particularly long
     plt.subplots_adjust(bottom=0.2)
 
-    # Uncomment the following line if you want to display the plot directly
-    # plt.show()
-
     return plt.gcf()
 
 def plot_bar_chart(feature1, feature2=None, df=None, filter_json=None):

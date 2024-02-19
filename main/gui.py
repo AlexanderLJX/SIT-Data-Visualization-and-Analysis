@@ -66,7 +66,7 @@ def validate_json_plot_thread(window, json_str):
     window.write_event_value('-PLOT-JSON-VALIDATED-', validation_result)
     validating_plot_json = False
 
-def plot_thread(window, plot_dict, df, plot_on_canvas, filter_json=None):
+def plot_thread(window, plot_dict, df, filter_json=None):
     try:
         global canvas_figure
         if plot_dict["plot"] == "pie chart":
@@ -254,7 +254,7 @@ layout2 = [
                 # add a checkbox to clear the previous plt on the canvas
                 sg.Checkbox('Clear previous plot', key='-CLEAR-PLOT-', font=font), 
                 # create a checkbox to show the diagram on the canvas
-                # sg.Checkbox('Show plot in GUI', key='-SHOW-ON-CANVAS-', font=font),
+                sg.Checkbox('Plot in new window', key='-PLOT-IN-NEW-WINDOW-', font=font),
             ],
             [sg.Text('', key='-PLOT-STATUS-', font=font)],
             [sg.Canvas(key='-CANVAS-')],
@@ -356,9 +356,6 @@ while True:
         if window['-PLOT-JSON-STATUS-'].get() == 'Valid JSON':
             # convert the json to a dictionary
             plot_dict = json.loads(plot_json)
-
-            # plot_on_canvas = values["-SHOW-ON-CANVAS-"] # True if checked, False if unchecked
-            plot_on_canvas = True
             # check if the clear plot checkbox is checked
             if values["-CLEAR-PLOT-"]:
                 plt.clf()
@@ -373,9 +370,9 @@ while True:
                     filtered_df = filter_df_json(filter_json, df_data)
                     # json load
                     filter_json = json.loads(filter_json)
-                threading.Thread(target=plot_thread, args=(window, plot_dict, filtered_df, plot_on_canvas, filter_json), daemon=True).start()
+                threading.Thread(target=plot_thread, args=(window, plot_dict, filtered_df, filter_json), daemon=True).start()
             else:
-                threading.Thread(target=plot_thread, args=(window, plot_dict, df_data, plot_on_canvas), daemon=True).start()
+                threading.Thread(target=plot_thread, args=(window, plot_dict, df_data), daemon=True).start()
         else:
             # set status to error
             window['-PLOT-STATUS-'].update('Error: Invalid JSON filter')
@@ -453,14 +450,23 @@ while True:
     elif event == "-PLOT-GENERATED-":
         # update plot status
         window['-PLOT-STATUS-'].update(values[event])
-        # Remove previous drawings
-        canvas_elem = window['-CANVAS-']
-        canvas = canvas_elem.TKCanvas
-        for child in canvas.winfo_children():
-            child.destroy()
-        if plot_on_canvas:
+        # get plot in new window checkbox value
+        plot_in_new_window = values["-PLOT-IN-NEW-WINDOW-"]
+        if plot_in_new_window:
+            nlayout = [[sg.Canvas(key='-CANVAS-')]]
+            nwindow = sg.Window('Foodplaces in Singapore', nlayout, size=(800,600),element_justification='center', resizable=True,no_titlebar=False,grab_anywhere=True, finalize=True)
+            ncanvas_elem = nwindow['-CANVAS-']
+            ncanvas = ncanvas_elem.TKCanvas
+            figure_canvas_agg = FigureCanvasTkAgg(plt.gcf(), ncanvas)
+            figure_canvas_agg.draw()
+            figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=3)
+        else:
+            # Remove previous drawings
+            canvas_elem = window['-CANVAS-']
+            canvas = canvas_elem.TKCanvas
+            for child in canvas.winfo_children():
+                child.destroy()
             # Draw the figure on the canvas
-            # Draw new figure
             draw_figure(canvas, canvas_figure)
 
     elif event == '-SUBMIT-TRAIN-QUERY-':
