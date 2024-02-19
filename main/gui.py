@@ -174,7 +174,7 @@ default_filter_query = "dine in and takeaway and region is central and top 10 on
 layout = [
     
     [sg.Text()],
-    [sg.Text('Filter data by Natural Language Query: ', font=("Arial",16))],
+    [sg.Text('Filtering data by Natural Language Query: ', font=("Arial",16))],
     [
         # add text for the description of the input box
         sg.Text('NLQ: ', font=font),
@@ -195,9 +195,9 @@ layout = [
     [sg.Text(size=(10,1))],
     [sg.Text('Additional Filters:', font=("Arial",16))],
     [ 
-        sg.Text('Area in Singapore : ', font=font),
+        sg.Text('Areas in Singapore : ', font=font),
         sg.Text(size=(16, 2)),
-        sg.Text('Category of Foodplace : ', font=font)
+        sg.Text('Category of Foodplaces : ', font=font)
     ],
     
     [   
@@ -290,25 +290,9 @@ layout3 = [
 help_tab_layout = [
     [sg.Text('Instructions', font=("Arial", 16, "underline bold")), ],
     [sg.Text(size=(5,1))],
-    [sg.Text('View Foodplaces Page', font=("Arial", 14, "underline bold"))],
-    [sg.Text(size=(5,1))],
-    [sg.Text('Filtering Data by Natural Language Query', font=("Arial", 12, "underline bold"))],
-    [sg.Text(size=(5,1))],
-    [sg.Text('1. Write a Natural language Query.', font= ("Arial", 10))],
-    [sg.Text('2. Click the \"Generate\" Button.', font= ("Arial", 10))],
-    [sg.Text('3. View and Display the data on the map by clicking on one of the 4 maps.', font= ("Arial", 10))],
-    [sg.Text(size=(5,1))],
-    [sg.Text('Filtering Data by Area in Singapore and Categories of Foodplace', font=("Arial", 12, "underline bold"))],
-    [sg.Text(size=(5,1))],
-    [sg.Text('1. Select an area and a category from the list below.', font= ("Arial", 10))],
-    [sg.Text('2. Generate the Filtered Dataset by clicking on \"Export Filtered Dataset\".', font= ("Arial", 10))],
-    [sg.Text('3. View and Display the data on the map by clicking on the "Export Map" button.', font= ("Arial", 10))],
-    [sg.Text('4. You can also view the original raw datset by clicking on \"Export Entire Dataset\".', font= ("Arial", 10))],
-    
-    [sg.Text(size=(5,1))],
-    [sg.Text('For detailed documentation on the rest of the other pages, visit ', font=font), 
-     sg.Text('https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis', font=('Arial', 11, 'underline'), text_color='light blue', key='-HELP-LINK-', enable_events=True),
-     sg.Text('for more information.', font=font)]
+    [sg.Text('Please visit ', font=("Arial", 12)), 
+     sg.Text('https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis', font=('Arial', 12, 'underline'), text_color='light blue', key='-HELP-LINK-', enable_events=True),
+     sg.Text('for a detailed documentation on using each of the PySimpleGUI tab.', font=("Arial", 12))]
 ]
 
 # Define the tab group with the tabs
