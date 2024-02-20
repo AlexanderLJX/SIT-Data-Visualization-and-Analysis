@@ -33,15 +33,30 @@ print(df['Category'].unique())
 
 # remove all categories that are NOT in constants.INCLUDED_CATEGORIES_KEYWORDS
 df = df[df['Category'].str.contains('|'.join(constants.INCLUDED_CATEGORIES_KEYWORDS), case=False)]
-# Remove excluded categories
-df = df[~df['Category'].str.contains('|'.join(constants.EXCLUDED_CATEGORIES), case=False)]
+# Remove excluded categories, match == instead of in
+df = df[~df['Category'].str.lower().isin([x.lower() for x in constants.EXCLUDED_CATEGORIES])]
+
 
 df.reset_index(drop=True, inplace=True)
 
 # Process the 'Date' column to keep only the date part
 review_df['Date'] = pd.to_datetime(review_df['Date']).dt.date
 
-# Feature Engineering
+
+
+## Feature Engineering
+
+# Create new column Chain based on if Name column contains keyword in constants.FOOD_CHAINS
+df['Chain'] = None
+for index, row in df.iterrows():
+    for chain in constants.FOOD_CHAINS:
+        # Check if the chain is in the 'Name' column (case-insensitive)
+        if chain.lower() in row['Name'].lower():
+            # If match found, set 'Chain' to the chain and break the inner loop
+            df.at[index, 'Chain'] = chain
+            break
+
+# Create new columns based on the 'About' column
 keywords_mapping = {
     'Dine In': ['Dine-in'], 'Takeaway': ['Takeaway'], 'Delivery Service': ['Delivery'], 
     'Accept Reservations': ['Accepts reservations'], 'Outdoor Seating': ['Outdoor seating'], 

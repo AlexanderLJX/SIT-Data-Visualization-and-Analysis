@@ -27,6 +27,7 @@ FEATURES_DATATYPES = {
     "First Opening Time": "ISO8601",  # ISO8601 format for the first opening time
     "Last Opening Time": "ISO8601",  # ISO8601 format for the last opening time
     "Average Opening Time": "float",  # Decimal number for average opening time in hours
+    "Chain": "string"  # Name of the chain
 }
 
 PLOT_FEATURES_DATATYPES = {
@@ -56,6 +57,7 @@ PLOT_FEATURES_DATATYPES = {
     "First Opening Time": "ISO8601",  # ISO8601 format for the first opening time
     "Last Opening Time": "ISO8601",  # ISO8601 format for the last opening time
     "Average Opening Time": "float",  # Decimal number for average opening time in hours
+    "Chain": "string"  # Name of the chain
 }
 
 LIST_OF_PLACES = {
@@ -83,3 +85,66 @@ REVIEW_CSV_URL = "https://huggingface.co/datasets/AlexanderLJX/Dining-Insights/r
 INCLUDED_CATEGORIES_KEYWORDS = ['restaurant', 'cafe', 'bar', 'takeaway', 'food court', 'bakery', 'pub', 'beer', 'patisserie', 'creperie', 'diner', 'bistro', 'live music venue', 'hawker', 'grill', 'kiosk', 'stand', 'BBQ', 'brewery', 'delicatessen', 'deli', 'chinese tea house', 'crab house', 'french steakhouse restaurant', 'japanese steakhouse', 'steak house', 'tea house', 'açaí shop', 'bagel shop', 'cake shop', 'coffee shop', 'dessert shop', 'ice cream shop', 'juice shop', 'kebab shop', 'noodle shop', 'pasta shop', 'pastry shop', 'salad shop', 'sandwich shop', 'soba noodle shop', 'soft drinks shop', 'soup shop', 'steamed bun shop', 'tea and coffee shop', 'bubble tea store', 'coffee store', 'grill store', 'health food store', 'tea store', 'wine store']
 
 EXCLUDED_CATEGORIES = ['Academic department', 'Add a photo', 'Add hours', "Add place's phone number", 'Apartment building', 'Apartment complex', 'Athletic field', 'BBQ area', 'Beverage distributor', 'Boat tour agency', 'Box lunch supplier', 'Bridge', 'Building firm', 'Bus stop', 'Business center', 'Butcher shop', 'Caterer', 'Catering food and drink supplier', 'Chicken shop', 'Circus', 'Club', 'Commercial agent', 'Commercial real estate agency', 'Community center', 'Computer repair service', 'Condominium complex', 'Convenience store', 'Corporate campus', 'Corporate office', 'Country club', 'Dog park', 'Environment office', 'Event venue', 'Family service center', 'Festival', 'Food', 'Food and beverage consultant', 'Food and drink', 'Food manufacturer', 'Food manufacturing supply', 'Food processing company', 'Food producer', 'Food products supplier', 'Fresh food market', 'Frozen food manufacturer', 'Fruit and vegetable store', 'Furniture store', 'Garden', 'Gourmet grocery store', 'Grocery store', 'HDB Flats', 'Hiking area', 'Hotel', 'Housing complex', 'Housing development', 'Housing society', 'Hypermarket', 'Importer', 'Industrial Real Estate Agency', 'International school', 'Island', 'Italian grocery store', 'Japanese grocery store', 'MRT/LRT Station', 'Manufacturer', 'Market', 'Meat products store', 'Media company', 'Nature preserve', 'Oil refinery', 'Park', 'Parking lot', 'Permanently closed', 'Personal chef service', 'Petrol Station', 'Prawn Fishing', 'Primary school', 'Promenade', 'Railway services', 'Rainwater tank supplier', 'Real estate agency', 'Real estate developer', 'Rice shop', 'Seafood market', 'Seafood wholesaler', 'Shared-use commercial kitchen', 'Shop', 'Shopping mall', 'Skateboard park', 'Soup kitchen', 'Sports club', 'Supermarket', 'Tiffin center', 'Tour operator', 'Tourist attraction', 'Townhouse complex', 'Transportation service', 'Vegetable wholesale market', 'Vending machine supplier', 'Visitor center', 'Warehouse', 'Waste management service', 'Wholesaler']
+
+# https://en.wikipedia.org/wiki/Category:Restaurant_chains_in_Singapore
+FOOD_CHAINS = [
+    "McDonald's",
+    "Starbucks",
+    "Burger King",
+    "KFC",
+    "Pastamania",
+    "4Fingers Crispy Chicken", 
+    "Din Tai Fung", 
+    "Eighteen Chefs", 
+    "Food Republic", 
+    "Genki Sushi", 
+    "Hard Rock Cafe", 
+    "J.CO Donuts", 
+    "Jumbo Seafood", 
+    "Killiney Kopitiam", 
+    "Kopi tiam", 
+    "Koufu", 
+    "Long Beach Seafood", 
+    "Long John Silver's", 
+    "MOS Burger", 
+    "Mr Bean", 
+    "Murugan Idli Shop", 
+    "Old Chang Kee", 
+    "Pastamania", 
+    "Saizeriya", 
+    "Sakae Sushi", 
+    "Standing Sushi Bar", 
+    "VeganBurg", 
+    "Ya Kun Kaya Toast", 
+    "Yoshinoya",
+    "Baskin-Robbins",
+    "Botak Jones",
+    "BreadTalk",
+    "Brotzeit",
+    "Carl's Jr.",
+    "Coca Steamboat",
+    "Crystal Jade",
+    "Din Tai Fung",
+    "Eighteen Chefs",
+    "Genki Sushi",
+    "Haato",
+    "Hard Rock Cafe",
+    "Jack's Place",
+    "Jumbo Seafood",
+    "Long Beach Seafood",
+    "Murugan Idli Shop",
+    "OldTown White Coffee",
+    "Palm Beach Seafood",
+    "Paradise Group Holdings",
+    "Pastamania",
+    "Sakae Sushi",
+    "Standing Sushi Bar",
+    "Subway",
+    "Thai Express",
+    "Trung Nguyên",
+    "VeganBurg",
+    "Yoshinoya"
+    "Shabu Sai",
+    "Sushi Express",
+    "Sanook Kitchen",
+]

@@ -141,6 +141,7 @@ logging.basicConfig(filename='gui_error.log', level=logging.ERROR, format='%(asc
 
 
 plt.switch_backend('agg')
+plt.figure(figsize=(20, 20))
 df_data=readfile("main/main.csv")
 filter_json = None
 json_queue_full = False
