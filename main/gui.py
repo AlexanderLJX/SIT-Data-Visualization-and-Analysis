@@ -317,7 +317,7 @@ tabgrp = [
         [sg.Tab('Train ML Models', layout3, element_justification='center', border_width=0)],
         [sg.Tab('Help', help_tab_layout, element_justification='center', border_width=0)]
     ], tab_location='centertop' , size=(1100,900))],
-    [sg.Text( font=font)],
+    [sg.Text( font=font)]
 ]
 
 
