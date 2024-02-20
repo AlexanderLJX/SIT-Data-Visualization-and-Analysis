@@ -1,6 +1,8 @@
 # Instructions for Using the PySimpleGUI Application for Data Visualisation and Analysis
 
-## DISCLAIMER: THIS GUI APPLICATION WORKS BEST WITH A COMPUTER SYSTEM SCALE OF 125%. PLEASE ADJUST BASE ON YOUR COMPUTER SYSTEM'S SCALE THAT GIVES YOU THE BEST VIEW.
+## DISCLAIMER: 
+## THIS GUI APPLICATION WORKS BEST WITH A COMPUTER SYSTEM SCALE OF 125%. PLEASE ADJUST BASE ON YOUR COMPUTER SYSTEM'S SCALE THAT GIVES YOU THE BEST VIEW.
+## DO NOT TOUCH THE JSON BOXES THAT IS FOUND IN ALL TAB IN THE GUI!
 
 ## <ins>1. View Foodplaces Tab</ins>
 
@@ -31,8 +33,7 @@ Examples of Natural Language Query:
 5. To save a copy of the filtered dataet, click "Export Filtered Datasset". Save the filtered dataset CSV file at the desired location of your file system.
 
 ### <ins>Combining Filters</ins>
-Users can filter the dataset up to 3 filters. Do note that certain filters that are set when generating will not produce any results if there are none available, resulting in a clean map without
-any symbols.
+Users can filter the dataset up to 3 filters. Do note that certain filters that are set when generating will not produce any results if there are none available, resulting in a clean map without any symbols.
 
 ### <ins>Saving Raw Dataset CSV File</ins>
 If you would like to view the entire raw dataset without any filtering, click "Export Entire Dataset". Save the raw dataset CSV file at the desired location of 
@@ -40,3 +41,5 @@ your file system.
 
 
 ## <ins>2. Data Diagrams Tab</ins>
+
+The Data Diagrams Tab allows users to create stories and view data insights and relationships from the raw datatset CSV file.
