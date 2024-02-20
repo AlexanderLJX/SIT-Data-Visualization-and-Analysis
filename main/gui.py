@@ -423,7 +423,7 @@ while True:
             "train": json_train
         }
         filename = sg.popup_get_file('Select a file to save the workflow', save_as=True, file_types=(("JSON Files", "*.json"),))
-        if filename and os.path.exists(filename):
+        if filename:
             with open(filename, 'w', encoding='utf-8') as f:
                 f.write(json.dumps(workflow_json, indent=4))
             window['-STATUS-'].update('Workflow exported successfully!')
