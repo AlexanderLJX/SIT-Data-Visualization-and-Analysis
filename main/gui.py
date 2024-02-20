@@ -305,7 +305,6 @@ tabgrp = [
         [sg.Tab('Help', help_tab_layout, element_justification='center', border_width=0)]
     ], tab_location='centertop' , size=(1100,900))],
     [sg.Text( font=font)],
-    [sg.Button('Close', size=(5,1))]
 ]
 
 
