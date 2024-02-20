@@ -67,18 +67,15 @@ def validate_json_plot_thread(window, json_str):
     validating_plot_json = False
 
 def plot_thread(window, unfiltered_df, plot_json, filter_json_status, apply_filter, filter_json):
-    df = unfiltered_df
+    df = unfiltered_df.copy()
     if apply_filter and filter_json_status == "Valid JSON":
-        if filter_json == "":
-            filter_json = None
-        else:
-            df = filter_df_json(filter_json, unfiltered_df)
-            filter_json = json.loads(filter_json)
+        df = filter_df_json(filter_json, unfiltered_df)
+        filter_json = json.loads(filter_json)
     # Drop String values that are "nan" based on columns feature1 and feature2 if feature2 is present
-    df = df.applymap(lambda x: np.nan if x == "nan" else x)
+    df[plot_json["feature1"]] = df[plot_json["feature1"]].apply(lambda x: np.nan if x == "nan" else x)
     df = df.dropna(subset=[plot_json["feature1"]])
     if "feature2" in plot_json:
-        df = df.applymap(lambda x: np.nan if x == "nan" else x)
+        df[plot_json["feature2"]] = df[plot_json["feature2"]].apply(lambda x: np.nan if x == "nan" else x)
         df = df.dropna(subset=[plot_json["feature2"]])
     try:
         global canvas_figure

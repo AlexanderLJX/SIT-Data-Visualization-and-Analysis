@@ -73,12 +73,13 @@ def plot_line_chart(feature1, feature2, df):
 
     return plt.gcf()
 
-def plot_bar_chart(feature1, feature2=None, df=None, filter_json=None):
+def plot_bar_chart(feature1, feature2=None, df=None, filter_json=""):
     if feature2 is None:
         # Calculate the mean of the specified feature
         mean_value = df[feature1].mean()
         xticks_label = feature1
-        if filter_json is not None:
+        # if filter_json is not a str
+        if type(filter_json) != str:
             for filter in filter_json:
                 xticks_label += "\n" + filter['column'] + filter['operator'] + filter['value']
             
@@ -86,7 +87,8 @@ def plot_bar_chart(feature1, feature2=None, df=None, filter_json=None):
         plt.bar(xticks_label, mean_value, alpha=0.7)
         plt.title(f'Mean of {feature1}')
         plt.ylabel(f'Mean of {feature1}')
-        # Adjusting plot aesthetics for clarity
+        plt.xlabel(feature1)
+        plt.ylabel('Mean of ' + feature1)
     else:
         # Original functionality for handling two features
         if df[feature2].dtype == 'object':  # if feature2 is a string, count each value
@@ -97,8 +99,8 @@ def plot_bar_chart(feature1, feature2=None, df=None, filter_json=None):
             mean_df = df.groupby(feature1)[feature2].mean().reset_index()
             plt.bar(mean_df[feature1], mean_df[feature2], alpha=0.7)
             plt.title('Bar Chart of ' + feature1 + ' and Mean of ' + feature2)
-    plt.xlabel(feature1)
-    plt.ylabel('Count' if feature2 is None or df[feature2].dtype == 'object' else 'Mean of ' + feature2)
+        plt.xlabel(feature1)
+        plt.ylabel('Count' if feature2 is None or df[feature2].dtype == 'object' else 'Mean of ' + feature2)
     plt.grid(True)
     plt.xticks(rotation=20)  # Rotate x-axis labels for better readability if needed
     plt.subplots_adjust(bottom=0.3)  # Adjust the bottom margin to fit the x-axis labels
