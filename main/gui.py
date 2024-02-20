@@ -66,21 +66,34 @@ def validate_json_plot_thread(window, json_str):
     window.write_event_value('-PLOT-JSON-VALIDATED-', validation_result)
     validating_plot_json = False
 
-def plot_thread(window, plot_dict, df, filter_json=None):
+def plot_thread(window, unfiltered_df, plot_json, filter_json_status, apply_filter, filter_json):
+    df = unfiltered_df
+    if apply_filter and filter_json_status == "Valid JSON":
+        if filter_json == "":
+            filter_json = None
+        else:
+            df = filter_df_json(filter_json, unfiltered_df)
+            filter_json = json.loads(filter_json)
+    # Drop String values that are "nan" based on columns feature1 and feature2 if feature2 is present
+    df = df.applymap(lambda x: np.nan if x == "nan" else x)
+    df = df.dropna(subset=[plot_json["feature1"]])
+    if "feature2" in plot_json:
+        df = df.applymap(lambda x: np.nan if x == "nan" else x)
+        df = df.dropna(subset=[plot_json["feature2"]])
     try:
         global canvas_figure
-        if plot_dict["plot"] == "pie chart":
-            canvas_figure = plot_pie_chart(plot_dict["feature1"], df)
-        elif plot_dict["plot"] == "bar chart":
-            canvas_figure = plot_bar_chart(plot_dict["feature1"], plot_dict["feature2"] if "feature2" in plot_dict else None, df, filter_json)
-        elif plot_dict["plot"] == "line chart":
-            canvas_figure = plot_line_chart(plot_dict["feature1"], plot_dict["feature2"], df)
-        elif plot_dict["plot"] == "scatter":
-            canvas_figure = plot_scatter(plot_dict["feature1"], plot_dict["feature2"], df)
-        elif plot_dict["plot"] == "hexbin":
-            canvas_figure = plot_hexbin(plot_dict["feature1"], plot_dict["feature2"], df)
-        elif plot_dict["plot"] == "distribution":
-            canvas_figure = plot_distribution(plot_dict["feature1"], df)
+        if plot_json["plot"] == "pie chart":
+            canvas_figure = plot_pie_chart(plot_json["feature1"], df)
+        elif plot_json["plot"] == "bar chart":
+            canvas_figure = plot_bar_chart(plot_json["feature1"], plot_json["feature2"] if "feature2" in plot_json else None, df, filter_json)
+        elif plot_json["plot"] == "line chart":
+            canvas_figure = plot_line_chart(plot_json["feature1"], plot_json["feature2"], df)
+        elif plot_json["plot"] == "scatter":
+            canvas_figure = plot_scatter(plot_json["feature1"], plot_json["feature2"], df)
+        elif plot_json["plot"] == "hexbin":
+            canvas_figure = plot_hexbin(plot_json["feature1"], plot_json["feature2"], df)
+        elif plot_json["plot"] == "distribution":
+            canvas_figure = plot_distribution(plot_json["feature1"], df)
         # set window event
         window.write_event_value('-PLOT-GENERATED-', "Plotting finished successfully!")
     except Exception as e:
@@ -141,7 +154,7 @@ logging.basicConfig(filename='gui_error.log', level=logging.ERROR, format='%(asc
 
 
 plt.switch_backend('agg')
-plt.figure(figsize=(20, 20))
+plt.figure(figsize=(40, 40))
 df_data=readfile("main/main.csv")
 filter_json = None
 json_queue_full = False
@@ -346,24 +359,16 @@ while True:
         # if plot status is valid, then plot the diagram
         if window['-PLOT-JSON-STATUS-'].get() == 'Valid JSON':
             # convert the json to a dictionary
-            plot_dict = json.loads(plot_json)
+            plot_json = json.loads(plot_json)
             # check if the clear plot checkbox is checked
             if values["-CLEAR-PLOT-"]:
                 plt.clf()
+                plt.figure(figsize=(40, 40))
             # check filter status
             filter_json_status = window['-JSON-STATUS-'].get()
-            if values['-APPLY-FILTER-'] and filter_json_status == "Valid JSON":
-                filter_json = values['-FILTER-']
-                if filter_json == "":
-                    filter_json = None
-                    filtered_df = df_data
-                else:
-                    filtered_df = filter_df_json(filter_json, df_data)
-                    # json load
-                    filter_json = json.loads(filter_json)
-                threading.Thread(target=plot_thread, args=(window, plot_dict, filtered_df, filter_json), daemon=True).start()
-            else:
-                threading.Thread(target=plot_thread, args=(window, plot_dict, df_data), daemon=True).start()
+            apply_filter = values['-APPLY-FILTER-']
+            filter_json = values['-FILTER-']
+            threading.Thread(target=plot_thread, args=(window, df_data, plot_json, filter_json_status, apply_filter, filter_json), daemon=True).start()
         else:
             # set status to error
             window['-PLOT-STATUS-'].update('Error: Invalid JSON filter')
