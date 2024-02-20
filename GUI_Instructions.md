@@ -33,12 +33,23 @@ Examples of Natural Language Query:
 5. To save a copy of the filtered dataet, click "Export Filtered Datasset". Save the filtered dataset CSV file at the desired location of your file system.
 
 ### <ins>Combining Filters</ins>
-Users can filter the dataset up to 3 filters. Do note that certain filters that are set when generating will not produce any results if there are none available, resulting in a clean map without any symbols.
+Users can filter the dataset up to 3 filters. **Do note that certain filters that are set when generating will not produce any results if there are none available, resulting in a clean map without any hotspots and drop pins symbols.**
 
 ### <ins>Saving Raw Dataset CSV File</ins>
 If you would like to view the entire raw dataset without any filtering, click "Export Entire Dataset". Save the raw dataset CSV file at the desired location of 
 your file system.
 
+### Using the Map for Analysis
+1. To use the map, users can use the "+" sign button found at the top left of the map or scroll up using the mouse to enlarge the map. Similar for the opposite, users can use the "-" sign button found at the top left of the map or scroll down using the mouse to minimse the map.
+2. Enlarging the map makes the location more precise. Therefore, there will be more hotspots found with it being disperesed into more precise areas. 
+3. Clicking on the hostpots will further zoom in the map. The final result will be a drop pin where users can hover to it to view the foodplace names located at the particular location. 
+
+### Map Result Example seen in View Foodplaces Tab
+
+<figure>
+  <img src="View_Foodplaces_Tab_Example.png" alt="View_Foodplaces_Tab_Example">
+   <figcaption style="text-align: center;">Map result showing the foodplaces found in the Eastern Region of Singapore.</figcaption>
+</figure>
 
 ## <ins>2. Data Diagrams Tab</ins>
 
