@@ -70,11 +70,11 @@ The Data Diagrams Tab allows users to create stories and view data insights and 
 3. To apply the filters that are set on the View Foodplaces Tab, select the checkbox "Apply filter to diagram".
 4. Click on the "Show Diagram" button.
 5. The data diagram shown will be a diagram created from the Natural Language Query entered in this tab with filter set and applied from the View Foodplaces Tab.
-6. If user would like to apply more than 1 filter for plotting the data diagram, go to the View Foodplaces Tab and enter additional new filters. Follow the steps mentioned in the View Foodplaces Tab.
-7. Once completed, return back to this tab and click on "Show Diagram" again.
+6. If user would like to apply more than 1 filter for plotting the data diagram, go to the View Foodplaces Tab and enter the new additional filters. Follow the instructions mentioned in the View Foodplaces Tab.
+7. Once completed, return back to this tab and click on the "Show Diagram" "buton" again.
 8. Repeat Step 6 and Step 7 for adding more filters.
 9. Select the Checkbox "Plot in new window" to view the data diagram in a new window.
-10. Checking the checkbox "Clear Previous Plot" will clear the previous plot on the data diagram as there are multiple plots plotted when the multiple filters are applied.
+10. Checking the checkbox "Clear Previous Plot" will clear the previous plot on the data diagram as there are multiple plots plotted when multiple filters are applied.
 
 ### <ins>Examples of Natural Language Query for Plotting</ins>
 - Plot the bar chart of expensiveness against region
@@ -88,3 +88,7 @@ Similar to the View Foodplaces Tab, The JSON filter that is generated after the 
 **EITHER THE OPTION OF NATURAL LANGUAGE QUERY GENERAATION FROM THE NLQ TEXTBOX OR EDITING THE JSON FILTER CAN BE USED AT ANY ONE TIME TOGETHER WITH THE CHECKBOXES TO DISPLAY THE DATA DIAGRAM.**
 
 ### <ins>Data Diagram Example seen in View Foodplaces Tab</ins>
+<figure>
+  <img src="Data_Diagrams_Tab_Example.png" alt="Data_Diagrams_Tab_Example">
+   <figcaption>Pie chart for the percentage of foodplaces in the respective regions of Singapore</figcaption>
+</figure>
