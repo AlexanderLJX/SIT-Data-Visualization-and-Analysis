@@ -72,13 +72,13 @@ def validate_plot_json(plot_json):
     return "Valid JSON"
     
 def filter_df(planning_area, category, df_data):
-    if planning_area != '' and planning_area != []:
-        df_data_filtered = df_data[df_data['Planning Area'] == planning_area[0]]
+    if planning_area:  # If value1 is not empty, it contains a list of selected areas
+        df_data_filtered = df_data.loc[df_data['Planning Area'].isin(planning_area)]
     else:
         df_data_filtered = df_data
 
-    if category != '' and category != []:
-        df_data_filtered = df_data_filtered[df_data_filtered['Category'] == category[0]]
+    if category:  # If value2 is not empty, it contains a list of selected categories
+        df_data_filtered = df_data_filtered.loc[df_data_filtered['Category'].isin(category)]
 
     return df_data_filtered
 
