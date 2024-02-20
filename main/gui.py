@@ -279,7 +279,7 @@ layout3 = [
                 # add text for the description of the input box
                 sg.Text('Natural Language query: ', font=font),
                 # add a text box for a user query input
-                sg.Multiline(size=(50, 3), default_text='make a model to visualize if there are any anomalies in categories.', key='-TRAIN-QUERY-', font=font),
+                sg.Multiline(size=(50, 3), default_text='make a model to visualize if there are any anomalies in avg star rating.', key='-TRAIN-QUERY-', font=font),
                 # add a button to submit the query
                 sg.Button('Generate', key='-SUBMIT-TRAIN-QUERY-', size=(10, 1), font=font,border_width=0),
             ],
