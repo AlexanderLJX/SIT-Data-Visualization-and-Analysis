@@ -28,7 +28,9 @@ def generate_filter(query):
                 "content": """[
   {
     "column": "About",
-    "value": "LGBTQ+ friendly",
+    "values": [
+      "LGBTQ+ friendly"
+    ],
     "operator": "=="
   }
 ]"""
@@ -42,12 +44,16 @@ def generate_filter(query):
                 "content": """[
   {
     "column": "First Opening Time",
-    "value": "09:00",
+    "values": [
+      "09:00"
+    ],
     "operator": ">"
   },
   {
     "column": "Planning Area",
-    "value": "Bishan",
+    "values": [
+      "Bishan"
+    ],
     "operator": "=="
   }
 ]"""
@@ -61,17 +67,23 @@ def generate_filter(query):
                 "content": """[
   {
     "column": "Average Star Rating",
-    "value": "3.0",
+    "values": [
+      "3.0"
+    ],
     "operator": "<"
   },
   {
     "column": "Planning Areas",
-    "value": "Bishan",
+    "values": [
+      "Bishan"
+    ],
     "operator": "=="
   },
   {
     "column": "Planning Areas",
-    "value": "Jurong East",
+    "values": [
+      "Jurong East"
+    ],
     "operator": "=="
   }
 ]"""
@@ -85,7 +97,9 @@ def generate_filter(query):
                 "content": """[
   {
     "column": "Search Engine Rating",
-    "value": "5",
+    "values": [
+      "5"
+    ],
     "operator": "largest"
   }
 ]"""
@@ -99,7 +113,9 @@ def generate_filter(query):
                 "content": """[
   {
     "column": "Star Rating",
-    "value": "10",
+    "values": [
+      "10"
+    ],
     "operator": "smallest"
   }
 ]"""
@@ -113,12 +129,16 @@ def generate_filter(query):
                 "content": """[
   {
     "column": "Bayesian Rating",
-    "value": "100",
+    "values": [
+      "100"
+    ],
     "operator": "smallest"
   },
   {
     "column": "First Opening Time",
-    "value": "10",
+    "values": [
+      "10"
+    ],
     "operator": "smallest"
   }
 ]"""
@@ -132,13 +152,34 @@ def generate_filter(query):
                 "content": """[
   {
     "column": "Price Rating",
-    "value": "$$$",
+    "values": [
+      "$$$"
+    ],
     "operator": ">="
   },
   {
     "column": "Average Star Rating",
-    "value": "10",
+    "values": [
+      "10"
+    ],
     "operator": "largest"
+  }
+]"""
+            },
+            {
+                "role": "user",
+                "content": """out door seating and good for kids"""
+            },
+            {
+                "role": "assistant",
+                "content": """[
+  {
+    "column": "About",
+    "values": [
+      "Outdoor seating",
+      "Good for kids"
+    ],
+    "operator": "=="
   }
 ]"""
             },
@@ -235,14 +276,15 @@ def generate_ml_train_json(query):
         model=g4f.models.gpt_4,
         messages=[{
                 "role": "user",
-                "content": """You are an AI intepreter that will translate the user's queries into json format in order to train a ML model based on the following information:
+                "content": """You are an AI intepreter that will translate the user's queries into json format in order create a machine learning model based on the following information:
                 These are the features of the dataframe:
-                Region,Planning Area,Subzone,Name,Search Engine Rating,Sponsored,Opening Hours,First Opening Time,Popular Times,Average Star Rating,Individual Star Rating,Reviews,Category,Price Rating,Metadata,Tags,About
+                """ + str(constants.PLOT_FEATURES_DATATYPES) + """
                 These are the values of the About column:
                 ['Outdoor seating', 'Delivery', 'Takeaway', 'Dine-in', 'Wheelchair-accessible entrance', 'Alcohol', 'Beer', 'Coffee', 'Late-night food', 'Small plates', 'Lunch', 'Dinner', 'Catering', 'Dessert', 'Seating', 'Gender-neutral toilets', 'Toilets', 'Casual', 'Family friendly', 'Groups', 'LGBTQ+ friendly', 'Transgender safe space', 'Debit cards', 'NFC mobile payments', 'Good for kids', 'High chairs', 'Free parking lot', 'Somewhat difficult to find a space']
+                These are the only ML model types that can be used:
+                """ + str(constants.ML_MODELS) + """
                 1. The key "feature1" refers to the the x-axis. the value of the key is the column name of the dataframe.
                 2. The key "feature2" refers to the the y-axis. 
-                3. The key "plot" refers to the type of plot to be plotted.
                 **You can only reply in json format.**
                 You are to determine the appropriate ML model to use based on the user's query.
                 This is the first query:
@@ -251,32 +293,53 @@ def generate_ml_train_json(query):
             {
                 "role": "assistant",
                 "content": """{
-  "feature1": "Reviews",
-  "feature2": "Average Star Rating",
-  "ML model": "linear regression"
+  "model": "linear regression",
+  "features": [
+    "Reviews"
+  ],
+  "target": "Average Star Rating"
 }"""
             },
             {
                 "role": "user",
-                "content": """train a model to see the relationship of relavancy and star rating"""
+                "content": """predict star rating based on relevancy"""
             },
             {
                 "role": "assistant",
                 "content": """{
-  "feature1": "Search Engine Rating",
-  "feature2": "Average Star Rating",
-  "ML model": "linear regression"
+  "model": "linear regression",
+  "features": [
+    "Search Engine Rating"
+  ],
+  "target": "Average Star Rating"
 }"""
             },
             {
                 "role": "user",
-                "content": """see if there are any anomalies in number of reviews"""
+                "content": """train a model to predict bayesian rating based on region and price per person"""
             },
             {
                 "role": "assistant",
                 "content": """{
-  "feature1": "Reviews",
-  "ML model": "anomaly detection"
+  "model": "random forest",
+  "features": [
+    "Region",
+    "Price per Person"
+  ],
+  "target": "Bayesian Rating"
+}"""
+            },
+            {
+                "role": "user",
+                "content": """train a model to find anomalies in the number of reviews"""
+            },
+            {
+                "role": "assistant",
+                "content": """{
+  "model": "isolation forest",
+  "features": [
+    "Reviews"
+  ]
 }"""
             },
             {

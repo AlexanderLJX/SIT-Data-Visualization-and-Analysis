@@ -72,6 +72,8 @@ PLOT_TYPES = ['pie chart', 'bar chart', 'distribution', 'hexbin', 'linear regres
 
 OPERATORS = ['==', '>', '<', '>=', '<=', '!=', 'smallest', 'largest', 'in', 'not in']
 
+ML_MODELS = ["linear regression", "isolation forest", "time series prediction", "random forest"]
+
 
 DEFAULT_PLOT_JSON = """{
   "feature1": "First Opening Time",
