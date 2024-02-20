@@ -75,7 +75,7 @@ def validate_json_train_thread(window, json_str):
 
 def plot_thread(window, unfiltered_df, plot_json, filter_json_status, apply_filter, filter_json):
     df = unfiltered_df.copy()
-    if apply_filter and filter_json_status == "Valid JSON":
+    if apply_filter and filter_json_status == "Valid JSON" and filter_json is not None and filter_json != "":
         df = filter_df_json(filter_json, unfiltered_df)
         filter_json = json.loads(filter_json)
     # Drop String values that are "nan" based on columns feature1 and feature2 if feature2 is present
@@ -112,7 +112,7 @@ def generate_ml_train_json_thread(window, query):
 
 def train_and_predict_thread(window, unfiltered_df, train_json, filter_json_status, apply_filter, filter_json):
     df = unfiltered_df.copy()
-    if apply_filter and filter_json_status == "Valid JSON":
+    if apply_filter and filter_json_status == "Valid JSON" and filter_json is not None and filter_json != "":
         df = filter_df_json(filter_json, unfiltered_df)
         filter_json = json.loads(filter_json)
     # for each feature in features, drop String values that are "nan" based on the feature

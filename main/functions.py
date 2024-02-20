@@ -209,10 +209,10 @@ def filter_df_json(filter_json, df_data):
                 df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: value in x for value in values)]
         elif constants.FEATURES_DATATYPES[column] == "integer":
             values = [int(value) for value in values]
-            df_data_filtered = filter_for_string_and_float(df_data_filtered, column, values, operator)
+            df_data_filtered = filter_for_int_and_float(df_data_filtered, column, values, operator)
         elif constants.FEATURES_DATATYPES[column] == "float":
             values = [float(value) for value in values]
-            df_data_filtered = filter_for_string_and_float(df_data_filtered, column, values, operator)
+            df_data_filtered = filter_for_int_and_float(df_data_filtered, column, values, operator)
         elif constants.FEATURES_DATATYPES[column] == "ISO8601":
             values = [pd.to_datetime(value, format='%H:%M') for value in values]
             # # convert the column to a string
