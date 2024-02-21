@@ -67,11 +67,11 @@ The Data Diagrams Tab allows users to create stories and view data insights and 
 ### <ins>Applying Filters set on the View Foodplaces Tab</ins>
 1. To begin, enter a Natural Language Query.
 2. Click on the "Generate" Button.
-3. To apply the filters that are set on the View Foodplaces Tab, select the checkbox "Apply filter to diagram".
+3. To apply the filters that are set on the View Foodplaces Tab, select the checkbox "Apply filter".
 4. Click on the "Show Diagram" button.
 5. The data diagram shown will be a diagram created from the Natural Language Query entered in this tab with filter set and applied from the View Foodplaces Tab.
 6. If user would like to apply more than 1 filter for plotting the data diagram, go to the View Foodplaces Tab and enter the new additional filters. Follow the instructions mentioned in the View Foodplaces Tab.
-7. Once completed, return back to this tab and click on the "Show Diagram" "buton" again.
+7. Once completed, return back to this tab and click on the "Show Diagram" buton again.
 8. Repeat Step 6 and Step 7 for adding more filters.
 9. Select the Checkbox "Plot in new window" to view the data diagram in a new window.
 10. Checking the checkbox "Clear Previous Plot" will clear the previous plot on the data diagram as there are multiple plots plotted when multiple filters are applied.
@@ -91,4 +91,35 @@ Similar to the View Foodplaces Tab, The JSON filter that is generated after the 
 <figure>
   <img src="Data_Diagrams_Tab_Example.png" alt="Data_Diagrams_Tab_Example">
    <figcaption>Pie chart for the percentage of foodplaces in the respective regions of Singapore</figcaption>
+</figure>
+
+## <ins>3. Train ML Models Tab</ins>
+
+### <ins>Basic Use</ins>
+1. To begin, enter a Natural Language Query.
+2. Click on the "Generate" Button.
+3. Click on the "Train & Predict" button.
+4. A ML Model image will be shown.
+5. Select the Checkbox "Plot in new window" to view the ML Model in a new window.
+
+### <ins>Applying Filters set on the View Foodplaces Tab</ins>
+1. To begin, enter a Natural Language Query.
+2. Click on the "Generate" Button.
+3. To apply the filters that are set on the View Foodplaces Tab, select the checkbox "Apply filter".
+4. Click on the "Train & Predict" button.
+5. The ML Model image shown will be the ML Model trained from the Natural Language Query entered in this tab with filter set and applied from the View Foodplaces Tab.
+6. If user would like to apply more than 1 filter for training the ML Model, go to the View Foodplaces Tab and enter the new additional filters. Follow the instructions mentioned in the View Foodplaces Tab.
+7. Once completed, return back to this tab and click on the "Train & Predict" buton again.
+8. Repeat Step 6 and Step 7 for adding more filters.
+9. Select the Checkbox "Plot in new window" to view the ML Model in a new window.
+10. Checking the checkbox "Clear Previous Plot" will clear the previous plot on the ML Model as there are multiple plots plotted when multiple filters are applied.
+
+### <ins>Editing JSON filter after Natural Language Query geenration</ins>
+Similar to the View Foodplaces and the Data Diagrams Tab, The JSON filter that is generated after the Natural Language Query can be edited. However, by doing so, users **DO NOT need to click on the "Generate" button** to display the result, and the resulted diagram produced is based on the **latest settings configured on the JSON Filter**. 
+**EITHER THE OPTION OF NATURAL LANGUAGE QUERY GENERAATION FROM THE NLQ TEXTBOX OR EDITING THE JSON FILTER CAN BE USED AT ANY ONE TIME TOGETHER WITH THE CHECKBOXES TO DISPLAY THE DATA DIAGRAM.**
+
+### <ins>ML Model Example seen in Train ML Models Tab</ins>
+<figure>
+  <img src="Train_ML_Models_Tab_Example.png" alt="Train_ML_Models_Tab_Example">
+   <figcaption>ML Model Example visualising for anomalies in average star rating</figcaption>
 </figure>
