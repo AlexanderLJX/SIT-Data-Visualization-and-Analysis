@@ -1,0 +1,10 @@
+{
+    "filter": "",
+    "plot": {
+        "feature1": "Planning Area",
+        "feature2": "Price Per Person",
+        "plot": "bar chart",
+        "aggregation": "mean"
+    },
+    "train": ""
+}

@@ -1,0 +1,9 @@
+{
+    "filter": "",
+    "plot": {
+        "feature1": "Planning Area",
+        "feature2": "Average Star Rating",
+        "plot": "bar chart"
+    },
+    "train": ""
+}

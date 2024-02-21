@@ -1,0 +1,9 @@
+{
+    "filter": "",
+    "plot": {
+        "feature1": "Average Star Rating",
+        "feature2": "Price Rating",
+        "plot": "bar chart"
+    },
+    "train": ""
+}
