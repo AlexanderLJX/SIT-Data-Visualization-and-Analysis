@@ -480,19 +480,21 @@ def plotmap(df):
     # Return the name of the temporary file so that we can delete the temp file after the user closes the window
     return tmp.name
 
-def plotmap_with_animation(df):
+def plotmap_with_animation(df, time_feature):
     # Convert 'Time' to string in ISO format if it's not already, eg 11:00:00, there is no date, only time, so make it today's date
-    df['First Opening Time'] = pd.to_datetime(df['First Opening Time']).dt.strftime('2024-02-19T%H:%M:%S')
+    # get today's date in the format 2024-02-19
+    today = pd.to_datetime('today').strftime('%Y-%m-%d')
+    df[time_feature] = pd.to_datetime(df[time_feature]).dt.strftime(today + 'T%H:%M:%S')
 
     # drop rows with NaN values
-    df = df.dropna(subset=['latitude', 'longitude', 'First Opening Time'])
+    df = df.dropna(subset=['latitude', 'longitude', time_feature])
 
     features = []
     for _, row in df.iterrows():
         feature = {
             'type': 'Feature',
             'properties': {
-                'time': row['First Opening Time'],
+                'time': row[time_feature],
                 'name': row['Name']
                 # Add other properties here if necessary
             },
@@ -553,19 +555,19 @@ def plotmap_with_animation(df):
 
 
 # def plotmap_with_heat(df):  
-#     # Convert 'First Opening Time' to datetime and then to string
-#     df['First Opening Time'] = pd.to_datetime(df['First Opening Time']).dt.strftime('%Y-%m-%dT%H:%M:%S')
+#     # Convert time_feature to datetime and then to string
+#     df[time_feature] = pd.to_datetime(df[time_feature]).dt.strftime('%Y-%m-%dT%H:%M:%S')
     
 #     # Drop rows with NaN values
-#     df = df.dropna(subset=['latitude', 'longitude', 'First Opening Time'])
+#     df = df.dropna(subset=['latitude', 'longitude', time_feature])
     
     
-#     # Sort by 'First Opening Time'
-#     df['First Opening Time'] = pd.to_datetime(df['First Opening Time']).sort_values(ascending=True)
+#     # Sort by time_feature
+#     df[time_feature] = pd.to_datetime(df[time_feature]).sort_values(ascending=True)
     
-#     # Group by 'First Opening Time' and create data for HeatMapWithTime
+#     # Group by time_feature and create data for HeatMapWithTime
 #     data = []
-#     for _, d in df.groupby('First Opening Time'):
+#     for _, d in df.groupby(time_feature):
 #         data.append([[row['latitude'], row['longitude'], 1] for _, row in d.iterrows()])
     
 #     # Create map

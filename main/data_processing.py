@@ -184,7 +184,7 @@ def convert_to_24_hour(time_str, am_pm=None):
     if time_str == 'Closed':
         return time_str
     # if time_str does not have a am or pm
-    if 'am' not in time_str and 'pm' not in time_str:
+    if 'am' not in time_str.lower() and 'pm' not in time_str.lower():
         time_str = time_str + ' ' + am_pm
     # format for parsing example: 12 pm or 11:30 am
     fmt = '%I %p'
@@ -286,6 +286,33 @@ for index, row in df.iterrows():
             total_hours += calculate_hours(x)
 
     df.at[index, 'Average Opening Hours'] = total_hours / len(row['Opening Hours'])
+
+# Create new column "Most Popular Time of Day"
+df['Most Popular Time of Day'] = None
+def calculate_most_popular_time(popular_times_dict):
+    most_popular_time = None
+    most_popular_time_popularity = 0
+    for day, day_popular_times_dict in popular_times_dict.items():
+        if day_popular_times_dict:
+            for time, popularity in day_popular_times_dict.items():
+                try:
+                    popularity = int(popularity.replace('%', ''))
+                except:
+                    popularity = 0
+                time = convert_to_24_hour(time)
+                if most_popular_time is None or popularity > most_popular_time_popularity:
+                    most_popular_time = time
+
+    return most_popular_time
+
+# convert popular times to dict
+df['Popular Times'] = df['Popular Times'].apply(lambda x: ast.literal_eval(x) if pd.notnull(x) else {})
+# calculate most popular time of day for each row
+for index, row in df.iterrows():
+    if row['Popular Times'] == {}:
+        df.at[index, 'Most Popular Time of Day'] = None
+        continue
+    df.at[index, 'Most Popular Time of Day'] = calculate_most_popular_time(row['Popular Times'])
 
 ## Analysis and Calculations
 # Calculate bayesian rating based on the number of reviews and the average star rating
