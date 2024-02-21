@@ -1,0 +1,34 @@
+{
+    "filter": "",
+    "plot": {
+        "feature1": "First Opening Time",
+        "feature2": "Average Star Rating",
+        "plot": "line chart"
+    },
+    "train": {
+        "model": "random forest",
+        "features": [
+            "href",
+            "Region",
+            "Planning Area",
+            "Subzone",
+            "Name",
+            "Search Engine Rating",
+            "Sponsored",
+            "Category",
+            "Price Rating",
+            "Address",
+            "longitude",
+            "latitude",
+            "Service Rating",
+            "Food Rating",
+            "Atmosphere",
+            "Price Per Person",
+            "First Opening Time",
+            "Last Closing Time",
+            "Average Opening Hours",
+            "Chain"
+        ],
+        "target": "Bayesian Rating"
+    }
+}

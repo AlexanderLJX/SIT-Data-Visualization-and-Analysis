@@ -177,6 +177,8 @@ def validate_train_json(train_json):
         
     # if model is isolation forest, make sure columns are float or integer
     if train_dict['model'] == "isolation forest":
+        if len(train_dict['features']) != 2:
+            return "Isolation forest model requires exactly 2 features"
         for feature in train_dict['features']:
             if constants.PLOT_FEATURES_DATATYPES[feature] not in ["integer", "float"]:
                 return f"{feature} not a valid column for isolation forest model"
@@ -186,15 +188,20 @@ def validate_train_json(train_json):
         for feature in train_dict['features']:
             if constants.PLOT_FEATURES_DATATYPES[feature] not in ["integer", "float"]:
                 return f"{feature} not a valid column for linear regression model"
-        # make sure target is a float or integer
+        if 'target' not in train_dict:
+            return "target not in the JSON"
+        if train_dict['target'] not in constants.PLOT_FEATURES_DATATYPES:   
+            return f"{train_dict['target']} not a valid column"
         if constants.PLOT_FEATURES_DATATYPES[train_dict['target']] not in ["integer", "float"]:
             return f"{train_dict['target']} not a valid column for linear regression model"
     
-    # if model is random forest, make sure columns are float or integer
-
-    # # verify that the column is in feature list
-    # if train_dict['target'] not in constants.PLOT_FEATURES_DATATYPES.keys():
-    #     return f"{train_dict['target']} not a valid column"
+    if train_dict['model'] == "random forest":
+        if 'target' not in train_dict:
+            return "target not in the JSON"
+        if train_dict['target'] not in constants.PLOT_FEATURES_DATATYPES:   
+            return f"{train_dict['target']} not a valid column"
+        if constants.PLOT_FEATURES_DATATYPES[train_dict['target']] not in ["integer", "float"]:
+            return f"{train_dict['target']} not a valid column for random forest model"
 
     return "Valid JSON"
     

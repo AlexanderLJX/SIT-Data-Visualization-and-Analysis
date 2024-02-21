@@ -390,8 +390,14 @@ while True:
             # load json prettily
             workflow_json = json.loads(workflow_json)
             filter_json = json.dumps(workflow_json["filter"], indent=4)
+            if filter_json == '""':
+                filter_json = ""
             plot_json = json.dumps(workflow_json["plot"], indent=4)
+            if plot_json == '""':
+                plot_json = ""
             train_json = json.dumps(workflow_json["train"], indent=4)
+            if train_json == '""':
+                train_json = ""
             window['-FILTER-'].update(filter_json)
             window['-PLOT-JSON-'].update(plot_json)
             window['-TRAIN-JSON-'].update(train_json)

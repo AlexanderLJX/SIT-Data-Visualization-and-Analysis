@@ -251,6 +251,8 @@ for index, row in df.iterrows():
 
 # create new column "Average Opening Hours"
 def calculate_hours(open_close_times):
+    open_close_times['open'] = open_close_times['open'].replace(". Hide open hours for the week", "").strip()
+    open_close_times['close'] = open_close_times['close'].replace(". Hide open hours for the week", "").strip()
     if open_close_times['open'] == 'Closed':
         return 0
     elif open_close_times['open'] == '12 am' and open_close_times['close'] == '12 am':
@@ -282,8 +284,13 @@ for index, row in df.iterrows():
     total_hours = 0
     # loop through dict row['Opening Hours']
     for key, item in row['Opening Hours'].items():
+        prev_key_list = []
         for x in item:
+            if str(x) in prev_key_list:
+                continue
+            prev_key_list.append(str(x))
             total_hours += calculate_hours(x)
+            
 
     df.at[index, 'Average Opening Hours'] = total_hours / len(row['Opening Hours'])
 

@@ -1,0 +1,15 @@
+{
+    "filter": "",
+    "plot": {
+        "feature1": "First Opening Time",
+        "feature2": "Average Star Rating",
+        "plot": "line chart"
+    },
+    "train": {
+        "model": "isolation forest",
+        "features": [
+            "Reviews",
+            "Average Star Rating"
+        ]
+    }
+}

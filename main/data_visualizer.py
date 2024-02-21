@@ -157,29 +157,51 @@ def plot_pie_chart(feature1, df):
 def plot_linear_regression(features, target, df):
     # drop all the rows with NaN values based on the features
     df = df.dropna(subset=features + [target])
-    # Split data into training and testing sets
-    X = df[features]  # Independent variables
-    y = df[target]    # Dependent variable
+    if len(features) == 1:
+        X = df[features]  # Independent variable
+        y = df[target]  # Dependent variable
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Perform linear regression
-    model = LinearRegression()
-    model.fit(X_train, y_train)
-    
-    # Make predictions
-    y_pred = model.predict(X_test)
+        # Perform linear regression
+        model = LinearRegression()
+        model.fit(X_train, y_train)
 
-    # Since we're now dealing with multiple features, we cannot directly plot a line as before.
-    # Instead, we can compare actual vs. predicted values or use a scatter plot for individual features if needed.
-    plt.figure(figsize=(10, 6))
-    plt.scatter(y_test, y_pred, color='blue', label='Predicted vs Actual')
-    plt.plot([y.min(), y.max()], [y.min(), y.max()], 'k--', lw=4, color='red', label='Ideal Fit')
-    plt.xlabel('Actual')
-    plt.ylabel('Predicted')
-    plt.title('Actual vs. Predicted Values')
-    plt.legend()
-    # plt.show()
+        # Make predictions
+        y_pred = model.predict(X_test)
+
+        # Plot results
+        plt.scatter(X, y, color='blue', label='Actual data')  # Actual data points
+        plt.plot(X_test, y_pred, color='red', linewidth=2, label='Linear regression line')  # Regression line
+        plt.title(f'Linear Regression of {features[0]} and {target}')
+        plt.xlabel(features[0])
+        plt.ylabel(target)
+        plt.legend()
+        plt.show()
+    else:
+        
+        # Split data into training and testing sets
+        X = df[features]  # Independent variables
+        y = df[target]    # Dependent variable
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        # Perform linear regression
+        model = LinearRegression()
+        model.fit(X_train, y_train)
+        
+        # Make predictions
+        y_pred = model.predict(X_test)
+
+        # Since we're now dealing with multiple features, we cannot directly plot a line as before.
+        # Instead, we can compare actual vs. predicted values or use a scatter plot for individual features if needed.
+        plt.scatter(y_test, y_pred, color='blue', label='Predicted vs Actual')
+        plt.plot([y.min(), y.max()], [y.min(), y.max()], 'k--', lw=4, color='red', label='Ideal Fit')
+        plt.xlabel('Actual')
+        plt.ylabel('Predicted')
+        plt.title('Actual vs. Predicted Values')
+        plt.legend()
+        # plt.show()
 
     return plt.gcf()
 
@@ -204,9 +226,6 @@ def plot_random_forest(features, target, data):
     
     # Make predictions
     y_pred = model.predict(X_test)
-    
-    # Plotting function for RandomForest results
-    plt.figure(figsize=(10, 6))
     # Actual vs Predicted scatter plot
     plt.scatter(y_test, y_pred, color='blue', label='Actual vs. Predicted')
     # Perfect predictions line
@@ -221,34 +240,30 @@ def plot_random_forest(features, target, data):
     return plt.gcf()
 
 def plot_isolation_forest(features, df):
-    # drop all the rows with NaN values based on the features
-    df = df.dropna(subset=features)
-    # Initialize the IsolationForest model
-    iso_forest = IsolationForest(contamination=0.1)
+    # Drop all the rows with NaN values based on the features
+    df_clean = df.dropna(subset=features)
     
-    plt.figure(figsize=(10, 6))
+    # Initialize the IsolationForest model with adjusted parameters
+    iso_forest = IsolationForest(n_estimators=100, max_samples='auto', contamination=0.01, random_state=42)
     
-    for feature in features:
-        # Reshape data for the model
-        X = df[feature].values.reshape(-1, 1)
-        
-        # Fit the model
-        iso_forest.fit(X)
-        
-        # Predict anomalies (-1 for outliers, 1 for inliers)
-        preds = iso_forest.predict(X)
-        
-        # Plot inliers
-        plt.plot(df.index[preds == 1], df[feature][preds == 1], alpha=0.7, label=f"{feature} Inliers")
-        
-        # Plot outliers
-        plt.scatter(df.index[preds == -1], df[feature][preds == -1], color='r', label=f"{feature} Outliers")
+    # Use all features for training
+    X = df_clean[features]
+    iso_forest.fit(X)
     
-    plt.title('Anomaly Detection for Features: ' + ', '.join(features))
-    plt.xlabel('Index')
-    plt.ylabel('Value')
+    # Predict anomalies (-1 for outliers, 1 for inliers)
+    preds = iso_forest.predict(X)
+    
+    # # Plotting
+    # for feature in features:
+    # Plot inliers
+    plt.plot(df_clean[features[0]][preds == 1], df_clean[features[1]][preds == 1], 'o', alpha=0.7, label=f" Inliers")
+    # Plot outliers
+    plt.scatter(df_clean[features[0]][preds == -1], df_clean[features[1]][preds == -1], color='r', label=f" Outliers")
+    
+    plt.title(f'Anomaly Detection for {features[0]} and {features[1]}')
+    plt.xlabel(features[0])
+    plt.ylabel(features[1])
     plt.legend()
     plt.grid(True)
-    plt.show()
 
     return plt.gcf()
