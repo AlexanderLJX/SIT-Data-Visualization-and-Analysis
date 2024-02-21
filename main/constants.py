@@ -26,6 +26,7 @@ FEATURES_DATATYPES = {
     "Recommended Dishes": "list",  # String with recommended dishes
     "First Opening Time": "ISO8601",  # ISO8601 format for the first opening time
     "Last Opening Time": "ISO8601",  # ISO8601 format for the last opening time
+    "Most Popular Time of Day": "ISO8601",  # ISO8601 format for the most popular time of day
     "Average Opening Time": "float",  # Decimal number for average opening time in hours
     "Chain": "string"  # Name of the chain
 }

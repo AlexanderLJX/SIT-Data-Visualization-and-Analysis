@@ -17,7 +17,7 @@ import webbrowser
 import logging
 
 # long-running function
-def generate_map_thread(window, df_data, plot_function, planning_area, category, filter_json):
+def generate_map_thread(window, df_data, plot_function, planning_area, category, filter_json, time_feature=None):
     try:
         global temp_file_name
         if filter_json is not None and filter_json != "":
@@ -27,7 +27,7 @@ def generate_map_thread(window, df_data, plot_function, planning_area, category,
             filtered_df = filter_df(planning_area, category, df_data)
 
         if plot_function == "plotmap_with_animation":
-            temp_file_name = plotmap_with_animation(filtered_df)
+            temp_file_name = plotmap_with_animation(filtered_df, time_feature)
         else: # else is plotmap
             temp_file_name = plotmap(filtered_df) 
 
@@ -169,6 +169,9 @@ validating_train_json = False
 unique_cat = df_data['Category'].unique()
 unique_cat_list = sorted(list(map(str, unique_cat)))
 
+# find all time ISO8601 features in the constants.FEATURES_DATATYPES
+time_features_list = [feature for feature, datatype in constants.FEATURES_DATATYPES.items() if datatype == "ISO8601"]
+
 
 # find the sub area types in the csv
 unique_Area = df_data['Planning Area'].unique()
@@ -227,6 +230,7 @@ layout = [
         sg.Button('Show on Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
        # sg.Button('Show on 3D Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
         sg.Button('Show on Animated Map', size=(20, 2), font=font,border_width=0,button_color=('white', 'green')),
+        sg.Listbox(values=time_features_list, size=(22,3), select_mode='single', key='-PLOT-TIME-FEATURE-')
        # sg.Button('Show on Heat Map', size=(15, 2), font=font,border_width=0,button_color=('white', 'green')),
     ],
     [sg.Text(size=(5,1))],
@@ -601,9 +605,13 @@ while True:
             # view the map with the Category of restaurant or the sub area that it is in
             planning_area = values['-OPTION-']
             category = values['-OPTION2-']
+            if values['-PLOT-TIME-FEATURE-'] == []:
+                window['-STATUS-'].update('Error: No time feature selected')
+                continue
+            time_feature = values['-PLOT-TIME-FEATURE-'][0]
             # get text in the filter box -FILTER-
             filter_json = values['-FILTER-']
-            threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap_with_animation", planning_area, category, filter_json), daemon=True).start()
+            threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap_with_animation", planning_area, category, filter_json, time_feature), daemon=True).start()
         else:
             # set status to error
             window['-STATUS-'].update('Error: Invalid JSON filter')

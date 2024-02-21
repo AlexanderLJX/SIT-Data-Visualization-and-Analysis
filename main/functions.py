@@ -426,19 +426,21 @@ def plotmap(df):
     # Return the name of the temporary file so that we can delete the temp file after the user closes the window
     return tmp.name
 
-def plotmap_with_animation(df):
+def plotmap_with_animation(df, time_feature):
     # Convert 'Time' to string in ISO format if it's not already, eg 11:00:00, there is no date, only time, so make it today's date
-    df['First Opening Time'] = pd.to_datetime(df['First Opening Time']).dt.strftime('2024-02-19T%H:%M:%S')
+    # get today's date in the format 2024-02-19
+    today = pd.to_datetime('today').strftime('%Y-%m-%d')
+    df[time_feature] = pd.to_datetime(df[time_feature]).dt.strftime(today + 'T%H:%M:%S')
 
     # drop rows with NaN values
-    df = df.dropna(subset=['latitude', 'longitude', 'First Opening Time'])
+    df = df.dropna(subset=['latitude', 'longitude', time_feature])
 
     features = []
     for _, row in df.iterrows():
         feature = {
             'type': 'Feature',
             'properties': {
-                'time': row['First Opening Time'],
+                'time': row[time_feature],
                 'name': row['Name']
                 # Add other properties here if necessary
             },
