@@ -353,10 +353,6 @@ while True:
             os.remove(temp_file_name)
         break
     
-    elif event == 'Search':
-        search_term = values['-SEARCH-'].lower()
-        filtered_data = [item for item in unique_Area_list if search_term in item.lower()]
-        window['-OPTION-'].update(values=filtered_data)
         
     elif event== '-SHOW-DIAGRAM-':
         # show plotting diagram on the plot status
@@ -380,12 +376,6 @@ while True:
         else:
             # set status to error
             window['-PLOT-STATUS-'].update('Error: Invalid JSON filter')
-
-    elif event == '-EXPORT-':
-        # exporting the full dataset
-        filename = sg.popup_get_file('Select a file to save to', save_as=True, file_types=(("CSV Files", "*.csv"),))
-        if filename:
-            df_data.to_csv(filename, index=False)
 
     elif event == '-IMPORT-WORKFLOW-':
         workflow_path = sg.popup_get_file('Select JSON workflow file', file_types=(("JSON Files", "*.json"),))
@@ -684,10 +674,19 @@ while True:
             # Save the filtered dataframe to a CSV file
             destination = sg.popup_get_file('Select a file to save the filtered dataset CSV', save_as=True, file_types=(('CSV Files', '*.csv'),))
             if destination:
-                filtered_df.to_csv(destination, index=False)
+                filtered_df.to_csv(destination, index=False,encoding='utf-8-sig')
                 window['-STATUS-'].update('Filtered dataset exported successfully!')
         else:
             window['-STATUS-'].update('Error: No filters applied')
+
+    elif event == '-EXPORT-':
+        # exporting the full dataset
+        filename = sg.popup_get_file('Select a file to save to', save_as=True, file_types=(("CSV Files", "*.csv"),))
+        if filename:
+            try:
+                df_data.to_csv(filename, index=False, encoding='utf-8-sig')
+            except Exception as e:
+                print(f"An error occurred while saving the file: {e}")
 
     elif event == '-HELP-LINK-':
         webbrowser.open('https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis')
