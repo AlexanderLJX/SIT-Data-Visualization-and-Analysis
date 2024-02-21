@@ -48,7 +48,7 @@ def generate_filter(query):
   },
   "input2": {
     "column": "Planning Area",
-    "values": "Bishan",
+    "value": "Bishan",
     "operator": "=="
   }
 }"""
@@ -70,7 +70,7 @@ def generate_filter(query):
     },
     "input2": {
       "column": "Planning Areas",
-      "values": "Bishan",
+      "value": "Bishan",
       "operator": "=="
     }
   },
@@ -89,7 +89,7 @@ def generate_filter(query):
                 "role": "assistant",
                 "content": """{
     "column": "Search Engine Rating",
-    "values": "5",
+    "value": "5",
     "operator": "largest"
   }"""
             },
@@ -101,7 +101,7 @@ def generate_filter(query):
                 "role": "assistant",
                 "content": """{
     "column": "Star Rating",
-    "values": "10",
+    "value": "10",
     "operator": "smallest"
   }"""
             },
