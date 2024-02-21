@@ -6,7 +6,7 @@ import constants
 def readfile(csv_path):
     try:
         df_data=pd.read_csv(csv_path, encoding='utf-8-sig')
-        return process_csv(df_data)
+        return process_df(df_data)
     #exception if the file cant be found 
     except FileNotFoundError:
         print(" CSV file could not be found.")
@@ -16,7 +16,7 @@ def readfile(csv_path):
         print(f"An error occurred while reading the CSV file: {e}")
         exit(1)
 
-def process_csv(df_data):
+def process_df(df_data):
     # convert based on the features_datatypes
     for feature, datatype in constants.FEATURES_DATATYPES.items():
         # if feature not in the dataframe, continue
@@ -31,9 +31,9 @@ def process_csv(df_data):
         elif datatype == "dictionary":
             df_data[feature] = df_data[feature].apply(lambda x: ast.literal_eval(x) if pd.notnull(x) else x)
         elif datatype == "list":
-            df_data[feature] = df_data[feature].apply(lambda x: ast.literal_eval(x) if pd.notnull(x) else x)
+            df_data[feature] = df_data[feature].apply(lambda x: ast.literal_eval(x) if pd.notnull(x) and x != "nan" else x)
         elif datatype == "ISO8601":
             df_data[feature] = pd.to_datetime(df_data[feature], format='%H:%M', errors='coerce')
-    # print dtypes
-    print(df_data.dtypes)
+    # # print dtypes
+    # print(df_data.dtypes)
     return df_data

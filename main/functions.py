@@ -7,6 +7,67 @@ import os
 from folium.plugins import TimestampedGeoJson
 import json
 import constants
+from util import process_df
+
+def validate_filter_condition(condition):
+    # Validate a single filter condition (leaf node)
+    if 'column' in condition:
+        column, operator = condition.get('column'), condition.get('operator')
+        
+        # Validate column
+        if column not in constants.FEATURES_DATATYPES:
+            return f"{column} not a valid column"
+        
+        # Validate operator
+        if operator not in constants.OPERATORS:
+            return f"{operator} not a valid operator"
+        
+        # Validate value based on column's data type (example simplified for brevity)
+        # Additional checks for data type correctness would be similar to your initial approach
+        
+        return "Valid JSON"  # Return valid if all checks pass for a condition
+    
+    else:
+        return None  # Indicate that this is not a leaf node
+
+def validate_filter_json_recursive(filter_json):
+    if filter_json == "":
+        return "Valid JSON"
+    try:
+        filter_obj = json.loads(filter_json) if isinstance(filter_json, str) else filter_json
+        
+        def recursive_validate(node):
+            # Base case for leaf nodes
+            validation_result = validate_filter_condition(node)
+            if validation_result:
+                return validation_result
+            
+            # Recursive case for logical gates
+            if 'gate' in node and 'input1' in node and 'input2' in node:
+                gate = node['gate']
+                if gate.lower() not in ['and', 'or']:
+                    return f"{gate} is not a valid logical gate"
+                
+                # Recursively validate input1 and input2
+                input1_result = recursive_validate(node['input1'])
+                input2_result = recursive_validate(node['input2'])
+                
+                if input1_result != "Valid JSON":
+                    return input1_result
+                if input2_result != "Valid JSON":
+                    return input2_result
+                
+                return "Valid JSON"  # Both inputs are valid
+            
+            return "Invalid JSON structure"  # Missing required keys or structure is incorrect
+        
+        # Start the recursive validation
+        return recursive_validate(filter_obj)
+    
+    except ValueError as e:  # Catch JSON parsing errors
+        return f"JSON parsing error: {str(e)}"
+    except Exception as e:  # Catch all other exceptions
+        return f"Unexpected error: {str(e)}"
 
 def validate_filter_json(filter_json):
     if filter_json == "":
@@ -148,115 +209,212 @@ def filter_df(planning_area, category, df_data):
 
     return df_data_filtered
 
-def filter_for_int_and_float(df_data_filtered, column, values, operator):
-    # filter the dataframe based on the column, value and operator
-    if operator == "==":
-        df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: x in values)]
-    elif operator == ">":
-        df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: x > values[0])]
-    elif operator == "<":
-        df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: x < values[0])]
-    elif operator == ">=":
-        df_data_filtered = df_data_filtered[df_data_filtered[column] >= values[0]]
-    elif operator == "<=":
-        df_data_filtered = df_data_filtered[df_data_filtered[column] <= values[0]]
-    elif operator == "!=":
-        df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: x in values)]
-    elif operator == "largest":
-        # filter using list slicing, sort df in descending order by column and get the first x rows
-        df_data_filtered = df_data_filtered.sort_values(by=column, ascending=False).head(int(values[0]))
-    elif operator == "smallest":
-        # filter using list slicing, sort df in ascending order by column and get the first x rows
-        df_data_filtered = df_data_filtered.sort_values(by=column, ascending=True).head(int(values[0]))
-    elif operator == "in":
-        df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: value in x for value in values)]
-    elif operator == "not in":
-        df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: value in x for value in values)]
+def filter_or(filter_dict, df_data_filtered):
+    # get the column name from the dictionary
+    column = filter_dict['column']
+    # drop rows with NaN values or empty strings or lists or dictionaries
+    df_data_filtered = df_data_filtered.dropna(subset=[column])
+    # get the value from the dictionary
+    values = filter_dict['values']
+    operator = filter_dict['operator']
+    # convert values to the data type of the column
+    if constants.FEATURES_DATATYPES[column] == "string":
+        # convert values and column to lowercase
+        values = [str(value).lower() for value in values]
+        df_data_filtered[column] = df_data_filtered[column].apply(lambda x: str(x).lower())
+        if operator == "==":
+            df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: x in values)]
+        elif operator == "!=":
+            df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: x in values)]
+        elif operator == "largest":
+            # filter by counting number of unique string values
+            df_data_filtered = df_data_filtered.groupby(column).size().sort_values(ascending=False).head(int(values[0]))
+        elif operator == "smallest":
+            # filter by counting number of unique string values
+            df_data_filtered = df_data_filtered.groupby(column).size().sort_values(ascending=True).head(int(values[0]))
+        elif operator == "in":
+            df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: value in x for value in values)]
+        elif operator == "not in":
+            df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: value in x for value in values)]
+    elif constants.FEATURES_DATATYPES[column] == "integer" or constants.FEATURES_DATATYPES[column] == "float":
+        values = [float(value) for value in values]
+        # filter the dataframe based on the column, value and operator
+        if operator == "==":
+            df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: x in values)]
+        elif operator == ">":
+            df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: x > values[0])]
+        elif operator == "<":
+            df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: x < values[0])]
+        elif operator == ">=":
+            df_data_filtered = df_data_filtered[df_data_filtered[column] >= values[0]]
+        elif operator == "<=":
+            df_data_filtered = df_data_filtered[df_data_filtered[column] <= values[0]]
+        elif operator == "!=":
+            df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: x in values)]
+        elif operator == "largest":
+            # filter using list slicing, sort df in descending order by column and get the first x rows
+            df_data_filtered = df_data_filtered.sort_values(by=column, ascending=False).head(int(values[0]))
+        elif operator == "smallest":
+            # filter using list slicing, sort df in ascending order by column and get the first x rows
+            df_data_filtered = df_data_filtered.sort_values(by=column, ascending=True).head(int(values[0]))
+    elif constants.FEATURES_DATATYPES[column] == "ISO8601":
+        values = [pd.to_datetime(value, format='%H:%M') for value in values]
+        # # convert the column to a string
+        # df_data_filtered[column] = df_data_filtered[column].apply(lambda x: str(x))
+        # filter the dataframe based on the column, value and operator
+        if operator == "==":
+            df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: x in values)]
+        elif operator == "!=":
+            df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: x in values)]
+        elif operator == "largest":
+            # sort by the column and get the top x latest times
+            value = values[0]
+            df_data_filtered = df_data_filtered.sort_values(by=column, ascending=False).head(int(value))
+        elif operator == "smallest":
+            # sort by the column and get the top x earliest times
+            value = values[0]
+            df_data_filtered = df_data_filtered.sort_values(by=column, ascending=True).head(int(value))
+        else:
+            df_data_filtered = df_data_filtered
+    elif constants.FEATURES_DATATYPES[column] == "list":
+        # filter the dataframe based on the column, value and operator
+        if operator == "==":
+            df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: any(y in x for y in values))]
+        elif operator == "!=":
+            df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: any(y in x for y in values))]
+        else:
+            df_data_filtered = df_data_filtered
+    elif column == "Tags":
+        # Tags is a dictionary the value should be a key in the dictionary
+        # convert value to lowercase
+        value = value.lower()
+        # convert keys to lowercase
+        df_data_filtered[column] = df_data_filtered[column].apply(lambda x: {k.lower(): v for k, v in x.items()})
+        # filter the dataframe based on the column, value and operator, some values are not in the dictionary
+        if operator == "==":
+            df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: set(x.keys()) <= set(values))]
+        elif operator == "!=":
+            df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: set(x.keys()) <= set(values))]
+        elif operator == "in":
+            df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: any(key in values for key in x.keys()))]
+        elif operator == "not in":
+            df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: any(key in values for key in x.keys()))]
+        else:
+            df_data_filtered = df_data_filtered
+
+def filter_one(column, operator, value, df_data_filtered):
+    # drop rows with NaN values or empty strings or lists or dictionaries
+    df_data_filtered = df_data_filtered.dropna(subset=[column])
+    if constants.FEATURES_DATATYPES[column] == "string":
+        # convert values and column to lowercase
+        value = str(value).lower()
+        df_data_filtered[column] = df_data_filtered[column].apply(lambda x: str(x).lower())
+        if operator == "==":
+            df_data_filtered = df_data_filtered[df_data_filtered[column] == value]
+        elif operator == "!=":
+            df_data_filtered = df_data_filtered[df_data_filtered[column] != value]
+        elif operator == "in":
+            df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: value in x)]
+        elif operator == "not in":
+            df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: value in x)]
+        elif operator == "largest":
+            df_data_filtered = df_data_filtered.sort_values(by=column, ascending=False).head(int(value))
+        elif operator == "smallest":
+            df_data_filtered = df_data_filtered.sort_values(by=column, ascending=True).head(int(value))
+    elif constants.FEATURES_DATATYPES[column] == "integer" or constants.FEATURES_DATATYPES[column] == "float":
+        value = float(value)
+        if operator == "==":
+            df_data_filtered = df_data_filtered[df_data_filtered[column] == value]
+        elif operator == ">":
+            df_data_filtered = df_data_filtered[df_data_filtered[column] > value]
+        elif operator == "<":
+            df_data_filtered = df_data_filtered[df_data_filtered[column] < value]
+        elif operator == ">=":
+            df_data_filtered = df_data_filtered[df_data_filtered[column] >= value]
+        elif operator == "<=":
+            df_data_filtered = df_data_filtered[df_data_filtered[column] <= value]
+        elif operator == "!=":
+            df_data_filtered = df_data_filtered[df_data_filtered[column] != value]
+        elif operator == "largest":
+            df_data_filtered = df_data_filtered.sort_values(by=column, ascending=False).head(int(value))
+        elif operator == "smallest":
+            df_data_filtered = df_data_filtered.sort_values(by=column, ascending=True).head(int(value))
+    elif constants.FEATURES_DATATYPES[column] == "ISO8601":
+        value = pd.to_datetime(value, format='%H:%M')
+        if operator == "==":
+            df_data_filtered = df_data_filtered[df_data_filtered[column] == value]
+        elif operator == "!=":
+            df_data_filtered = df_data_filtered[df_data_filtered[column] != value]
+        elif operator == "largest":
+            df_data_filtered = df_data_filtered.sort_values(by=column, ascending=False).head(int(value))
+        elif operator == "smallest":
+            df_data_filtered = df_data_filtered.sort_values(by=column, ascending=True).head(int(value))
+    elif constants.FEATURES_DATATYPES[column] == "list":
+        if operator == "==":
+            df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: value in x)]
+        elif operator == "!=":
+            df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: value in x)]
+    elif column == "Tags":
+        # Tags is a dictionary the value should be a key in the dictionary
+        # convert value to lowercase
+        value = value.lower()
+        # convert keys to lowercase
+        df_data_filtered[column] = df_data_filtered[column].apply(lambda x: {k.lower(): v for k, v in x.items()})
+        if operator == "==":
+            df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: value in x.keys())]
+        elif operator == "!=":
+            df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: value in x.keys())]
+        elif operator == "in":
+            df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: value in x.keys())]
+        elif operator == "not in":
+            df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: value in x.keys())]
 
     return df_data_filtered
 
+def parse_logic(expression, df_data_filtered):
+    # Base case: if the expression is a condition (leaf node)
+    if "column" in expression:
+        # Construct the condition string
+        column = expression["column"]
+        operator = expression["operator"]
+        value = expression.get("value", "")
+
+        return filter_one(column, operator, value, df_data_filtered)
+    
+    # Recursive case: if the expression is a logical gate (non-leaf node)
+    else:
+        gate = expression["gate"].upper()  # AND, OR, etc.
+        df_input1 = parse_logic(expression["input1"], df_data_filtered.copy())
+        df_input2 = parse_logic(expression["input2"], df_data_filtered.copy())
+
+        if gate == "AND":
+            # convert dataframe columns to string to compare
+            df_input1 = df_input1.astype(str)
+            df_input2 = df_input2.astype(str)
+            # combine dataframes, keeping only rows that are present in both dataframes, do not include the index in merge
+            ndf_data_filtered = pd.merge(df_input1, df_input2, on='href', suffixes=('', '__2'), how='inner')
+            # Drop the duplicate columns
+            ndf_data_filtered.drop(columns=[col for col in ndf_data_filtered.columns if '__2' in col], inplace=True)
+            # convert the columns back to their original data types
+            ndf_data_filtered = process_df(ndf_data_filtered)
+            return ndf_data_filtered
+        elif gate == "OR":
+            # convert dataframe columns to string to compare
+            df_input1 = df_input1.astype(str)
+            df_input2 = df_input2.astype(str)
+            # combine dataframes, keeping all rows from both dataframes
+            ndf_data_filtered = pd.concat([df_input1, df_input2])
+            # convert the columns back to their original data types
+            ndf_data_filtered = process_df(ndf_data_filtered)
+            return ndf_data_filtered
+        
+
 def filter_df_json(filter_json, df_data):
     # convert the json string to a list of dictionaries
-    filter_list = json.loads(filter_json)
+    filter_json = json.loads(filter_json)
     # make a copy of the dataframe so that the original dataframe is not modified
     df_data_filtered = df_data.copy()
-    for filter_dict in filter_list:
-        # get the column name from the dictionary
-        column = filter_dict['column']
-        # drop rows with NaN values or empty strings or lists or dictionaries
-        df_data_filtered = df_data_filtered.dropna(subset=[column])
-        # get the value from the dictionary
-        values = filter_dict['values']
-        operator = filter_dict['operator']
-        # convert values to the data type of the column
-        if constants.FEATURES_DATATYPES[column] == "string":
-            # convert values and column to lowercase
-            values = [str(value).lower() for value in values]
-            df_data_filtered[column] = df_data_filtered[column].apply(lambda x: str(x).lower())
-            if operator == "==":
-                df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: x in values)]
-            elif operator == "!=":
-                df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: x in values)]
-            elif operator == "largest":
-                # filter by counting number of unique string values
-                df_data_filtered = df_data_filtered.groupby(column).size().sort_values(ascending=False).head(int(values[0]))
-            elif operator == "smallest":
-                # filter by counting number of unique string values
-                df_data_filtered = df_data_filtered.groupby(column).size().sort_values(ascending=True).head(int(values[0]))
-            elif operator == "in":
-                df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: value in x for value in values)]
-            elif operator == "not in":
-                df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: value in x for value in values)]
-        elif constants.FEATURES_DATATYPES[column] == "integer":
-            values = [int(value) for value in values]
-            df_data_filtered = filter_for_int_and_float(df_data_filtered, column, values, operator)
-        elif constants.FEATURES_DATATYPES[column] == "float":
-            values = [float(value) for value in values]
-            df_data_filtered = filter_for_int_and_float(df_data_filtered, column, values, operator)
-        elif constants.FEATURES_DATATYPES[column] == "ISO8601":
-            values = [pd.to_datetime(value, format='%H:%M') for value in values]
-            # # convert the column to a string
-            # df_data_filtered[column] = df_data_filtered[column].apply(lambda x: str(x))
-            # filter the dataframe based on the column, value and operator
-            if operator == "==":
-                df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: x in values)]
-            elif operator == "!=":
-                df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: x in values)]
-            elif operator == "largest":
-                # sort by the column and get the top x latest times
-                value = values[0]
-                df_data_filtered = df_data_filtered.sort_values(by=column, ascending=False).head(int(value))
-            elif operator == "smallest":
-                # sort by the column and get the top x earliest times
-                value = values[0]
-                df_data_filtered = df_data_filtered.sort_values(by=column, ascending=True).head(int(value))
-            else:
-                df_data_filtered = df_data_filtered
-        elif constants.FEATURES_DATATYPES[column] == "list":
-            # filter the dataframe based on the column, value and operator
-            if operator == "==":
-                df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: any(y in x for y in values))]
-            elif operator == "!=":
-                df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: any(y in x for y in values))]
-            else:
-                df_data_filtered = df_data_filtered
-        elif column == "Tags":
-            # Tags is a dictionary the value should be a key in the dictionary
-            # convert value to lowercase
-            value = value.lower()
-            # convert keys to lowercase
-            df_data_filtered[column] = df_data_filtered[column].apply(lambda x: {k.lower(): v for k, v in x.items()})
-            # filter the dataframe based on the column, value and operator, some values are not in the dictionary
-            if operator == "==":
-                df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: set(x.keys()) <= set(values))]
-            elif operator == "!=":
-                df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: set(x.keys()) <= set(values))]
-            elif operator == "in":
-                df_data_filtered = df_data_filtered[df_data_filtered[column].apply(lambda x: any(key in values for key in x.keys()))]
-            elif operator == "not in":
-                df_data_filtered = df_data_filtered[~df_data_filtered[column].apply(lambda x: any(key in values for key in x.keys()))]
-            else:
-                df_data_filtered = df_data_filtered
+    df_data_filtered = parse_logic(filter_json, df_data_filtered)
     
     return df_data_filtered
 

@@ -43,7 +43,12 @@ def generate_map_thread(window, df_data, plot_function, planning_area, category,
         window.write_event_value('-MAP-FAILED-', None)
 
 def generate_filter_thread(window, query):
-    filter_json = generate_filter(query)
+    try:
+        filter_json = generate_filter(query)
+    except Exception as e:
+        filter_json = ""
+        logging.exception("Exception occurred in generate_filter_thread")
+        window.write_event_value('-FILTER-FAILED-', None)
     # Update the GUI with the generated filter
     window.write_event_value('-FILTER-GENERATED-', filter_json)  # Signal the GUI thread that the task is done
 
@@ -55,7 +60,7 @@ def generate_plot_json_thread(window, query):
 def validate_json_thread(window, json_str):
     global validating_json
     validating_json = True
-    validation_result = validate_filter_json(json_str)
+    validation_result = validate_filter_json_recursive(json_str)
     window.write_event_value('-JSON-VALIDATED-', validation_result)
     validating_json = False
 

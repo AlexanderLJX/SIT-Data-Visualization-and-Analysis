@@ -28,9 +28,7 @@ def generate_filter(query):
                 "content": """[
   {
     "column": "About",
-    "values": [
-      "LGBTQ+ friendly"
-    ],
+    "value": "LGBTQ+ friendly",
     "operator": "=="
   }
 ]"""
@@ -41,22 +39,19 @@ def generate_filter(query):
             },
             {
                 "role": "assistant",
-                "content": """[
-  {
+                "content": """{
+  "gate": "and",
+  "input1": {
     "column": "First Opening Time",
-    "values": [
-      "09:00"
-    ],
+    "value": "09:00",
     "operator": ">"
   },
-  {
+  "input2": {
     "column": "Planning Area",
-    "values": [
-      "Bishan"
-    ],
+    "values": "Bishan",
     "operator": "=="
   }
-]"""
+}"""
             },
             {
                 "role": "user",
@@ -64,29 +59,27 @@ def generate_filter(query):
             },
             {
                 "role": "assistant",
-                "content": """[
-  {
-    "column": "Average Star Rating",
-    "values": [
-      "3.0"
-    ],
-    "operator": "<"
+                "content": """{
+  "gate": "and",
+  "input1": {
+    "gate": "and",
+    "input1": {
+      "column": "Average Star Rating",
+      "value": "3.0",
+      "operator": "<"
+    },
+    "input2": {
+      "column": "Planning Areas",
+      "values": "Bishan",
+      "operator": "=="
+    }
   },
-  {
+  "input2": {
     "column": "Planning Areas",
-    "values": [
-      "Bishan"
-    ],
-    "operator": "=="
-  },
-  {
-    "column": "Planning Areas",
-    "values": [
-      "Jurong East"
-    ],
+    "value": "Jurong East",
     "operator": "=="
   }
-]"""
+}"""
             },
             {
                 "role": "user",
@@ -94,15 +87,11 @@ def generate_filter(query):
             },
             {
                 "role": "assistant",
-                "content": """[
-  {
+                "content": """{
     "column": "Search Engine Rating",
-    "values": [
-      "5"
-    ],
+    "values": "5",
     "operator": "largest"
-  }
-]"""
+  }"""
             },
             {
                 "role": "user",
@@ -110,15 +99,11 @@ def generate_filter(query):
             },
             {
                 "role": "assistant",
-                "content": """[
-  {
+                "content": """{
     "column": "Star Rating",
-    "values": [
-      "10"
-    ],
+    "values": "10",
     "operator": "smallest"
-  }
-]"""
+  }"""
             },
             {
                 "role": "user",
@@ -126,22 +111,20 @@ def generate_filter(query):
             },
             {
                 "role": "assistant",
-                "content": """[
-  {
+                "content": """{
+  "gate": "and",
+  "input1": {
     "column": "Bayesian Rating",
-    "values": [
-      "100"
-    ],
+    "value": "100",
     "operator": "smallest"
   },
-  {
+  "input2": {
     "column": "First Opening Time",
-    "values": [
-      "10"
-    ],
+    "value": "10",
     "operator": "smallest"
   }
-]"""
+}
+"""
             },
             {
                 "role": "user",
@@ -149,22 +132,19 @@ def generate_filter(query):
             },
             {
                 "role": "assistant",
-                "content": """[
-  {
+                "content": """{
+  "gate": "and",
+  "input1": {
     "column": "Price Rating",
-    "values": [
-      "$$$"
-    ],
+    "value": "$$$",
     "operator": ">="
   },
-  {
+  "input2": {
     "column": "Average Star Rating",
-    "values": [
-      "10"
-    ],
+    "value": "10",
     "operator": "largest"
   }
-]"""
+}"""
             },
             {
                 "role": "user",
@@ -172,39 +152,19 @@ def generate_filter(query):
             },
             {
                 "role": "assistant",
-                "content": """[
-  {
+                "content": """{
+  "gate": "or",
+  "input1": {
     "column": "About",
-    "values": [
-      "Outdoor seating",
-      "Good for kids"
-    ],
-    "operator": "=="
-  }
-]"""
-            },
-            {
-                "role": "user",
-                "content": """both debit card AND nfc payment"""
-            },
-            {
-                "role": "assistant",
-                "content": """[
-  {
-    "column": "About",
-    "values": [
-      "Debit cards",
-    ],
+    "value": "Outdoor seating",
     "operator": "=="
   },
-  {
+  "input2": {
     "column": "About",
-    "values": [
-      "NFC mobile payments",
-    ],
+    "value": "Good for kids",
     "operator": "=="
   }
-]"""
+}"""
             },
             {
                 "role": "user",
