@@ -189,7 +189,7 @@ def generate_filter(query):
             },
             {
                 "role": "user",
-                "content": "**Reply only the json, DO NOT include more than 1 value per input.** " + query
+                "content": """**Reply only the json, DO NOT include more than 1 value per input like `"value": ["$", "$$"]`,** """ + query
             }],
         # stream=True,
     )
