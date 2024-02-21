@@ -120,6 +120,6 @@ Similar to the View Foodplaces and the Data Diagrams Tab, The JSON filter that i
 
 ### <ins>ML Model Example seen in Train ML Models Tab</ins>
 <figure>
-<!--   <img src="Data_Diagrams_Tab_Example.png" alt="Data_Diagrams_Tab_Example">
-   <figcaption>Pie chart for the percentage of foodplaces in the respective regions of Singapore</figcaption> -->
+<!--   <img src="Train_ML_Models_Tab_Example.png" alt="Train_ML_Models_Tab_Example">
+   <figcaption>ML Model Example visualising for anormalies in average star rating</figcaption> -->
 </figure>
