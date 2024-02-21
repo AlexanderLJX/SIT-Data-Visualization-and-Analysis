@@ -43,10 +43,10 @@ df.reset_index(drop=True, inplace=True)
 review_df['Date'] = pd.to_datetime(review_df['Date']).dt.date
 
 # convert Price Rating to dollar sign
-df['Price Rating'] = df['Price Rating'].replace(' Moderate', '$$')
-df['Price Rating'] = df['Price Rating'].replace(' Inexpensive', '$')
-df['Price Rating'] = df['Price Rating'].replace(' Very Expensive', '$$$$')
-df['Price Rating'] = df['Price Rating'].replace(' Expensive', '$$$')
+df['Price Rating'] = df['Price Rating'].replace(' Moderate', 'Moderate')
+df['Price Rating'] = df['Price Rating'].replace(' Inexpensive', 'Inexpensive')
+df['Price Rating'] = df['Price Rating'].replace(' Very Expensive', 'Very Expensive')
+df['Price Rating'] = df['Price Rating'].replace(' Expensive', 'Expensive')
 df['Price Rating'] = df['Price Rating'].replace('NAN', '')
 
 ## Feature Engineering
@@ -305,6 +305,8 @@ def calculate_most_popular_time(popular_times_dict):
 
     return most_popular_time
 
+# convert to string
+df['Popular Times'] = df['Popular Times'].astype(str)
 # convert popular times to dict
 df['Popular Times'] = df['Popular Times'].apply(lambda x: ast.literal_eval(x) if pd.notnull(x) else {})
 # calculate most popular time of day for each row

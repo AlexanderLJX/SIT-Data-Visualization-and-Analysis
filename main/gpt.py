@@ -149,7 +149,7 @@ def generate_filter(query):
             },
             {
                 "role": "user",
-                "content": """top 10 restaurants based on star rating where price rating more or equals to $$$"""
+                "content": """top 10 restaurants based on star rating where price rating equals to expensive"""
             },
             {
                 "role": "assistant",
@@ -157,8 +157,8 @@ def generate_filter(query):
   "gate": "and",
   "input1": {
     "column": "Price Rating",
-    "value": "$$$",
-    "operator": ">="
+    "value": "expensive",
+    "operator": "="
   },
   "input2": {
     "column": "Average Star Rating",
@@ -189,7 +189,7 @@ def generate_filter(query):
             },
             {
                 "role": "user",
-                "content": """**Reply only the json, DO NOT include more than 1 value per input like `"value": ["$", "$$"]`,** """ + query
+                "content": """**Reply only the json, DO NOT include more than 1 value per input like `"value": ["inexpensive", "moderate"]`,** """ + query
             }],
         # stream=True,
     )
