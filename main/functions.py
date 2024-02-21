@@ -408,60 +408,6 @@ def filter_df_json(filter_json, df_data):
     
     return df_data_filtered
 
-# def plotmap_3d(df):
-
-#     # Define the layer for the 3D scatter plot
-#     # layer = pdk.Layer(
-#     #     'ScatterplotLayer',     # Use a scatter plot layer
-#     #     df,
-#     #     get_position=['longitude', 'latitude'],
-#     #     get_color=[255, 0, 0, 160],    # Red color for the points
-#     #     get_radius=100,                # Radius of the points
-#     #     get_elevation='Average Star Rating',     # Use some 'elevation' value if your data has it, otherwise set a constant value
-#     #     elevation_scale=50,             # Scale for elevation to adjust the 3D effect
-#     # )
-#     layer = pdk.Layer(
-#     'HexagonLayer',  # `type` positional argument is here
-#     df,
-#     get_position=['longitude', 'latitude'],
-#     auto_highlight=True,
-#     elevation_scale=10,
-#     pickable=True,
-#     elevation_range=[0, 2000],
-#     extruded=True,
-#     coverage=1,
-#     radius=500)
-
-#     # Set the view for the 3D map
-#     view_state = pdk.ViewState(latitude=df['latitude'].mean(), longitude=df['longitude'].mean(), zoom=12, pitch=50)
-
-#     # Create the deck.gl map with CARTO as the map provider (no API key required)
-#     r = pdk.Deck(layers=[layer], 
-#                  initial_view_state=view_state, 
-#                  map_style='light',  # Using a CARTO basemap style
-#                  map_provider='carto')  # Specifying CARTO as the map provider
-
-#     # Save the map to an HTML file and open it in the browser
-#     with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as tmp:
-#         r.to_html(tmp.name)
-#         webbrowser.open("file://" + os.path.realpath(tmp.name))
-        
-#     return tmp.name
-
-
-    # lat_long = [[row['latitude'], row['longitude']] for index, row in df_data_filtered.iterrows()]
-
-    # # Adjust the gradient parameter to change the color thresholds
-    # gradient = {
-    #     0.3: 'blue',
-    #     0.6: 'lime',
-    #     0.8: 'yellow',
-    #     0.9: 'orange',
-    #     1.1: 'red'
-    # }
-    
-    # # Create and add a HeatMap layer
-    # HeatMap(lat_long, radius=15).add_to(m)
 def plotmap(df):
     #setting the map and the geo location that we want the users to focus on (e.g. Singapore) by using SG coordininates
     m=folium.Map(location=[1.287953, 103.851784],zoom_start=12,prefer_canvas=True)
@@ -551,35 +497,3 @@ def plotmap_with_animation(df):
 
 
 
-
-# def plotmap_with_heat(df):  
-#     # Convert 'First Opening Time' to datetime and then to string
-#     df['First Opening Time'] = pd.to_datetime(df['First Opening Time']).dt.strftime('%Y-%m-%dT%H:%M:%S')
-    
-#     # Drop rows with NaN values
-#     df = df.dropna(subset=['latitude', 'longitude', 'First Opening Time'])
-    
-    
-#     # Sort by 'First Opening Time'
-#     df['First Opening Time'] = pd.to_datetime(df['First Opening Time']).sort_values(ascending=True)
-    
-#     # Group by 'First Opening Time' and create data for HeatMapWithTime
-#     data = []
-#     for _, d in df.groupby('First Opening Time'):
-#         data.append([[row['latitude'], row['longitude'], 1] for _, row in d.iterrows()])
-    
-#     # Create map
-#     m = folium.Map(location=[1.287953,  103.851784], zoom_start=12)
-    
-#     # Add HeatMapWithTime plugin
-#     hm = HeatMapWithTime(data, auto_play=True, max_opacity=0.8)
-#     hm.add_to(m)
-    
-#     # Save and open the map
-#     with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as tmp:
-#         m.save(tmp.name)
-#         webbrowser.open("file://" + os.path.realpath(tmp.name))
-    
-#     return tmp.name
-
-#defining a function to plot the locations on the map

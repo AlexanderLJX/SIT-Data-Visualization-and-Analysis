@@ -608,30 +608,7 @@ while True:
             # set status to error
             window['-STATUS-'].update('Error: Invalid JSON filter')
 
-    # elif event == 'Show on 3D Map' :
-    #     if window['-JSON-STATUS-'].get() == 'Valid JSON':
-    #         # Update GUI to show "generating..." message
-    #         window['-STATUS-'].update('Generating...')
-    #         # view the map with the Category of restaurant or the sub area that it is in
-    #         planning_area = values['-OPTION-']
-    #         category = values['-OPTION2-']
-    #         # get text in the filter box -FILTER-
-    #         filter_json = values['-FILTER-']
-    #         threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap_3d", planning_area, category, filter_json), daemon=True).start()
-    #     else:
-    #         # set status to error
-    #         window['-STATUS-'].update('Error: Invalid JSON filter')
-        
-
-    
-    # elif event == "Show on Heat Map":
-    #     # Update GUI to show "generating..." message
-    #     window['-STATUS-'].update('Generating...')
-    #     planning_area = values['-OPTION-']
-    #     category = values['-OPTION2-']
-    #     filter_json = values['-FILTER-']
-    #     threading.Thread(target=generate_map_thread, args=(window, df_data, "plotmap_with_heat", planning_area, category, filter_json), daemon=True).start()
-
+   
     elif event == '-MAP-GENERATED-':
         window['-STATUS-'].update('Map generated successfully!')
 
