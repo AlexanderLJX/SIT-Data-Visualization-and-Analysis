@@ -18,9 +18,10 @@ def generate_filter(query):
                 ['Central Region', 'East Region', 'North Region', 'North-East Region', 'West Region']
                 These are the valid operators, you can only use these operators to filter the dataframe:
                 """ + str(constants.OPERATORS) + """
-                1. The first key of the json is the dataframe column name.
-                2. the value of the key will be the value of the column that the user wants to filter
-                3. You can only reply in json format.
+                1. You can only reply in json format.
+                2. The key "value" refers to the value to be filtered in the column, only ONE value can be used, DO NOT use a list.
+                3. the key "gate" refers to the logical operator to be used, only "and" and "or" can be used.
+                This is the first query:
                 Please filter out non LGBTQ friendly restaurants."""
             },
             {
@@ -55,43 +56,63 @@ def generate_filter(query):
             },
             {
                 "role": "user",
-                "content": """show me only shops that have less than 3 average star rating and are in Bishan and jurong east planning areas."""
+                "content": """show me only shops that have less than 3 average star rating and are in Bishan or jurong east planning areas."""
             },
             {
                 "role": "assistant",
                 "content": """{
   "gate": "and",
   "input1": {
-    "gate": "and",
     "input1": {
       "column": "Average Star Rating",
       "value": "3.0",
       "operator": "<"
-    },
-    "input2": {
-      "column": "Planning Areas",
-      "value": "Bishan",
-      "operator": "=="
     }
   },
   "input2": {
-    "column": "Planning Areas",
-    "value": "Jurong East",
-    "operator": "=="
+    "gate": "or",
+    "input1": {
+      "column": "Planning Areas",
+      "value": "Bishan",
+      "operator": "=="
+    },
+    "input2": {
+      "column": "Planning Areas",
+      "value": "Jurong East",
+      "operator": "=="
+    }
   }
 }"""
             },
             {
                 "role": "user",
-                "content": """display the top 5 restaurants with the highest search engine rating."""
+                "content": """filter for restaurants which have the tag wings or chicken and display the top 5 restaurants with the highest search engine rating"""
             },
             {
                 "role": "assistant",
                 "content": """{
-    "column": "Search Engine Rating",
-    "value": "5",
-    "operator": "largest"
-  }"""
+  "gate": "and",
+  "input1": {
+    "gate": "or",
+    "input1": {
+      "column": "Tag",
+      "value": "wings",
+      "operator": "=="
+    },
+    "input2": {
+      "column": "Tag",
+      "value": "chicken",
+      "operator": "=="
+    }
+  },
+  "input2": {
+    "input1": {
+      "column": "Search Engine Rating",
+      "value": "5",
+      "operator": "largest"
+    }
+  }
+}"""
             },
             {
                 "role": "user",
@@ -100,10 +121,10 @@ def generate_filter(query):
             {
                 "role": "assistant",
                 "content": """{
-    "column": "Star Rating",
-    "value": "10",
-    "operator": "smallest"
-  }"""
+  "column": "Star Rating",
+  "value": "10",
+  "operator": "smallest"
+}"""
             },
             {
                 "role": "user",
@@ -148,7 +169,7 @@ def generate_filter(query):
             },
             {
                 "role": "user",
-                "content": """out door seating OR good for kids"""
+                "content": """out door seating or good for kids"""
             },
             {
                 "role": "assistant",
@@ -168,7 +189,7 @@ def generate_filter(query):
             },
             {
                 "role": "user",
-                "content": "**Reply only the json.** " + query
+                "content": "**Reply only the json, DO NOT include more than 1 value per input.** " + query
             }],
         # stream=True,
     )

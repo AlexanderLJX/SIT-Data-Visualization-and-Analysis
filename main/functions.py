@@ -388,24 +388,14 @@ def parse_logic(expression, df_data_filtered):
         df_input2 = parse_logic(expression["input2"], df_data_filtered.copy())
 
         if gate == "AND":
-            # convert dataframe columns to string to compare
-            df_input1 = df_input1.astype(str)
-            df_input2 = df_input2.astype(str)
             # combine dataframes, keeping only rows that are present in both dataframes, do not include the index in merge
             ndf_data_filtered = pd.merge(df_input1, df_input2, on='href', suffixes=('', '__2'), how='inner')
             # Drop the duplicate columns
             ndf_data_filtered.drop(columns=[col for col in ndf_data_filtered.columns if '__2' in col], inplace=True)
-            # convert the columns back to their original data types
-            ndf_data_filtered = process_df(ndf_data_filtered)
             return ndf_data_filtered
         elif gate == "OR":
-            # convert dataframe columns to string to compare
-            df_input1 = df_input1.astype(str)
-            df_input2 = df_input2.astype(str)
             # combine dataframes, keeping all rows from both dataframes
             ndf_data_filtered = pd.concat([df_input1, df_input2])
-            # convert the columns back to their original data types
-            ndf_data_filtered = process_df(ndf_data_filtered)
             return ndf_data_filtered
         
 

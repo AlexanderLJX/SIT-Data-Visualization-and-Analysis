@@ -42,7 +42,12 @@ df.reset_index(drop=True, inplace=True)
 # Process the 'Date' column to keep only the date part
 review_df['Date'] = pd.to_datetime(review_df['Date']).dt.date
 
-
+# convert Price Rating to dollar sign
+df['Price Rating'] = df['Price Rating'].replace(' Moderate', '$$')
+df['Price Rating'] = df['Price Rating'].replace(' Inexpensive', '$')
+df['Price Rating'] = df['Price Rating'].replace(' Very Expensive', '$$$$')
+df['Price Rating'] = df['Price Rating'].replace(' Expensive', '$$$')
+df['Price Rating'] = df['Price Rating'].replace('NAN', '')
 
 ## Feature Engineering
 
