@@ -186,7 +186,7 @@ def filter_df_json(filter_json, df_data):
         # drop rows with NaN values or empty strings or lists or dictionaries
         df_data_filtered = df_data_filtered.dropna(subset=[column])
         # get the value from the dictionary
-        values = filter_dict['value']
+        values = filter_dict['values']
         operator = filter_dict['operator']
         # convert values to the data type of the column
         if constants.FEATURES_DATATYPES[column] == "string":

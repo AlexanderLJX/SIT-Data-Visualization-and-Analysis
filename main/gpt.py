@@ -168,7 +168,7 @@ def generate_filter(query):
             },
             {
                 "role": "user",
-                "content": """out door seating and good for kids"""
+                "content": """out door seating OR good for kids"""
             },
             {
                 "role": "assistant",
@@ -178,6 +178,29 @@ def generate_filter(query):
     "values": [
       "Outdoor seating",
       "Good for kids"
+    ],
+    "operator": "=="
+  }
+]"""
+            },
+            {
+                "role": "user",
+                "content": """both debit card AND nfc payment"""
+            },
+            {
+                "role": "assistant",
+                "content": """[
+  {
+    "column": "About",
+    "values": [
+      "Debit cards",
+    ],
+    "operator": "=="
+  },
+  {
+    "column": "About",
+    "values": [
+      "NFC mobile payments",
     ],
     "operator": "=="
   }
