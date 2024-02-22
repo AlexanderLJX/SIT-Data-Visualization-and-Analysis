@@ -83,8 +83,8 @@ There are already workflows pre-created and stored in the "workflows" folder of 
 5. Go to the Data Diagrams Tab.
 6. Click "Show Diagram".
 7. The workflow diagram is displayed.
-8. 
-### <ins> Exporting Workflows for JSON Filters in Vieew Foodplaces Tab </ins>
+
+### <ins> Exporting Workflows for JSON Filters in View Foodplaces Tab </ins>
 
 The JSON Filters that are generated from the Natural Language Query or after making edits to them after generation can be saved in your desired file system location by clicking on the "Export Workflow" button.
 
@@ -124,7 +124,7 @@ Similar to the View Foodplaces Tab, The JSON filter that is generated after the 
 
 ### <ins> Importing Workflows from View Foodplaces Tab </ins>
 
-Please refer to the section "Importing Workflows to View Foodplaces Tab" above at the "View Foodplaces" Tab section.
+Please refer to the section "Importing Workflows to Data Diagrams Tab" above in the "View Foodplaces Tab" instructions.
 
 ### <ins>Data Diagram Example seen in View Foodplaces Tab</ins>
 <figure>
