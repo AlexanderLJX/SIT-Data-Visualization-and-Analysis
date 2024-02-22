@@ -25,7 +25,7 @@ FEATURES_DATATYPES = {
     "Price Per Person": "float",  # Decimal number for price per person
     "Recommended Dishes": "list",  # String with recommended dishes
     "First Opening Time": "ISO8601",  # ISO8601 format for the first opening time
-    "Last Opening Time": "ISO8601",  # ISO8601 format for the last opening time
+    "Last Closing Time": "ISO8601",  # ISO8601 format for the last closing time
     "Most Popular Time of Day": "ISO8601",  # ISO8601 format for the most popular time of day
     "Average Opening Time": "float",  # Decimal number for average opening time in hours
     "Chain": "string"  # Name of the chain
@@ -58,7 +58,7 @@ PLOT_FEATURES_DATATYPES = {
     "Price Per Person": "float",  # Decimal number for price per person
     # "Recommended Dishes": "list",  # String with recommended dishes
     "First Opening Time": "ISO8601",  # ISO8601 format for the first opening time
-    "Last Closing Time": "ISO8601",  # ISO8601 format for the last opening time
+    "Last Closing Time": "ISO8601",  # ISO8601 format for the last closing time
     "Average Opening Hours": "float",  # Decimal number for average opening time in hours
     "Chain": "string"  # Name of the chain
 }

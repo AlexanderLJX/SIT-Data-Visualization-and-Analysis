@@ -178,7 +178,7 @@ def validate_train_json(train_json):
     # if model is isolation forest, make sure columns are float or integer
     if train_dict['model'] == "isolation forest":
         if len(train_dict['features']) != 2:
-            return "Isolation forest model requires exactly 2 features"
+            return "2 features required for isolation forest model"
         for feature in train_dict['features']:
             if constants.PLOT_FEATURES_DATATYPES[feature] not in ["integer", "float"]:
                 return f"{feature} not a valid column for isolation forest model"

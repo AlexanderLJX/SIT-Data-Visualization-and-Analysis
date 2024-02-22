@@ -33,7 +33,7 @@ def process_df(df_data):
         elif datatype == "list":
             df_data[feature] = df_data[feature].apply(lambda x: ast.literal_eval(x) if pd.notnull(x) and x != "nan" else x)
         elif datatype == "ISO8601":
-            df_data[feature] = pd.to_datetime(df_data[feature], format='%H:%M', errors='coerce')
+            df_data[feature] = pd.to_datetime(df_data[feature], format='%H:%M', errors='coerce').dt.strftime('%H:%M')
     # # print dtypes
     # print(df_data.dtypes)
     return df_data
