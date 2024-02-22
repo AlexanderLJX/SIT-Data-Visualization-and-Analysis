@@ -5,12 +5,14 @@
 
 ## <ins>1. View Foodplaces Tab</ins>
 
-The View foodplaces tab is used to view the list of foodplaces in Singapore on the map where users can set up to 3 filters -- entering a Natural Language Query, 
-Areas of Singapore and also the Categories of Foodplaces.
+The View Foodplaces tab is used to view the list of foodplaces in Singapore on the map where users can set up to 3 filters -- fiiltering by either entering a Natural Language Query or JSON filter, filtering by the Areas of Singapore and also filtering by the Categories of Foodplaces.
 
-### <ins>Filtering based on Natural Language Query</ins>
+### <ins> Basic Use </ins>
+
+### <ins>A1. Filtering based on Natural Language Query</ins>
 Natural Language Query provides users the flexibility to enter any query they want on how the data can be filtered and then visualised.
-1. To begin, enter a Natural language Query. Only 1 Natural Language Query can be entered at a time.
+
+1. To begin, enter a Natural language Query. Only 1 Natural Language Query can be entered at a time. An example "dine in and takeaway and region is central and top 10 on bayesian rating" has ben provided in the NLQ box.
 
 Examples of Natural Language Query for Filtering:
 - list all the restaurants in the east
@@ -19,24 +21,42 @@ Examples of Natural Language Query for Filtering:
 - top 3 lowest bayesian rating
 - top 100 based on relevancy and the 10 earliest to open
 
-### <ins>Filtering based on Areas of Singapore</ins>
+2. Click on the "Generate" button. **(FOR THIS METHOD ONLY)**
+
+### <ins>B. Filtering based on Areas of Singapore</ins>
 1. To begin, select the Areas of Singapore that you will want to view the foodplaces from in the list. Multiple selections are allowed. A highlighted yellow field shows that the area has been selected. Unselect by clicking the same highlighted area. 
    
-### <ins>Filtering based on Categories of Foodplaces</ins>
-1. To begin, select the Categories of Foodplaces that you will want to view the foodplaces from in the list. Multiple selections are allowed. A highlighted yellow field shows that the category has been selected. Unselect by clicking the same highlighted category. 
+### <ins>C. Filtering based on Categories of Foodplaces</ins>
+1. To begin, select the Categories of Foodplaces that you will want to view the foodplaces from in the list. Multiple selections are allowed. A highlighted yellow field shows that the category has been selected. Unselect by clicking the same highlighted category.
 
-### <ins>For all 3 Filtering Methods (after Step 1 is completed)</ins>
-2. Click on the "Generate" button.
+### <ins> A2. Filtering by JSON Filter</ins>
+
+#### <ins>(i). Editing JSON filter after Natural Language Query generation </ins>
+1. The JSON filter that is generated after entering the Natural Language Query and clicking on the "Generate" button can also be edited.
+
+**NOTE: Configurations done on the JSON filter after pressing the "Generate" button will override the result produced on the map**.
+
+#### <ins>(ii). Manual Entering of JSON Filter</ins>
+1. Users can also manually type in the JSON filter into the GUI.
+
+### <ins> To View Results for ALL Filtering Methods - A1, A2, B and C (after the above steps mentioned are completed)</ins>
+
+<ins> **(FOR A2, B and C)**</ins>
+**NOTE: DO NOT need to click on the "Generate" button to display the result.**
+
 3. View and Display the data results on the map by clicking on one of the 2 map options (green buttons).
 4. To save a copy of the map, click "Export Map". Save the map HTML file at the desired location of your file system.
-5. To save a copy of the filtered dataet, click "Export Filtered Datasset". Save the filtered dataset CSV file at the desired location of your file system.
+5. To save a copy of the filtered dataet, click "Export Filtered Dataset". Save the filtered dataset CSV file at the desired location of your file system.
 
 ### <ins>Combining Filters</ins>
-Users can filter the dataset up to 3 filters. **Do note that certain filters that are set when generating will not produce any results if there are none available, resulting in a clean map without any hotspots and drop pins symbols.**
+Users can filter the dataset **UP TO 3 filters**. **EITHER THE OPTION OF NATURAL LANGUAGE QUERY GENERATION FROM THE NLQ TEXTBOX (METHOD A1) OR EDITING THE JSON FILTER (METHOD A2) CAN BE USED TOGETHER WITH OR WITHOUT THE OTHER 2 FILTERING OPTIONS (METHOD B AND C) AT ANY ONE TIME.** 
 
-### <ins>Editing JSON filter after Natural Language Query geenration </ins>
-The JSON filter that is generated after entering the Natural Language Query can also be edited and combined with the other 2 filters - Areas of Singapore and Categories of Foodplaces. However, by doing so, users **DO NOT need to click on the "Generate" button** to display the result, and the result produced on the map is based on the **latest settings configured on the JSON Filter**. 
-**EITHER THE OPTION OF NATURAL LANGUAGE QUERY GENERAATION FROM THE NLQ TEXTBOX OR EDITING THE JSON FILTER CAN BE USED TOGETHER WITH OR WITHOUT THE OTHER 2 FILTERING OPTIONS AT ANY ONE TIME.**
+<ins>**Example**</ins>
+
+- A1, B and  C (Correct)
+- A1, A2 and B (Wrong)
+
+**Do note that certain filters that are set when generating will not produce any results if there are none available, resulting in a clean map without any hotspots and drop pins symbols.**
 
 ### <ins>Saving Raw Dataset CSV File</ins>
 If you would like to view the entire raw dataset without any filtering, click "Export Entire Dataset". Save the raw dataset CSV file at the desired location of 
@@ -52,6 +72,10 @@ your file system.
   <img src="View_Foodplaces_Tab_Example.png" alt="View_Foodplaces_Tab_Example">
    <figcaption>Map result showing the foodplaces found in the Eastern Region of Singapore.</figcaption>
 </figure>
+
+### <ins> Exporting Workflows for JSON Filters in Vieew Foodplaces Tab </ins>
+
+The JSON Filters that are generated from the Natural Language Query or after making edits to them after generation can be saved in your desired file system location by clicking on the "Export Workflow" button.
 
 ## <ins>2. Data Diagrams Tab</ins>
 
@@ -83,7 +107,7 @@ The Data Diagrams Tab allows users to create stories and view data insights and 
 - hex bin of relevancy to star rating
 - distribution of star rating
   
-### <ins>Editing JSON filter after Natural Language Query geenration</ins>
+### <ins>Editing JSON filter after Natural Language Query generation</ins>
 Similar to the View Foodplaces Tab, The JSON filter that is generated after the Natural Language Query can be edited. However, by doing so, users **DO NOT need to click on the "Generate" button** to display the result, and the resulted diagram produced is based on the **latest settings configured on the JSON Filter**. 
 **EITHER THE OPTION OF NATURAL LANGUAGE QUERY GENERAATION FROM THE NLQ TEXTBOX OR EDITING THE JSON FILTER CAN BE USED AT ANY ONE TIME TOGETHER WITH THE CHECKBOXES TO DISPLAY THE DATA DIAGRAM.**
 
@@ -114,6 +138,17 @@ Similar to the View Foodplaces Tab, The JSON filter that is generated after the 
 9. Select the Checkbox "Plot in new window" to view the ML Model in a new window.
 10. Checking the checkbox "Clear Previous Plot" will clear the previous plot on the ML Model as there are multiple plots plotted when multiple filters are applied.
 
+### <ins> Importing Workflows for Data Diagrams Tab from View Foodplaces Tab </ins>
+There are already workflows pre-created and stored in the "workflows" folder of this project. The imported workflows are used to display the diagrams in the "Display Datagrams" tab.
+
+1. Go to the workflows folders file of this project.
+2. Select one of the JSON workflows file.
+3. Click "Open".
+4. Click "Ok".
+5. Go to the Data Diagrams Tab.
+6. Click "Show Diagram".
+7. The workflow diagram is displayed.
+8. 
 ### <ins>Editing JSON filter after Natural Language Query geenration</ins>
 Similar to the View Foodplaces and the Data Diagrams Tab, The JSON filter that is generated after the Natural Language Query can be edited. However, by doing so, users **DO NOT need to click on the "Generate" button** to display the result, and the resulted diagram produced is based on the **latest settings configured on the JSON Filter**. 
 **EITHER THE OPTION OF NATURAL LANGUAGE QUERY GENERAATION FROM THE NLQ TEXTBOX OR EDITING THE JSON FILTER CAN BE USED AT ANY ONE TIME TOGETHER WITH THE CHECKBOXES TO DISPLAY THE DATA DIAGRAM.**
