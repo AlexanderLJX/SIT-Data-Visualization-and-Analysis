@@ -190,10 +190,10 @@ default_filter_query = "dine in and takeaway and region is central and top 10 on
 layout = [
     
     [sg.Text()],
-    [sg.Text('Filtering data by Natural Language Query: ', font=("Arial",16))],
+    [sg.Text('Generate JSON Filter with a prompt: ', font=("Arial",16))],
     [
         # add text for the description of the input box
-        sg.Text('NLQ: ', font=font),
+        sg.Text('Prompt: ', font=font),
         # add a text box for a user query input
         sg.Multiline(size=(50, 3), default_text=default_filter_query, key='-USER-QUERY-', font=font),
         # add a button to submit the query
@@ -262,7 +262,7 @@ layout2 = [
             [sg.Text(size=(5,2))],
             [
                 # add text for the description of the input box
-                sg.Text('NLQ: ', font=font),
+                sg.Text('Prompt: ', font=font),
                 # add a text box for a user query input
                 sg.Multiline(size=(50, 3), default_text='Plot the relationship between number of reviews and star rating!', key='-PLOT-QUERY-', font=font, enable_events=True),
                 # add a button to submit the query
@@ -295,7 +295,7 @@ layout3 = [
             [sg.Text('Train ML models:', font=("Arial", 20))],
             [
                 # add text for the description of the input box
-                sg.Text('Natural Language query: ', font=font),
+                sg.Text('Prompt: ', font=font),
                 # add a text box for a user query input
                 sg.Multiline(size=(50, 3), default_text='make a model to visualize if there are any anomalies in avg star rating and reviews.', key='-TRAIN-QUERY-', font=font),
                 # add a button to submit the query
