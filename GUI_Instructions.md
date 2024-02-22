@@ -53,8 +53,8 @@ Users can filter the dataset **UP TO 3 filters**. **EITHER THE OPTION OF NATURAL
 
 <ins>**Example**</ins>
 
-- A1, B and C (Correct)
-- A1, A2 and B (Wrong)
+- A1 or A2, B and/or C (Correct)
+- A1, A2, B and/or C (Wrong)
 
 **Do note that certain filters that are set when generating will not produce any results if there are none available, resulting in a clean map without any hotspots and drop pins symbols.**
 
