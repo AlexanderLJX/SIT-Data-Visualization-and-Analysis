@@ -115,8 +115,16 @@ def plot_bar_chart(feature1, feature2=None, df=None, filter_json=""):
         plt.xlabel(feature1)
         plt.ylabel('Count' if feature2 is None or df[feature2].dtype == 'object' else 'Mean of ' + feature2)
     plt.grid(True)
-    plt.xticks(rotation=20)  # Rotate x-axis labels for better readability if needed
-    plt.subplots_adjust(bottom=0.3)  # Adjust the bottom margin to fit the x-axis labels
+    # if more than 20 values in x-axis then rotate the x-axis labels 90 degree
+    if len(df[feature1].unique()) > 20:
+        plt.xticks(rotation=90)
+        plt.subplots_adjust(bottom=0.35)
+    elif len(df[feature1].unique()) > 10:
+        plt.xticks(rotation=45)
+        plt.subplots_adjust(bottom=0.32)
+    else:
+        plt.xticks(rotation=20)  # Rotate x-axis labels for better readability if needed
+        plt.subplots_adjust(bottom=0.3)  # Adjust the bottom margin to fit the x-axis labels
 
     # if more the 10 values in legends then remove the legends
     if feature2 is not None and len(df[feature2].unique()) > 10:
