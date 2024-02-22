@@ -73,6 +73,17 @@ your file system.
    <figcaption>Map result showing the foodplaces found in the Eastern Region of Singapore.</figcaption>
 </figure>
 
+### <ins> Importing Workflows to Data Diagrams Tab </ins>
+There are already workflows pre-created and stored in the "workflows" folder of this project. The imported workflows are used to display the diagrams in the "Display Datagrams" tab.
+
+1. Go to the workflows folders file of this project.
+2. Select one of the JSON workflows file.
+3. Click "Open".
+4. Click "Ok".
+5. Go to the Data Diagrams Tab.
+6. Click "Show Diagram".
+7. The workflow diagram is displayed.
+8. 
 ### <ins> Exporting Workflows for JSON Filters in Vieew Foodplaces Tab </ins>
 
 The JSON Filters that are generated from the Natural Language Query or after making edits to them after generation can be saved in your desired file system location by clicking on the "Export Workflow" button.
@@ -99,23 +110,28 @@ The Data Diagrams Tab allows users to create stories and view data insights and 
 8. Repeat Step 6 and Step 7 for adding more filters.
 9. Select the Checkbox "Plot in new window" to view the data diagram in a new window.
 10. Checking the checkbox "Clear Previous Plot" will clear the previous plot on the data diagram as there are multiple plots plotted when multiple filters are applied.
-
+    
 ### <ins>Examples of Natural Language Query for Plotting</ins>
 - Plot the bar chart of expensiveness against region
 - pie chart of regions
 - bar chart of region to planning area
 - hex bin of relevancy to star rating
 - distribution of star rating
-  
+
 ### <ins>Editing JSON filter after Natural Language Query generation</ins>
 Similar to the View Foodplaces Tab, The JSON filter that is generated after the Natural Language Query can be edited. However, by doing so, users **DO NOT need to click on the "Generate" button** to display the result, and the resulted diagram produced is based on the **latest settings configured on the JSON Filter**. 
 **EITHER THE OPTION OF NATURAL LANGUAGE QUERY GENERAATION FROM THE NLQ TEXTBOX OR EDITING THE JSON FILTER CAN BE USED AT ANY ONE TIME TOGETHER WITH THE CHECKBOXES TO DISPLAY THE DATA DIAGRAM.**
+
+### <ins> Importing Workflows from View Foodplaces Tab </ins>
+
+Please refer to the section "Importing Workflows to View Foodplaces Tab" above at the "View Foodplaces" Tab section.
 
 ### <ins>Data Diagram Example seen in View Foodplaces Tab</ins>
 <figure>
   <img src="Data_Diagrams_Tab_Example.png" alt="Data_Diagrams_Tab_Example">
    <figcaption>Pie chart for the percentage of foodplaces in the respective regions of Singapore</figcaption>
 </figure>
+
 
 ## <ins>3. Train ML Models Tab</ins>
 
@@ -138,17 +154,6 @@ Similar to the View Foodplaces Tab, The JSON filter that is generated after the 
 9. Select the Checkbox "Plot in new window" to view the ML Model in a new window.
 10. Checking the checkbox "Clear Previous Plot" will clear the previous plot on the ML Model as there are multiple plots plotted when multiple filters are applied.
 
-### <ins> Importing Workflows for Data Diagrams Tab from View Foodplaces Tab </ins>
-There are already workflows pre-created and stored in the "workflows" folder of this project. The imported workflows are used to display the diagrams in the "Display Datagrams" tab.
-
-1. Go to the workflows folders file of this project.
-2. Select one of the JSON workflows file.
-3. Click "Open".
-4. Click "Ok".
-5. Go to the Data Diagrams Tab.
-6. Click "Show Diagram".
-7. The workflow diagram is displayed.
-8. 
 ### <ins>Editing JSON filter after Natural Language Query geenration</ins>
 Similar to the View Foodplaces and the Data Diagrams Tab, The JSON filter that is generated after the Natural Language Query can be edited. However, by doing so, users **DO NOT need to click on the "Generate" button** to display the result, and the resulted diagram produced is based on the **latest settings configured on the JSON Filter**. 
 **EITHER THE OPTION OF NATURAL LANGUAGE QUERY GENERAATION FROM THE NLQ TEXTBOX OR EDITING THE JSON FILTER CAN BE USED AT ANY ONE TIME TOGETHER WITH THE CHECKBOXES TO DISPLAY THE DATA DIAGRAM.**
