@@ -172,5 +172,5 @@ Similar to the View Foodplaces and the Data Diagrams Tab, The JSON filter that i
 ### <ins>ML Model Example seen in Train ML Models Tab</ins>
 <figure>
   <img src="images/Train_ML_Models_Tab_Example.png" alt="Train_ML_Models_Tab_Example">
-   <figcaption>ML Model Example visualising for anomalies in average star rating</figcaption>
+   <figcaption>ML Model Example visualising for anomalies in average star rating and reviews</figcaption>
 </figure>
