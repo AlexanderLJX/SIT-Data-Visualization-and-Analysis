@@ -419,7 +419,7 @@ def plotmap(df):
     #setting the map and the geo location that we want the users to focus on (e.g. Singapore) by using SG coordininates
     m=folium.Map(location=[1.287953, 103.851784],zoom_start=12,prefer_canvas=True)
     #getting the coordinates from the data set then adding the markers
-    coordinates = df.apply(lambda row: [row['Name'], row['latitude'], row['longitude']], axis=1)
+    coordinates = df.apply(lambda row: [row['Name']+"\n"+row['href'], row['latitude'], row['longitude']], axis=1)
     marker_cluster = MarkerCluster().add_to(m)
     for coord in coordinates:
         folium.Marker(location=[coord[1], coord[2]], popup=str(coord[0]), tooltip='Click here to see restaurant').add_to(marker_cluster)

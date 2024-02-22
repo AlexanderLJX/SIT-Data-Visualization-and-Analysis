@@ -26,6 +26,9 @@ def generate_map_thread(window, df_data, plot_function, planning_area, category,
         else:
             filtered_df = filter_df(planning_area, category, df_data)
 
+        if filtered_df.empty:
+            window.write_event_value('-MAP-FAILED-', "No data to plot. Please check your filter and try again.")
+            return
         if plot_function == "plotmap_with_animation":
             temp_file_name = plotmap_with_animation(filtered_df, time_feature)
         else: # else is plotmap
@@ -40,7 +43,7 @@ def generate_map_thread(window, df_data, plot_function, planning_area, category,
         window.write_event_value('-MAP-GENERATED-', None)  # Signal the GUI thread that the task is done
     except Exception as e:
         logging.exception("Exception occurred in generate_map_thread")
-        window.write_event_value('-MAP-FAILED-', None)
+        window.write_event_value('-MAP-FAILED-', "Error: Map generation failed")
 
 def generate_filter_thread(window, query):
     try:
@@ -636,7 +639,7 @@ while True:
         window['-STATUS-'].update('Map generated successfully!')
 
     elif event == '-MAP-FAILED-':
-        window['-STATUS-'].update('Error: Map generation failed')
+        window['-STATUS-'].update(values[event])
 
     elif event == '-PLOT-FAILED-':
         window['-PLOT-STATUS-'].update(values[event])
