@@ -683,7 +683,7 @@ while True:
                 print(f"An error occurred while saving the file: {e}")
 
     elif event == '-HELP-LINK-':
-        webbrowser.open('https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis')
+        webbrowser.open('https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis/blob/master/GUI_Instructions.md')
         
 
 
