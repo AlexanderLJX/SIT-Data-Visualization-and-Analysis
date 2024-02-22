@@ -30,7 +30,7 @@ Examples of Natural Language Query for Filtering:
 1. To begin, select the Categories of Foodplaces that you will want to view the foodplaces from in the list. Multiple selections are allowed. A highlighted yellow field shows that the category has been selected. Unselect by clicking the same highlighted category.
 
 ### <ins>D. Filtering based on Time Features (WORKS ON ANIMATED MAP ONLY)</ins>
-1. To begin, select the Time Feature you will like to view on the animated map. Only one selection is allowed.
+1. To begin, select the Time Feature you will like to view on the animated map. Only one selection is allowed. A highlighted yellow field means that the time fature has been selected.
 First Opening TIme - View the first opening time of foodplaces over time.
 Last Closing Time -  View the last closing time of foodplaces over time.
 Most Popular Time of Day - View the most popular time of day of foodplaces over time.
