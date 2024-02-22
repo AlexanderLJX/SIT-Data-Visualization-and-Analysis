@@ -5,7 +5,7 @@
 
 ## <ins>1. View Foodplaces Tab</ins>
 
-The View Foodplaces tab is used to view the list of foodplaces in Singapore on the map where users can set up to 4 filters -- fiiltering by either entering a Natural Language Query or JSON filter, filtering by the Areas of Singapore, filtering by the Categories of Foodplaces and also filtering by Time Features.
+The View Foodplaces tab is used to view the list of foodplaces in Singapore on the map where users can set up to 3 filters -- fiiltering by either entering a Natural Language Query or JSON filter, filtering by the Areas of Singapore, filtering by the Categories of Foodplaces.
 
 ### <ins> Basic Use </ins>
 
@@ -29,12 +29,6 @@ Examples of Natural Language Query for Filtering:
 ### <ins>C. Filtering based on Categories of Foodplaces</ins>
 1. To begin, select the Categories of Foodplaces that you will want to view the foodplaces from in the list. Multiple selections are allowed. A highlighted yellow field shows that the category has been selected. Unselect by clicking the same highlighted category.
 
-### <ins>D. Filtering based on Time Features (WORKS ON ANIMATED MAP ONLY)</ins>
-1. To begin, select the Time Feature you will like to view on the animated map. Only one selection is allowed. A highlighted yellow field means that the time fature has been selected.
-First Opening TIme - View the first opening time of foodplaces over time.
-Last Closing Time -  View the last closing time of foodplaces over time.
-Most Popular Time of Day - View the most popular time of day of foodplaces over time.
-
 ### <ins> A2. Filtering by JSON Filter</ins>
 
 #### <ins>(i). Editing JSON filter after Natural Language Query generation </ins>
@@ -45,9 +39,9 @@ Most Popular Time of Day - View the most popular time of day of foodplaces over 
 #### <ins>(ii). Manual Entering of JSON Filter</ins>
 1. Users can also manually type in the JSON filter into the GUI.
 
-### <ins> To View Results for ALL Filtering Methods - A1, A2, B and C, D (after the above steps mentioned are completed)</ins>
+### <ins> To View Results for ALL Filtering Methods - A1, A2, B and C (after the above steps mentioned are completed)</ins>
 
-<ins> **(FOR A2, B, C and D)**</ins>
+<ins> **(FOR A2, B, C)**</ins>
 **NOTE: DO NOT need to click on the "Generate" button to display the result.**
 
 3. View and Display the data results on the map by clicking on one of the 2 map options (green buttons).
@@ -55,14 +49,20 @@ Most Popular Time of Day - View the most popular time of day of foodplaces over 
 5. To save a copy of the filtered dataet, click "Export Filtered Dataset". Save the filtered dataset CSV file at the desired location of your file system.
 
 ### <ins>Combining Filters</ins>
-Users can filter the dataset **UP TO 4 filters**. **EITHER THE OPTION OF NATURAL LANGUAGE QUERY GENERATION FROM THE NLQ TEXTBOX (METHOD A1) OR EDITING THE JSON FILTER (METHOD A2) CAN BE USED TOGETHER WITH OR WITHOUT THE OTHER 3 FILTERING OPTIONS (METHOD B AND C) AT ANY ONE TIME.** 
+Users can filter the dataset **UP TO 3 filters**. **EITHER THE OPTION OF NATURAL LANGUAGE QUERY GENERATION FROM THE NLQ TEXTBOX (METHOD A1) OR EDITING THE JSON FILTER (METHOD A2) CAN BE USED TOGETHER WITH OR WITHOUT THE OTHER 2 FILTERING OPTIONS (METHOD B AND C) AT ANY ONE TIME.** 
 
 <ins>**Example**</ins>
 
-- A1, B, C and D (Correct)
-- A1, A2, B and D (Wrong)
+- A1, B and C (Correct)
+- A1, A2 and B (Wrong)
 
 **Do note that certain filters that are set when generating will not produce any results if there are none available, resulting in a clean map without any hotspots and drop pins symbols.**
+
+### <ins> Time Features Animation (WORKS ON ANIMATED MAP ONLY)</ins>
+1. To begin, select the Time Feature you will like to view on the animated map. Only one selection is allowed. A highlighted yellow field means that the time fature has been selected.
+First Opening TIme - View the first opening time of foodplaces over time.
+Last Closing Time -  View the last closing time of foodplaces over time.
+Most Popular Time of Day - View the most popular time of day of foodplaces over time.
 
 ### <ins>Saving Raw Dataset CSV File</ins>
 If you would like to view the entire raw dataset without any filtering, click "Export Entire Dataset". Save the raw dataset CSV file at the desired location of 
