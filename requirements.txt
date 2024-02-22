@@ -11,3 +11,4 @@ selenium
 pandas
 matplotlib
 g4f
+seaborn

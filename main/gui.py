@@ -102,6 +102,8 @@ def plot_thread(window, unfiltered_df, plot_json, filter_json_status, apply_filt
             canvas_figure = plot_line_chart(plot_json["feature1"], plot_json["feature2"], df)
         elif plot_json["plot"] == "scatter":
             canvas_figure = plot_scatter(plot_json["feature1"], plot_json["feature2"], df)
+        elif plot_json["plot"] == "violin":
+            canvas_figure = plot_violin(plot_json["feature1"], plot_json["feature2"], df)
         elif plot_json["plot"] == "hexbin":
             canvas_figure = plot_hexbin(plot_json["feature1"], plot_json["feature2"], df)
         elif plot_json["plot"] == "distribution":

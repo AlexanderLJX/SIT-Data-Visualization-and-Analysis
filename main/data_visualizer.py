@@ -6,6 +6,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import IsolationForest
+import seaborn as sns
 
 def plot_distribution(feature, df):
     # Convert "NAN" to actual NaN and change dtype to float
@@ -45,7 +46,7 @@ def plot_hexbin(feature1, feature2, df):
 def plot_scatter(feature1, feature2, df):
     # Plotting the scatter plot
     plt.scatter(df[feature1], df[feature2], alpha=0.7)
-    plt.title('Scatter Plot of Average Opening Hours and Star Rating')
+    plt.title('Scatter Plot of ' + feature1 + ' and ' + feature2)
     plt.xlabel(feature1)
     plt.ylabel(feature2)
     plt.grid(True)
@@ -53,6 +54,19 @@ def plot_scatter(feature1, feature2, df):
     plt.subplots_adjust(bottom=0.2)
     # plt.show()
 
+    return plt.gcf()
+
+def plot_violin(feature1, feature2, df):
+    # Creating the violin plot
+    sns.violinplot(x=df[feature1], y=df[feature2])
+    plt.title('Violin Plot of ' + feature2 + ' by ' + feature1)
+    plt.xlabel(feature1)
+    plt.ylabel(feature2)
+    plt.grid(True)
+    plt.subplots_adjust(bottom=0.2)  # Add margin at the bottom to fit the x-axis label
+    
+
+    # Return the current figure instance
     return plt.gcf()
 
 def plot_line_chart(feature1, feature2, df):
