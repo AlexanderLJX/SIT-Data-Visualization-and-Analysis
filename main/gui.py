@@ -213,20 +213,26 @@ layout = [
         sg.Button('Export Workflow', key='-EXPORT-WORKFLOW-', size=(15, 2),font=font,border_width=0),
     ],
     [sg.Text(size=(10,1))],
-    [sg.Text('Additional Filters:', font=("Arial",16))],
+    [
+        sg.Text(size=(14, 2)),
+        sg.Text('Additional Filters:', font=("Arial",16)),
+        sg.Text(size=(20, 2)),
+        sg.Text('Animation Features:', font=("Arial",16))
+    ],
     [ 
+        sg.Text(size=(5, 2)),
         sg.Text('Areas in Singapore : ', font=font),
-        sg.Text(size=(10, 2)),
+        sg.Text(size=(8, 2)),
         sg.Text('Category of Foodplaces : ', font=font),
-        sg.Text(size=(9, 2)),
+        sg.Text(size=(6, 2)),
         sg.Text('Time Features(animated map only) : ', font=font)
     ],
     
     [   
         sg.Listbox(unique_Area_list, size=(20,6), select_mode='multiple', key='-OPTION-'),
-        sg.Text(size=(14, 2)),
+        sg.Text(size=(6, 2)),
         sg.Listbox(values=unique_cat_list, size=(22,6), select_mode='multiple', key='-OPTION2-'),
-        sg.Text(size=(14, 2)),
+        sg.Text(size=(8, 2)),
         sg.Listbox(values=time_features_list, size=(22,6), select_mode='single', key='-PLOT-TIME-FEATURE-')
     ],
     [sg.Text(size=(5,1))],
