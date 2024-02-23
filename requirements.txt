@@ -4,7 +4,7 @@ folium
 geopy
 numpy
 pydeck
-PySimpleGUI == PySimpleGUI == 4.60.5
+PySimpleGUI == 4.60.5
 python_dateutil
 scikit_learn
 selenium
