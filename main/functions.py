@@ -88,17 +88,17 @@ def validate_plot_json(plot_json):
     if plot_dict['plot'] not in constants.PLOT_TYPES:
         return f"{plot_dict['plot']} not a valid plot type"
     # verify that the column is in feature list
-    if plot_dict['feature1'] not in constants.FEATURES_DATATYPES.keys():
+    if plot_dict['feature1'] not in constants.PLOT_FEATURES_DATATYPES.keys():
         return f"{plot_dict['feature1']} not a valid column"
     # if there is a feature2 check it too
     if 'feature2' in plot_dict:
         # verify that the column is in feature list
-        if plot_dict['feature2'] not in constants.FEATURES_DATATYPES.keys():
+        if plot_dict['feature2'] not in constants.PLOT_FEATURES_DATATYPES.keys():
             return f"{plot_dict['feature2']} not a valid column"
     
     # if plot is distribution make sure feature1 is in the JSON is a int or float
     if plot_dict['plot'] == "distribution":
-        if constants.FEATURES_DATATYPES[plot_dict['feature1']] not in ["integer", "float"]:
+        if constants.PLOT_FEATURES_DATATYPES[plot_dict['feature1']] not in ["integer", "float"]:
             return f"{plot_dict['feature1']} not a valid column for distribution plot"
 
     return "Valid JSON"

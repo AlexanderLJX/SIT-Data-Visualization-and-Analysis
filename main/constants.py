@@ -60,6 +60,7 @@ PLOT_FEATURES_DATATYPES = {
     "First Opening Time": "ISO8601",  # ISO8601 format for the first opening time
     "Last Closing Time": "ISO8601",  # ISO8601 format for the last closing time
     "Average Opening Hours": "float",  # Decimal number for average opening time in hours
+    "Most Popular Time of Day": "ISO8601",  # ISO8601 format for the most popular time of day
     "Chain": "string"  # Name of the chain
 }
 
