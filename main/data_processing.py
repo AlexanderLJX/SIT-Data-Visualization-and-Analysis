@@ -131,6 +131,9 @@ review_df['Metadata'] = review_df['Metadata'].apply(ast.literal_eval)
 # review_df = review_df.head(1000)
 review_df = process_metadata(review_df)
 
+# save review_df to csv
+review_df.to_csv('main/review.csv', encoding='utf-8-sig', index=False)
+
 # First, rename 'href of Place' in review_df to 'href' to match the column name in df
 review_df.rename(columns={'href of Place': 'href'}, inplace=True)
 
@@ -146,9 +149,6 @@ aggregated_df = review_df.groupby('href').agg({
     # convert to list
     'Recommended dishes': lambda x: ', '.join(x.dropna()).replace(' and ', ', ').split(', ')
 }).reset_index()
-
-# save to csv
-aggregated_df.to_csv('main/review.csv', encoding='utf-8-sig', index=False)
 
 # If you want to join this aggregated information back to the original df DataFrame:
 df = pd.merge(df, aggregated_df, on='href', how='left')
