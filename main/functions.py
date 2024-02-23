@@ -294,10 +294,11 @@ def plotmap(df):
     # Return the name of the temporary file so that we can delete the temp file after the user closes the window
     return tmp.name
 
-def plotmap_with_animation(df, time_feature):
+def plotmap_with_animation(df_original, time_feature):
     # Convert 'Time' to string in ISO format if it's not already, eg 11:00:00, there is no date, only time, so make it today's date
     # get today's date in the format 2024-02-19
     today = pd.to_datetime('today').strftime('%Y-%m-%d')
+    df = df_original.copy()
     df[time_feature] = pd.to_datetime(df[time_feature]).dt.strftime(today + 'T%H:%M:%S')
 
     # drop rows with NaN values

@@ -21,7 +21,7 @@ FEATURES_DATATYPES = {
     "About": "list",  # List of features, services, or attributes
     "Service Rating": "float",  # Decimal number for service rating
     "Food Rating": "float",  # Decimal number for food rating
-    "Atmosphere Rating": "float",  # Decimal number for atmosphere rating
+    "Atmosphere": "float",  # Decimal number for atmosphere rating
     "Price Per Person": "float",  # Decimal number for price per person
     "Recommended Dishes": "list",  # String with recommended dishes
     "First Opening Time": "ISO8601",  # ISO8601 format for the first opening time

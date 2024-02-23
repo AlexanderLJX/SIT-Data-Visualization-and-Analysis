@@ -1,0 +1,42 @@
+{
+    "filter": {
+        "gate": "and",
+        "input1": {
+            "gate": "or",
+            "input1": {
+                "column": "About",
+                "value": "Dine-in",
+                "operator": "=="
+            },
+            "input2": {
+                "column": "About",
+                "value": "Takeaway",
+                "operator": "=="
+            }
+        },
+        "input2": {
+            "gate": "and",
+            "input1": {
+                "column": "Region",
+                "value": "Central Region",
+                "operator": "=="
+            },
+            "input2": {
+                "column": "Bayesian Rating",
+                "value": "10",
+                "operator": "largest"
+            }
+        }
+    },
+    "plot": {
+        "feature1": "Most Popular Time of Day",
+        "plot": "line chart"
+    },
+    "train": {
+        "model": "isolation forest",
+        "features": [
+            "Average Star Rating",
+            "Reviews"
+        ]
+    }
+}

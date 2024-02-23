@@ -69,21 +69,36 @@ def plot_violin(feature1, feature2, df):
     # Return the current figure instance
     return plt.gcf()
 
-def plot_line_chart(feature1, feature2, df):
-    # Group the DataFrame by feature1 and calculate the mean of feature2 for each group
-    aggregated_data = df.groupby(feature1)[feature2].mean().reset_index()
+def plot_line_chart(feature1, feature2=None, df=None):
+    if feature2:
+        # Group the DataFrame by feature1 and calculate the mean of feature2 for each group
+        aggregated_data = df.groupby(feature1)[feature2].mean().reset_index()
 
-    # Sorting the aggregated data based on feature1 to ensure a proper line plot.
-    # This step is particularly important if feature1 represents a sequential variable like time.
-    aggregated_data = aggregated_data.sort_values(by=feature1)
+        # Sorting the aggregated data based on feature1 to ensure a proper line plot.
+        # This step is particularly important if feature1 represents a sequential variable like time.
+        aggregated_data = aggregated_data.sort_values(by=feature1)
 
-    # Plotting the line chart
-    # make plot larger
-    plt.plot(aggregated_data[feature1], aggregated_data[feature2], marker='o', linestyle='-', alpha=0.7)
-    plt.title(f'Line Chart of {feature1} and Mean of {feature2}')
-    plt.xlabel(feature1)
-    plt.ylabel(f'Mean of {feature2}')
-    plt.grid(True)
+        # Plotting the line chart
+        # make plot larger
+        plt.plot(aggregated_data[feature1], aggregated_data[feature2], marker='o', linestyle='-', alpha=0.7)
+        plt.title(f'Line Chart of {feature1} and Mean of {feature2}')
+        plt.xlabel(feature1)
+        plt.ylabel(f'Mean of {feature2}')
+        plt.grid(True)
+    else:
+        # Group the DataFrame by the feature and count the number of occurrences for each group
+        aggregated_data = df.groupby(feature1).size().reset_index(name='Count')
+
+        # Sorting the aggregated data based on the feature to ensure a proper line plot.
+        # This step is particularly important if the feature represents a sequential variable like time.
+        aggregated_data = aggregated_data.sort_values(by=feature1)
+
+        # Plotting the line chart
+        plt.plot(aggregated_data[feature1], aggregated_data['Count'], marker='o', linestyle='-', alpha=0.7)
+        plt.title(f'Line Chart of {feature1} Count')
+        plt.xlabel(feature1)
+        plt.ylabel('Count')
+        plt.grid(True)
 
     # Adjust the bottom margin if the labels are particularly long
     plt.subplots_adjust(bottom=0.2)
@@ -107,8 +122,8 @@ def plot_bar_chart(feature1, feature2=None, df=None, filter_json=""):
             xticks_label = feature1
             # if filter_json is not a str
             if type(filter_json) != str:
-                for filter in filter_json:
-                    xticks_label += "\n" + filter['column'] + filter['operator'] + filter['value']
+                if "column" in filter_json and "operator" in filter_json and "value" in filter_json:
+                    xticks_label += "\n" + filter_json['column'] + filter_json['operator'] + filter_json['value']
                 
             # Plotting the mean as a single bar
             plt.bar(xticks_label, mean_value, alpha=0.7)

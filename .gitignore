@@ -20,4 +20,4 @@ main/map.html
 
 # ignore log files
 *.log
-testsave.html
+*.html

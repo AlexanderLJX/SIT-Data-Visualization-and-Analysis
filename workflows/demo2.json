@@ -1,0 +1,12 @@
+{
+    "filter": {
+        "column": "Chain",
+        "value": "Mcdonald's",
+        "operator": "=="
+    },
+    "plot": {
+        "feature1": "Average Star Rating",
+        "plot": "bar chart"
+    },
+    "train": ""
+}

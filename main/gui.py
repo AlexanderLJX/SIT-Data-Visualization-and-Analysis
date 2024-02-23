@@ -99,7 +99,7 @@ def plot_thread(window, unfiltered_df, plot_json, filter_json_status, apply_filt
         elif plot_json["plot"] == "bar chart":
             canvas_figure = plot_bar_chart(plot_json["feature1"], plot_json["feature2"] if "feature2" in plot_json else None, df, filter_json)
         elif plot_json["plot"] == "line chart":
-            canvas_figure = plot_line_chart(plot_json["feature1"], plot_json["feature2"], df)
+            canvas_figure = plot_line_chart(plot_json["feature1"], plot_json["feature2"] if "feature2" in plot_json else None, df)
         elif plot_json["plot"] == "scatter":
             canvas_figure = plot_scatter(plot_json["feature1"], plot_json["feature2"], df)
         elif plot_json["plot"] == "violin":
@@ -288,7 +288,7 @@ layout2 = [
                 # add a checkbox to apply the filter to the diagram
                 sg.Checkbox('Apply filter', key='-APPLY-FILTER-', font=font),  
                 # add a checkbox to clear the previous plt on the canvas
-                sg.Checkbox('Clear previous plot', key='-CLEAR-PLOT-', font=font), 
+                sg.Checkbox('Clear previous plot', key='-CLEAR-PLOT-', font=font, default = True), 
                 # create a checkbox to show the diagram on the canvas
                 sg.Checkbox('Plot in new window', key='-PLOT-IN-NEW-WINDOW-', font=font),
             ],
@@ -319,7 +319,7 @@ layout3 = [
                 # add a checkbox to apply the filter to the diagram
                 sg.Checkbox('Apply filter', key='-TRAIN-APPLY-FILTER-', font=font),  
                 # add a checkbox to clear the previous plt on the canvas
-                sg.Checkbox('Clear previous plot', key='-TRAIN-CLEAR-PLOT-', font=font), 
+                sg.Checkbox('Clear previous plot', key='-TRAIN-CLEAR-PLOT-', font=font, default = True), 
                 # create a checkbox to show the diagram on the canvas
                 sg.Checkbox('Plot in new window', key='-TRAIN-PLOT-IN-NEW-WINDOW-', font=font),
             ],
