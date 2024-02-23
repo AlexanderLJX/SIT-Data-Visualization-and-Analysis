@@ -71,11 +71,11 @@ LIST_OF_PLACES = {
     'West Region': {'Boon Lay': ['Liu Fang', 'Samulun', 'Shipyard', 'Tukang'], 'Bukit Batok': ['Brickworks', 'Bukit Batok Central', 'Bukit Batok East', 'Bukit Batok West', 'Bukit Batok South', 'Gombak', 'Guilin', 'Hillview', 'Hong Kah North'], 'Bukit Panjang': ['Bangkit', 'Dairy Farm', 'Fajar', 'Jelebu', 'Nature Reserve', 'Saujana', 'Senja'], 'Choa Chu Kang': ['Choa Chu Kang Central', 'Choa Chu Kang North', 'Keat Hong', 'Peng Siang', 'Teck Whye', 'Yew Tee'], 'Clementi': ['Clementi Central', 'Clementi North', 'Clementi West', 'Clementi Woods', 'Faber', 'Pandan', 'Sunset Way', 'Toh Tuck', 'West Coast'], 'Jurong East': ['International Business Park', 'Jurong Gateway', 'Jurong Port', 'Jurong River', 'Lakeside (Business)', 'Lakeside (Leisure)', 'Penjuru Crescent', 'Teban Gardens', 'Toh Guan', 'Yuhua East', 'Yuhua West'], 'Jurong West': ['Boon Lay Place', 'Chin Bee', 'Hong Kah', 'Jurong West Central', 'Kian Teck', 'Safti', 'Taman Jurong', 'Wenya', 'Yunnan'], 'Pioneer': ['Benoi Sector', 'Gul Basin', 'Gul Circle', 'Joo Koon', 'Pioneer Sector'], 'Tengah': ['Brickland', 'Forest Hill', 'Garden', 'Park', 'Plantation', 'Tengah Industrial Estate'], 'Tuas': ['Tengeh', 'Tuas Bay', 'Tuas North', 'Tuas Promenade', 'Tuas View', 'Tuas View Extension'], 'Western Islands': ['Jurong Island and Bukom', 'Semakau', 'Sudong'], 'Western Water Catchment': ['Bahar', 'Cleantech', 'Murai']},
     }
 
-PLOT_TYPES = ['pie chart', 'bar chart', 'distribution', 'hexbin', 'linear regression', 'scatter', 'line chart', 'violin']
+PLOT_TYPES = ['pie chart', 'bar chart', 'distribution', 'hexbin', 'scatter', 'line chart', 'violin']
 
 OPERATORS = ['==', '>', '<', '>=', '<=', '!=', 'smallest', 'largest', 'in', 'not in']
 
-ML_MODELS = ["linear regression", "isolation forest", "time series prediction", "random forest"]
+ML_MODELS = ["linear regression", "isolation forest", "random forest"]
 
 
 DEFAULT_PLOT_JSON = """{
